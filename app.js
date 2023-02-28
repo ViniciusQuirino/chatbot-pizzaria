@@ -10,7 +10,7 @@ const fileUpload = require('express-fileupload');
 const axios = require('axios');
 const mime = require('mime-types');
 
-const port = process.env.PORT || 8005;
+const port = process.env.PORT || 7005;
 
 const app = express();
 const server = http.createServer(app);
@@ -29,7 +29,7 @@ app.use(express.urlencoded({
  * So, we just disabling the debug for simplicity.
  */
 app.use(fileUpload({
-  debug: false
+  debug: true
 }));
 
 app.get('/', (req, res) => {
