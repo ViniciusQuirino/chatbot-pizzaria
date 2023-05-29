@@ -1,47 +1,37 @@
 const { Requests } = require("./requests");
 const {
-  criarObjetoTelefone,
   obterRepresentacaoOrdinal,
   criarObjetoSabor,
   criarObjetoBordaRecheada,
   criarObjetoObs,
+  criarObjetoTamanho,
   desejaAlgoParaBeber,
   sabor,
+  tamanho,
 } = require("./scripts");
 
-async function maisDeUma(recuperarEtapa, msg, client) {
+async function grandeEMedia(recuperarEtapa, msg, client) {
   const response = await Requests.recuperarPedido(msg.from);
-  if (recuperarEtapa.etapa == "1") {
-    const ordinal = obterRepresentacaoOrdinal(response.loop);
-    if (msg.body == "1") {
-      client.sendMessage(
-        msg.from,
-        `Qual é o *sabor da ${ordinal} PIZZA ?*
-
+  const ordinal = obterRepresentacaoOrdinal(response.loop);
+  if (recuperarEtapa.etapa == "20") {
+    client.sendMessage(
+      msg.from,
+      `Qual é o *sabor da ${ordinal} PIZZA ?*
+          
 Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
-      );
-
-      const obj = criarObjetoTelefone(msg.from, response.qnt);
-
+    );
+    Requests.atualizarEtapa(msg.from, { etapa: "21" });
+    if (msg.body == "1") {
+      const obj = criarObjetoTamanho(msg.from, response.loop, "grande");
       Requests.atualizarPedido(obj);
-      Requests.atualizarEtapa(msg.from, { etapa: "2" });
-    }
-    if (msg.body == "2") {
-      client.sendMessage(
-        msg.from,
-        `Qual é o *tamanho da ${ordinal} PIZZA ?*
-
-⬇️ Escolha uma das opções abaixo digitante apenas o numero.
-
-*1* - Grande 🍕
-*2* - Média 🍕`
-      );
-      Requests.atualizarEtapa(msg.from, { etapa: "20" });
+    } else if (msg.body == "2") {
+      const obj = criarObjetoTamanho(msg.from, response.loop, "média");
+      Requests.atualizarPedido(obj);
     }
   }
 
-  if (recuperarEtapa.etapa == "2") {
-    const ordinal = obterRepresentacaoOrdinal(response.loop);
+  if (recuperarEtapa.etapa == "21") {
+    // const ordinal = obterRepresentacaoOrdinal(response.loop);
     client.sendMessage(
       msg.from,
       `*${ordinal} PIZZA:*
@@ -53,13 +43,14 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
 
 1 - Não quero adicionar e retirar nenhum ingrediente.`
     );
+
+    Requests.atualizarEtapa(msg.from, { etapa: "22" });
     const sabor = criarObjetoSabor(msg.from, response.loop, msg.body);
-    Requests.atualizarEtapa(msg.from, { etapa: "3" });
     Requests.atualizarPedido(sabor);
   }
 
-  if (recuperarEtapa.etapa == "3") {
-    const ordinal = obterRepresentacaoOrdinal(response.loop);
+  if (recuperarEtapa.etapa == "22") {
+    // const ordinal = obterRepresentacaoOrdinal(response.loop);
     client.sendMessage(
       msg.from,
       `*${ordinal} PIZZA:*
@@ -72,17 +63,15 @@ Quer adicionar borda recheada ?
 3 - Cheddar R$ 10,00
 4 - Chocolate R$ 12,00`
     );
+    Requests.atualizarEtapa(msg.from, { etapa: "23" });
 
-    if (msg.body == "1") {
-      Requests.atualizarEtapa(msg.from, { etapa: "4" });
-    } else if (msg.body != "1") {
+    if (msg.body != "1") {
       const obs = criarObjetoObs(msg.from, response.loop, msg.body);
-      Requests.atualizarEtapa(msg.from, { etapa: "4" });
       Requests.atualizarPedido(obs);
     }
   }
 
-  if (recuperarEtapa.etapa == "4") {
+  if (recuperarEtapa.etapa == "23") {
     if (msg.body == "1") {
       const atualizar = await Requests.atualizarPedido({
         telefone: msg.from,
@@ -91,7 +80,7 @@ Quer adicionar borda recheada ?
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
       } else {
-        sabor(msg.from, client, atualizar);
+        tamanho(msg.from, client, atualizar);
       }
     }
     if (msg.body == "2") {
@@ -105,7 +94,7 @@ Quer adicionar borda recheada ?
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
       } else {
-        sabor(msg.from, client, atualizar);
+        tamanho(msg.from, client, atualizar);
       }
     }
     if (msg.body == "3") {
@@ -118,7 +107,7 @@ Quer adicionar borda recheada ?
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
       } else {
-        sabor(msg.from, client, atualizar);
+        tamanho(msg.from, client, atualizar);
       }
     }
     if (msg.body == "4") {
@@ -131,7 +120,7 @@ Quer adicionar borda recheada ?
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
       } else {
-        sabor(msg.from, client, atualizar);
+        tamanho(msg.from, client, atualizar);
       }
     }
     if (
@@ -156,4 +145,4 @@ Quer adicionar borda recheada ?
   }
 }
 
-module.exports = { maisDeUma };
+module.exports = { grandeEMedia };

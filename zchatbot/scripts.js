@@ -92,23 +92,35 @@ const desejaAlgoParaBeber = async (from, client) => {
 *2* - Coca-Cola 2 Litros R$ 14,00
 *3* - Conquista Guaraná 2 Litros R$ 8,00`
   );
-  Requests.atualizarEtapa(msg.from, { etapa: "g" });
+  Requests.atualizarEtapa(from, { etapa: "g" });
 };
 
 const sabor = async (from, client, response) => {
   const ordinal = obterRepresentacaoOrdinal(response.loop);
 
   client.sendMessage(
-    msg.from,
-    `Blzaa, agora me conte, qual é o *sabor da ${ordinal} PIZZA ?*
+    from,
+    `Qual é o *sabor da ${ordinal} PIZZA ?*
 
 Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
   );
 
-  const obj = criarObjetoTelefone(msg.from, response.qnt);
+  Requests.atualizarEtapa(from, { etapa: "2" });
+};
 
-  Requests.atualizarPedido(obj);
-  Requests.atualizarEtapa(msg.from, { etapa: "2" });
+const tamanho = async (from, client, response) => {
+  const ordinal = obterRepresentacaoOrdinal(response.loop);
+
+  client.sendMessage(
+    from,
+    `Qual é o *tamanho da ${ordinal} PIZZA ?*
+
+⬇️ Escolha uma das opções abaixo digitante apenas o numero.
+
+*1* - Grande 🍕
+*2* - Média 🍕`
+  );
+  Requests.atualizarEtapa(from, { etapa: "20" });
 };
 
 function verificarNumero(mensagem) {
@@ -216,6 +228,7 @@ module.exports = {
   desejaConfirmarOPedido,
   desejaAlgoParaBeber,
   sabor,
+  tamanho,
   obterRepresentacaoOrdinal,
   criarObjetoTelefone,
   criarObjetoTamanho,

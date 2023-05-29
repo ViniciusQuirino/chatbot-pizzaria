@@ -7,6 +7,7 @@ const {
   verificarNumero,
   desejaConfirmarOPedido,
 } = require("./scripts");
+const { gerarTemplateString } = require("./informacoes.pedido");
 
 async function pedidos(recuperarEtapa, msg, client) {
   let message = msg.body.toLowerCase();
@@ -182,7 +183,7 @@ Se você quiser meia de uma e meia de outra, pode informar aqui mesmo por favor 
         msg.from,
         `Qual o *sabor* da pizza que deseja ?
 
-Se você quiser meia de uma e meia de outra, pode informar aqui mesmo por favor 😃`
+Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       );
       Requests.atualizarPedido({
         telefone: msg.from,
@@ -422,34 +423,7 @@ Se não, digite apenas o numero 1
         telefone: msg.from,
         formadepagamento: "cartão",
       });
-      client.sendMessage(
-        msg.from,
-        `*Numero do pedido:* ${response.id}
-*Quantidade*: ${response.qnt}
-*Sabor:* ${response.sabor1}
-
-${
-  response.bordarecheada1 != null
-    ? `*Borda:* ${response.bordarecheada1}`
-    : `*Borda:*`
-}
-*Tamanho:* ${response.tamanho1}
-${response.obs1 != null ? `*Obs:* ${response.obs1}` : `*Obs:*`}
-
-${
-  response.refrigerante == null
-    ? "*Refrigerante:*"
-    : `*Refrigerante:* ${response.qntrefrigerante}x - ${response.refrigerante}`
-}
-*Forma de pagamento:* ${response.formadepagamento}
-
-*Telefone:* ${response.telefone.slice(2, 13)}
-${
-  response.endereco != null
-    ? `*Endereço de entrega:* ${response.endereco}`
-    : "*Endereço de entrega:*"
-}`
-      );
+      gerarTemplateString(response, msg.from, client);
 
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
@@ -459,34 +433,7 @@ ${
         telefone: msg.from,
         formadepagamento: "pix",
       });
-      client.sendMessage(
-        msg.from,
-        `*Numero do pedido:* ${response.id}
-*Quantidade*: ${response.qnt}
-*Sabor:* ${response.sabor1}
-
-${
-  response.bordarecheada1 != null
-    ? `*Borda:* ${response.bordarecheada1}`
-    : `*Borda:*`
-}
-*Tamanho:* ${response.tamanho1}
-${response.obs1 != null ? `*Obs:* ${response.obs1}` : `*Obs:*`}
-
-${
-  response.refrigerante == null
-    ? "*Refrigerante:*"
-    : `*Refrigerante:* ${response.qntrefrigerante}x - ${response.refrigerante}`
-}
-*Forma de pagamento:* ${response.formadepagamento}
-
-*Telefone:* ${response.telefone.slice(2, 13)}
-${
-  response.endereco != null
-    ? `*Endereço de entrega:* ${response.endereco}`
-    : "*Endereço de entrega:*"
-}`
-      );
+      gerarTemplateString(response, msg.from, client);
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
@@ -510,35 +457,8 @@ Qual vai ser a forma de pagamento ?
       telefone: msg.from,
       troco: `${msg.body == "1" ? "" : msg.body}`,
     });
-    client.sendMessage(
-      msg.from,
-      `*Numero do pedido:* ${response.id}
-*Quantidade*: ${response.qnt}
-*Sabor:* ${response.sabor1}
 
-${
-  response.bordarecheada1 != null
-    ? `*Borda:* ${response.bordarecheada1}`
-    : `*Borda:*`
-}
-*Tamanho:* ${response.tamanho1}
-${response.obs1 != null ? `*Obs:* ${response.obs1}` : `*Obs:*`}
-  
-${
-  response.refrigerante == null
-    ? "*Refrigerante:*"
-    : `*Refrigerante:* ${response.qntrefrigerante}x - ${response.refrigerante}`
-}
-*Forma de pagamento:* ${response.formadepagamento}
-
-*Telefone:* ${response.telefone.slice(2, 13)}
-${
-  response.endereco != null
-    ? `*Endereço de entrega:* ${response.endereco}`
-    : "*Endereço de entrega:*"
-}
-${response.troco != "" ? `*Troco:* ${response.troco}` : "*Troco:*"}`
-    );
+    gerarTemplateString(response, msg.from, client);
 
     desejaConfirmarOPedido(msg.from, client);
     Requests.atualizarEtapa(msg.from, { etapa: "conf" });
@@ -550,7 +470,24 @@ ${response.troco != "" ? `*Troco:* ${response.troco}` : "*Troco:*"}`
         msg.from,
         `Seu pedido foi *confirmado com sucesso*. Obrigado pela confiança! 😃🍕`
       );
-      Requests.atualizarEtapa(msg.from, { etapa: "a" });
+
+      const response = await Requests.recuperarPedido(msg.from);
+
+      if (response.formadepagamento == "pix") {
+        client.sendMessage(
+          msg.from,
+          `⬇️ A chave do *pix* é o telefone abaixo.
+        
+Pizzas Primo Delivery/ Carlos Alexandre Primo 
+Banco C6Bank
+
+Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já deixo como pago na comanda!`
+        );
+        client.sendMessage(msg.from, "14998593589");
+        Requests.atualizarEtapa(msg.from, { etapa: "comp" });
+      } else if (response.formadepagamento != "pix") {
+        Requests.atualizarEtapa(msg.from, { etapa: "a" });
+      }
     }
     if (msg.body == "2") {
       client.sendMessage(
@@ -568,9 +505,19 @@ Tem um cliente precisando de ajuda!`
       Requests.atualizarEtapa(msg.from, { etapa: "des" });
     }
     if (msg.body != 1 && msg.body != 2) {
-      client.sendMessage(from, `Atenção ⚠️`);
+      client.sendMessage(msg.from, `Atenção ⚠️`);
       desejaConfirmarOPedido(msg.from, client);
     }
+  }
+
+  if (recuperarEtapa.etapa == "comp" && msg.mediaKey != undefined) {
+    client.sendMessage(
+      msg.from,
+      `Obrigado por nos enviar o comprovante!
+      
+Agradecemos pela sua colaboração!`
+    );
+    Requests.atualizarEtapa(msg.from, { etapa: "a" });
   }
 }
 

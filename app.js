@@ -12,6 +12,7 @@ const fs = require("fs");
 const { Requests } = require("./zchatbot/requests");
 const { pedidos } = require("./zchatbot/pedido");
 const { maisDeUma } = require("./zchatbot/todas.grandes");
+const { grandeEMedia } = require("./zchatbot/grande.media");
 
 const port = process.env.PORT || 7005;
 
@@ -66,6 +67,7 @@ client.on("message", async (msg) => {
     recuperarEtapa !== undefined &&
     recuperarEtapa.ativado == true &&
     msg.from == "5514998760815@c.us"
+    // msg.from == "5514998593589@c.us"
   ) {
     const message = msg.body.toLowerCase();
     let desativar = message.slice(0, 9);
@@ -76,9 +78,15 @@ client.on("message", async (msg) => {
         recuperarEtapa.etapa == "1" ||
         recuperarEtapa.etapa == "2" ||
         recuperarEtapa.etapa == "3" ||
-        recuperarEtapa.etapa == "4"
+        recuperarEtapa.etapa == "4" ||
+        recuperarEtapa.etapa == "20" ||
+        recuperarEtapa.etapa == "21" ||
+        recuperarEtapa.etapa == "22" ||
+        recuperarEtapa.etapa == "23" ||
+        recuperarEtapa.etapa == "24"
       ) {
         maisDeUma(recuperarEtapa, msg, client);
+        grandeEMedia(recuperarEtapa, msg, client);
       }
     }
   }
