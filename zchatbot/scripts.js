@@ -92,7 +92,6 @@ const desejaAlgoParaBeber = async (from, client) => {
 *2* - Coca-Cola 2 Litros R$ 14,00
 *3* - Conquista Guaraná 2 Litros R$ 8,00`
   );
-  Requests.atualizarEtapa(from, { etapa: "g" });
 };
 
 const sabor = async (from, client, response) => {
@@ -220,6 +219,25 @@ function criarObjetoBordaRecheada(from, numero, message) {
   return objeto;
 }
 
+async function listarPizzas(msg, client) {
+  let message = msg.body.toLowerCase();
+  let listar = message.includes("listar/pizzas");
+  if (listar) {
+    const response = await Requests.listarPizzas();
+    let texto = "";
+
+    for (let dados of response) {
+      texto += `
+*____________________________*
+*Id:* ${dados.id}
+*Nome:* ${dados.nome}
+*Média:* ${dados.media},00
+*Grande:* ${dados.grande},00`;
+    }
+    client.sendMessage(msg.from, texto);
+  }
+}
+
 module.exports = {
   cardapio,
   gostouDoNossoCardapio,
@@ -235,4 +253,5 @@ module.exports = {
   criarObjetoSabor,
   criarObjetoObs,
   criarObjetoBordaRecheada,
+  listarPizzas,
 };

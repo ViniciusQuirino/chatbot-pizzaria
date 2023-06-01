@@ -1,0 +1,6 @@
+{ id: 5, nome: 'atum', grande: 38, media: 34 },
+{ id: 6, nome: 'atum especial', grande: 41, media: 37 },
+{ id: 1, nome: 'a moda', grande: 45, media: 40 },
+{ id: 24, nome: 'moda do pizzaiolo', grande: 45, media: 40 },
+{ id: 41, nome: 'banana', grande: 32, media: 30 },
+{ id: 42, nome: 'banana nevada', grande: 36, media: 32 },

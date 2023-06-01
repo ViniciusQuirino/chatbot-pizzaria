@@ -38,7 +38,9 @@ ${
     }
 ${
   response.endereco !== null
-    ? `*Endereço de entrega:* ${response.endereco}`
+    ? `*Endereço de entrega:* ${response.endereco} - ${
+        response.cidade == 1 ? "Igaraçu do Tietê" : "Barra Bonita"
+      }`
     : ""
 }${response.endereco !== null ? "\n" : ""}*Telefone:* ${response.telefone.slice(
       2,
@@ -57,7 +59,9 @@ ${
     }
 ${
   response.endereco !== null
-    ? `*Endereço de entrega:* ${response.endereco}`
+    ? `*Endereço de entrega:* ${response.endereco} - ${
+        response.cidade == 1 ? "Igaraçu do Tietê" : "Barra Bonita"
+      }`
     : ""
 }${response.endereco !== null ? "\n" : ""}*Telefone:* ${response.telefone.slice(
       2,

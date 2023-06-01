@@ -13,6 +13,8 @@ const { Requests } = require("./zchatbot/requests");
 const { pedidos } = require("./zchatbot/pedido");
 const { maisDeUma } = require("./zchatbot/todas.grandes");
 const { grandeEMedia } = require("./zchatbot/grande.media");
+const { listarPizzas } = require("./zchatbot/scripts");
+const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
 
 const port = process.env.PORT || 7005;
 
@@ -58,6 +60,7 @@ const client = new Client({
 });
 
 client.on("message", async (msg) => {
+  
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
 
   const date = new Date();
@@ -67,6 +70,8 @@ client.on("message", async (msg) => {
     recuperarEtapa !== undefined &&
     recuperarEtapa.ativado == true &&
     msg.from == "5514998760815@c.us"
+    // msg.from == "5514996056869@c.us" ||
+    // msg.from == "5514991342480"
     // msg.from == "5514998593589@c.us"
   ) {
     const message = msg.body.toLowerCase();
@@ -74,6 +79,8 @@ client.on("message", async (msg) => {
     let ativar = message.slice(0, 6);
     if (ativar != "ativar" && desativar != "desativar" && h >= 5 && h < 23) {
       pedidos(recuperarEtapa, msg, client);
+      listarPizzas(msg, client);
+      atualizarPizza(msg, client);
       if (
         recuperarEtapa.etapa == "1" ||
         recuperarEtapa.etapa == "2" ||

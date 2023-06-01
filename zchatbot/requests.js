@@ -42,6 +42,16 @@ class Requests {
     let response = await api.get(`/pedidos/recuperar/${from}`);
     return response.data;
   }
+
+  static async listarPizzas() {
+    let response = await api.get(`/pizzas`);
+    return response.data;
+  }
+
+  static async atualizarPizzas(id, body) {
+    let response = await api.patch(`/pizzas/${id}`, body);
+    return response.data;
+  }
 }
 
 module.exports = { Requests };

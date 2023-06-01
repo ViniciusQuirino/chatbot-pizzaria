@@ -6,9 +6,10 @@ const {
   criarObjetoObs,
   criarObjetoTamanho,
   desejaAlgoParaBeber,
-  sabor,
   tamanho,
 } = require("./scripts");
+const { removerAcentos } = require("./atualizar.pizza");
+const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
 
 async function grandeEMedia(recuperarEtapa, msg, client) {
   const response = await Requests.recuperarPedido(msg.from);
@@ -43,9 +44,12 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
 
 1 - Não quero adicionar e retirar nenhum ingrediente.`
     );
+    var message = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+    const retorno = removerAcentos(message);
+    const frasePronta = corrigirPalavrasParecidas(retorno);
+    const sabor = criarObjetoSabor(msg.from, response.loop, frasePronta);
 
     Requests.atualizarEtapa(msg.from, { etapa: "22" });
-    const sabor = criarObjetoSabor(msg.from, response.loop, msg.body);
     Requests.atualizarPedido(sabor);
   }
 
@@ -79,6 +83,7 @@ Quer adicionar borda recheada ?
       });
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
+        Requests.atualizarEtapa(from, { etapa: "g" });
       } else {
         tamanho(msg.from, client, atualizar);
       }
@@ -93,6 +98,7 @@ Quer adicionar borda recheada ?
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
+        Requests.atualizarEtapa(from, { etapa: "g" });
       } else {
         tamanho(msg.from, client, atualizar);
       }
@@ -106,6 +112,7 @@ Quer adicionar borda recheada ?
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
+        Requests.atualizarEtapa(from, { etapa: "g" });
       } else {
         tamanho(msg.from, client, atualizar);
       }
@@ -119,6 +126,7 @@ Quer adicionar borda recheada ?
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
+        Requests.atualizarEtapa(from, { etapa: "g" });
       } else {
         tamanho(msg.from, client, atualizar);
       }

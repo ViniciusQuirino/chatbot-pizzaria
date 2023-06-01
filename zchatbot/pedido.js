@@ -6,11 +6,14 @@ const {
   querQueEntregue,
   verificarNumero,
   desejaConfirmarOPedido,
+  desejaAlgoParaBeber,
 } = require("./scripts");
 const { gerarTemplateString } = require("./informacoes.pedido");
+const { somarValorTotal } = require("./valor.total");
+const { removerAcentos } = require("./atualizar.pizza");
+const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
 
 async function pedidos(recuperarEtapa, msg, client) {
-  let message = msg.body.toLowerCase();
   if (recuperarEtapa.etapa == "a") {
     const response = await Requests.recuperarTempo();
     client.sendMessage(
@@ -116,31 +119,22 @@ Qual o *tamanho* que você quer ?
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
-        `Quer adicionar *borda recheada* ?
+        `Qual o *sabor* da pizza que deseja ?
 
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
-*1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       );
+
       Requests.atualizarPedido({ telefone: msg.from, tamanho1: "grande" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
     }
     if (msg.body == "2") {
       client.sendMessage(
         msg.from,
-        `Quer adicionar *borda recheada* ?
+        `Qual o *sabor* da pizza que deseja ?
 
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
-*1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       );
-      Requests.atualizarPedido({ telefone: msg.from, tamanho1: "media" });
+      Requests.atualizarPedido({ telefone: msg.from, tamanho1: "média" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
     }
     if (msg.body != "1" && msg.body != "2") {
@@ -156,53 +150,82 @@ Qual o *tamanho* que você quer ?
   }
 
   if (recuperarEtapa.etapa == "d") {
+    client.sendMessage(
+      msg.from,
+      `Há algum ingrediente que você gostaria de retirar ou adicionar ?
+
+Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você gostaria de acrescentar ou remover.
+
+⬇️ Se preferir manter a receita original, basta digitar o número 1.
+
+1 - Não quero adicionar e retirar nenhum ingrediente.`
+    );
+    var message = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+    const retorno = removerAcentos(message);
+    const frasePronta = corrigirPalavrasParecidas(retorno);
+    Requests.atualizarPedido({ telefone: msg.from, sabor1: frasePronta });
+    Requests.atualizarEtapa(msg.from, { etapa: "e" });
+  }
+
+  if (recuperarEtapa.etapa == "e") {
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
-        `Qual o *sabor* da pizza que deseja ?
-
-Se você quiser meia de uma e meia de outra, pode informar aqui mesmo por favor 😃`
+        `Quer adicionar *borda recheada* ?
+  
+⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
+  
+*1* - Não quero
+*2* - Catupiry R$ 10,00
+*3* - Cheddar R$ 10,00
+*4* - Chocolate R$ 12,00`
       );
-      Requests.atualizarEtapa(msg.from, { etapa: "e" });
-    }
-    if (msg.body == "2") {
+      Requests.atualizarEtapa(msg.from, { etapa: "f" });
+    } else if (msg.body != "1") {
       client.sendMessage(
         msg.from,
-        `Qual o *sabor* da pizza que deseja ?
-
-Se você quiser meia de uma e meia de outra, pode informar aqui mesmo por favor 😃`
+        `Quer adicionar *borda recheada* ?
+  
+⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
+  
+*1* - Não quero
+*2* - Catupiry R$ 10,00
+*3* - Cheddar R$ 10,00
+*4* - Chocolate R$ 12,00`
       );
+      Requests.atualizarPedido({ telefone: msg.from, obs1: msg.body });
+      Requests.atualizarEtapa(msg.from, { etapa: "f" });
+    }
+  }
+
+  if (recuperarEtapa.etapa == "f") {
+    if (msg.body == "1") {
+      desejaAlgoParaBeber(msg.from, client);
+      Requests.atualizarEtapa(msg.from, { etapa: "g" });
+    }
+    if (msg.body == "2") {
+      desejaAlgoParaBeber(msg.from, client);
       Requests.atualizarPedido({
         telefone: msg.from,
         bordarecheada1: "catupiry",
       });
-      Requests.atualizarEtapa(msg.from, { etapa: "e" });
+      Requests.atualizarEtapa(msg.from, { etapa: "g" });
     }
     if (msg.body == "3") {
-      client.sendMessage(
-        msg.from,
-        `Qual o *sabor* da pizza que deseja ?
-
-Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
-      );
+      desejaAlgoParaBeber(msg.from, client);
       Requests.atualizarPedido({
         telefone: msg.from,
         bordarecheada1: "cheddar",
       });
-      Requests.atualizarEtapa(msg.from, { etapa: "e" });
+      Requests.atualizarEtapa(msg.from, { etapa: "g" });
     }
     if (msg.body == "4") {
-      client.sendMessage(
-        msg.from,
-        `Qual o *sabor* da pizza que deseja ?
-
-Se você quiser meia de uma e meia de outra, pode informar aqui mesmo por favor 😃`
-      );
+      desejaAlgoParaBeber(msg.from, client);
       Requests.atualizarPedido({
         telefone: msg.from,
         bordarecheada1: "chocolate",
       });
-      Requests.atualizarEtapa(msg.from, { etapa: "e" });
+      Requests.atualizarEtapa(msg.from, { etapa: "g" });
     }
     if (
       msg.body != "1" &&
@@ -225,56 +248,10 @@ Quer adicionar borda recheada ?
     }
   }
 
-  if (recuperarEtapa.etapa == "e") {
-    client.sendMessage(
-      msg.from,
-      `Há algum ingrediente que você gostaria de retirar ou adicionar ?
-
-Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você gostaria de acrescentar ou remover.
-
-⬇️ Se preferir manter a receita original, basta digitar o número 1.
-
-1 - Não quero adicionar e retirar nenhum ingrediente.`
-    );
-    Requests.atualizarPedido({ telefone: msg.from, sabor1: msg.body });
-    Requests.atualizarEtapa(msg.from, { etapa: "f" });
-  }
-
-  if (recuperarEtapa.etapa == "f") {
-    if (msg.body == "1") {
-      client.sendMessage(
-        msg.from,
-        `Ok, você deseja algo para *beber* ? 🥤
-  
-  ⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-  
-*1* - Não quero.
-*2* - Coca-Cola 2 Litros R$ 14,00
-*3* - Conquista Guaraná 2 Litros R$ 8,00`
-      );
-
-      Requests.atualizarEtapa(msg.from, { etapa: "g" });
-    } else if (msg.body != "1") {
-      client.sendMessage(
-        msg.from,
-        `Ok, você deseja algo para *beber* ? 🥤
-
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-  
-*1* - Não quero.
-*2* - Coca-Cola 2 Litros R$ 14,00
-*3* - Conquista Guaraná 2 Litros R$ 8,00`
-      );
-
-      Requests.atualizarPedido({ telefone: msg.from, obs1: msg.body });
-      Requests.atualizarEtapa(msg.from, { etapa: "g" });
-    }
-  }
-
   if (recuperarEtapa.etapa == "g") {
     if (msg.body == "1") {
       querQueEntregue(msg.from, client);
-      Requests.atualizarEtapa(msg.from, { etapa: "i" });
+      Requests.atualizarEtapa(msg.from, { etapa: "ent" });
     }
 
     if (msg.body == "2") {
@@ -325,7 +302,7 @@ Você deseja algo para *beber* ? 🥤
         telefone: msg.from,
         qntrefrigerante: +verificarResposta,
       });
-      Requests.atualizarEtapa(msg.from, { etapa: "i" });
+      Requests.atualizarEtapa(msg.from, { etapa: "ent" });
     } else if (verificarResposta == "") {
       client.sendMessage(
         msg.from,
@@ -336,15 +313,16 @@ Você deseja algo para *beber* ? 🥤
     }
   }
 
-  if (recuperarEtapa.etapa == "i") {
+  if (recuperarEtapa.etapa == "ent") {
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
-        ` ⏩ Digite o seu endereço de entrega completo.
-
-*NOME DA RUA, NUMERO E NOME DA CIDADE*`
+        `⬇️ Qual é a cidade ?
+  
+*1* - Igaraçu do Tietê
+*2* - Barra Bonita`
       );
-      Requests.atualizarEtapa(msg.from, { etapa: "j" });
+      Requests.atualizarEtapa(msg.from, { etapa: "i" });
     }
 
     if (msg.body == "2") {
@@ -382,6 +360,31 @@ Igaraçu x Barra: 9,00 reais
 *1* - Sim, quero que entregue.
 *2* - Não, vou ir buscar.`
       );
+    }
+  }
+
+  if (recuperarEtapa.etapa == "i") {
+    client.sendMessage(
+      msg.from,
+      `⏩ Digite o seu *endereço* por favor.
+
+*Nome da rua, numero*
+*Exemplo*: Rua antônio manfio 1042`
+    );
+    if (msg.body == "1") {
+      Requests.atualizarPedido({
+        telefone: msg.from,
+        cidade: 1,
+      });
+      Requests.atualizarEtapa(msg.from, { etapa: "j" });
+    }
+
+    if (msg.body == "2") {
+      Requests.atualizarPedido({
+        telefone: msg.from,
+        cidade: 2,
+      });
+      Requests.atualizarEtapa(msg.from, { etapa: "j" });
     }
   }
 
@@ -424,6 +427,7 @@ Se não, digite apenas o numero 1
         formadepagamento: "cartão",
       });
       gerarTemplateString(response, msg.from, client);
+      await somarValorTotal(response, msg, client);
 
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
@@ -434,6 +438,8 @@ Se não, digite apenas o numero 1
         formadepagamento: "pix",
       });
       gerarTemplateString(response, msg.from, client);
+      await somarValorTotal(response, msg, client);
+
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
@@ -459,6 +465,7 @@ Qual vai ser a forma de pagamento ?
     });
 
     gerarTemplateString(response, msg.from, client);
+    await somarValorTotal(response, msg, client);
 
     desejaConfirmarOPedido(msg.from, client);
     Requests.atualizarEtapa(msg.from, { etapa: "conf" });
