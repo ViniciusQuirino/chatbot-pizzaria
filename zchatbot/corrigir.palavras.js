@@ -46,7 +46,7 @@ const dados = [
   { nome: "chocolate c/ pacoca", media: "34,00", grande: "38,00" },
   { nome: "laka oreo", media: "35,00", grande: "40,00" },
 ];
-let chamadaFeita = false;
+
 function corrigirPalavrasParecidas(frase) {
   let palavrasFrase = frase.toLowerCase().split(" ");
   palavrasFrase = palavrasFrase.filter(Boolean);
@@ -111,7 +111,14 @@ function corrigirPalavrasParecidas(frase) {
   const string = palavrasCorrigidas.join(" ");
 
   var palavras = string.split(" ");
-  var palavrasUnicas = [...new Set(palavras)];
+  var palavrasUnicas = [];
+
+  palavras.forEach((palavra) => {
+    if (palavra === "1/2" || !palavrasUnicas.includes(palavra)) {
+      palavrasUnicas.push(palavra);
+    }
+  });
+
   var stringUnica = palavrasUnicas.join(" ");
 
   if (
@@ -134,7 +141,6 @@ function corrigirPalavrasParecidas(frase) {
   }
   result = stringUnica.replace(/cm|om|com/, "c/");
 
-  result = result.replace(/1\/2|meia|meio/g, "1/2");
   return result;
 }
 
@@ -171,4 +177,4 @@ function levenshteinDistance(a, b) {
   return matrix[b.length][a.length];
 }
 
-// module.exports = { corrigirPalavrasParecidas };
+module.exports = { corrigirPalavrasParecidas };

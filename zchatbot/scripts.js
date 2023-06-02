@@ -1,7 +1,7 @@
 const URL_CHATBOT = "http://localhost:7005";
 const axios = require("axios");
 const { Requests } = require("./requests");
-const { dados } = require("./dados");
+const Fuse = require("fuse.js");
 
 const cardapio = async (from) => {
   const date = new Date();
@@ -239,25 +239,25 @@ async function listarPizzas(msg, client) {
   }
 }
 
-function encontrarObjetosIguais(frase) {
+async function encontrarObjetosIguais(frase) {
+  const dados = await Requests.listarPizzas();
   const objetosIguais = dados.filter((objeto) => frase.includes(objeto.nome));
 
   return objetosIguais;
 }
 
-function encontrarObjetosIguais(frase, dados) {
+async function encontrarObjetos(frase) {
+  const dados = await Requests.listarPizzas();
   const regex = /1\/2\s(.*?)\se\s1\/2\s(.*?)$/;
   const matches = frase.match(regex);
 
   if (matches) {
     const sabor1 = matches[1];
     const sabor2 = matches[2];
-    console.log("Sabor 1:", sabor1);
-    console.log("Sabor 2:", sabor2);
 
     const options = {
       keys: ["nome"],
-      threshold: 0.2,
+      threshold: -1,
     };
 
     const fuse = new Fuse(dados, options);
@@ -284,9 +284,25 @@ function encontrarObjetosIguais(frase, dados) {
   }
 }
 
-const frase = "1/2 a moda do pizzaiolo e 1/2 frango c/ bacon";
-const objetosEncontrados = encontrarObjetosIguais(frase, dados);
-console.log(objetosEncontrados);
+function melhorarFrase(frase) {
+  const padrao = /1\/2/g; // Expressão regular para encontrar todas as ocorrências de "1/2"
+
+  // Verifica se há pelo menos duas ocorrências de "1/2"
+  if ((frase.match(padrao) || []).length >= 2) {
+    // Verifica se a segunda ocorrência de "1/2" é precedida por um "e"
+    if (!/e\s1\/2/.test(frase)) {
+      frase = frase.replace(padrao, (match, offset) => {
+        if (offset === frase.indexOf("1/2", frase.indexOf("1/2") + 1)) {
+          return "e 1/2";
+        } else {
+          return match;
+        }
+      });
+    }
+  }
+
+  return frase; // Retorna a frase modificada ou a frase original se não houve alterações
+}
 
 module.exports = {
   cardapio,
@@ -305,4 +321,6 @@ module.exports = {
   criarObjetoBordaRecheada,
   listarPizzas,
   encontrarObjetosIguais,
+  melhorarFrase,
+  encontrarObjetos,
 };

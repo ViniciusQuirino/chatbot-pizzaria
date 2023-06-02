@@ -8,6 +8,7 @@ const {
   desejaConfirmarOPedido,
   desejaAlgoParaBeber,
   encontrarObjetosIguais,
+  melhorarFrase,
 } = require("./scripts");
 const { gerarTemplateString } = require("./informacoes.pedido");
 const { somarValorTotal } = require("./valor.total");
@@ -151,9 +152,13 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
   }
 
   if (recuperarEtapa.etapa == "d") {
-    const retorno = removerAcentos(msg.body);
+    let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+    const retorno = removerAcentos(result);
     const frasePronta = corrigirPalavrasParecidas(retorno);
-    const encontrar = encontrarObjetosIguais(frasePronta);
+    let frase = melhorarFrase(frasePronta);
+    console.log(frase);
+    const encontrar = await encontrarObjetosIguais(frase);
+    console.log(encontrar);
 
     if (encontrar[0]) {
       client.sendMessage(
@@ -166,7 +171,7 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
 
 1 - Não quero adicionar e retirar nenhum ingrediente.`
       );
-      Requests.atualizarPedido({ telefone: msg.from, sabor1: frasePronta });
+      Requests.atualizarPedido({ telefone: msg.from, sabor1: frase });
       Requests.atualizarEtapa(msg.from, { etapa: "e" });
     } else {
       client.sendMessage(
@@ -436,8 +441,8 @@ Se não, digite apenas o numero 1
         formadepagamento: "cartão",
       });
       gerarTemplateString(response, msg.from, client);
-      await somarValorTotal(response, msg, client);
-
+      const valor = await somarValorTotal(response, msg, client);
+      console.log(valor);
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
@@ -447,8 +452,8 @@ Se não, digite apenas o numero 1
         formadepagamento: "pix",
       });
       gerarTemplateString(response, msg.from, client);
-      await somarValorTotal(response, msg, client);
-
+      const valor = await somarValorTotal(response, msg, client);
+      console.log(valor);
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
@@ -474,8 +479,8 @@ Qual vai ser a forma de pagamento ?
     });
 
     gerarTemplateString(response, msg.from, client);
-    await somarValorTotal(response, msg, client);
-
+    const valor = await somarValorTotal(response, msg, client);
+    console.log(valor);
     desejaConfirmarOPedido(msg.from, client);
     Requests.atualizarEtapa(msg.from, { etapa: "conf" });
   }
