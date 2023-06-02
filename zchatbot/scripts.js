@@ -1,6 +1,7 @@
 const URL_CHATBOT = "http://localhost:7005";
 const axios = require("axios");
 const { Requests } = require("./requests");
+const { dados } = require("./dados");
 
 const cardapio = async (from) => {
   const date = new Date();
@@ -238,6 +239,55 @@ async function listarPizzas(msg, client) {
   }
 }
 
+function encontrarObjetosIguais(frase) {
+  const objetosIguais = dados.filter((objeto) => frase.includes(objeto.nome));
+
+  return objetosIguais;
+}
+
+function encontrarObjetosIguais(frase, dados) {
+  const regex = /1\/2\s(.*?)\se\s1\/2\s(.*?)$/;
+  const matches = frase.match(regex);
+
+  if (matches) {
+    const sabor1 = matches[1];
+    const sabor2 = matches[2];
+    console.log("Sabor 1:", sabor1);
+    console.log("Sabor 2:", sabor2);
+
+    const options = {
+      keys: ["nome"],
+      threshold: 0.2,
+    };
+
+    const fuse = new Fuse(dados, options);
+
+    const resultadosSabor1 = fuse.search(sabor1);
+    const resultadosSabor2 = fuse.search(sabor2);
+
+    const objetosIguais = [];
+
+    resultadosSabor1.forEach((resultado) => {
+      const objeto = resultado.item;
+      objetosIguais.push(objeto);
+    });
+
+    resultadosSabor2.forEach((resultado) => {
+      const objeto = resultado.item;
+      objetosIguais.push(objeto);
+    });
+
+    return objetosIguais;
+  } else {
+    console.log("Sabores não encontrados na frase.");
+    return [];
+  }
+}
+
+const frase = "1/2 a moda do pizzaiolo e 1/2 frango c/ bacon";
+const objetosEncontrados = encontrarObjetosIguais(frase, dados);
+console.log(objetosEncontrados);
+
 module.exports = {
   cardapio,
   gostouDoNossoCardapio,
@@ -254,4 +304,5 @@ module.exports = {
   criarObjetoObs,
   criarObjetoBordaRecheada,
   listarPizzas,
+  encontrarObjetosIguais,
 };

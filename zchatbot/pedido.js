@@ -7,6 +7,7 @@ const {
   verificarNumero,
   desejaConfirmarOPedido,
   desejaAlgoParaBeber,
+  encontrarObjetosIguais,
 } = require("./scripts");
 const { gerarTemplateString } = require("./informacoes.pedido");
 const { somarValorTotal } = require("./valor.total");
@@ -150,21 +151,29 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
   }
 
   if (recuperarEtapa.etapa == "d") {
-    client.sendMessage(
-      msg.from,
-      `Há algum ingrediente que você gostaria de retirar ou adicionar ?
+    const retorno = removerAcentos(msg.body);
+    const frasePronta = corrigirPalavrasParecidas(retorno);
+    const encontrar = encontrarObjetosIguais(frasePronta);
 
+    if (encontrar[0]) {
+      client.sendMessage(
+        msg.from,
+        `Há algum ingrediente que você gostaria de retirar ou adicionar ?
+  
 Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você gostaria de acrescentar ou remover.
 
 ⬇️ Se preferir manter a receita original, basta digitar o número 1.
 
 1 - Não quero adicionar e retirar nenhum ingrediente.`
-    );
-    var message = msg.body.replace(/1\/2|meia|meio/g, "1/2");
-    const retorno = removerAcentos(message);
-    const frasePronta = corrigirPalavrasParecidas(retorno);
-    Requests.atualizarPedido({ telefone: msg.from, sabor1: frasePronta });
-    Requests.atualizarEtapa(msg.from, { etapa: "e" });
+      );
+      Requests.atualizarPedido({ telefone: msg.from, sabor1: frasePronta });
+      Requests.atualizarEtapa(msg.from, { etapa: "e" });
+    } else {
+      client.sendMessage(
+        msg.from,
+        `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente o nome da pizza!`
+      );
+    }
   }
 
   if (recuperarEtapa.etapa == "e") {

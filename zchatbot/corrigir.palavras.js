@@ -46,46 +46,10 @@ const dados = [
   { nome: "chocolate c/ pacoca", media: "34,00", grande: "38,00" },
   { nome: "laka oreo", media: "35,00", grande: "40,00" },
 ];
-
-// function corrigirPalavrasParecidas(frase) {
-//   const palavrasFrase = frase.toLowerCase().split(" ");
-//   const palavrasCorrigidas = [];
-
-//   for (let i = 0; i < palavrasFrase.length; i++) {
-//     const palavraFrase = palavrasFrase[i];
-//     let palavraCorrigida = palavraFrase;
-//     let menorDistancia = Infinity;
-//     let melhorCorrespondencia = null;
-
-//     for (let j = 0; j < dados.length; j++) {
-//       const objeto = dados[j];
-//       const palavrasNome = objeto.nome.toLowerCase().split(" ");
-
-//       for (let k = 0; k < palavrasNome.length; k++) {
-//         const palavraNome = palavrasNome[k];
-//         const distancia = levenshteinDistance(palavraFrase, palavraNome);
-
-//         if (
-//           distancia <= Math.floor(palavraNome.length / 2.5) &&
-//           distancia < menorDistancia
-//         ) {
-//           melhorCorrespondencia = palavraNome;
-//           menorDistancia = distancia;
-//         }
-//       }
-//     }
-
-//     if (melhorCorrespondencia) {
-//       palavraCorrigida = melhorCorrespondencia;
-//     }
-
-//     palavrasCorrigidas.push(palavraCorrigida);
-//   }
-
-//   return palavrasCorrigidas.join(" ");
-// }
+let chamadaFeita = false;
 function corrigirPalavrasParecidas(frase) {
-  const palavrasFrase = frase.toLowerCase().split(" ");
+  let palavrasFrase = frase.toLowerCase().split(" ");
+  palavrasFrase = palavrasFrase.filter(Boolean);
   const palavrasCorrigidas = [];
 
   for (let i = 0; i < palavrasFrase.length; i++) {
@@ -114,35 +78,8 @@ function corrigirPalavrasParecidas(frase) {
 
     if (melhorCorrespondencia) {
       // Verificar se a próxima palavra é "bacon"
+
       if (palavrasFrase[i + 1] === "bacon") {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else if (
-        // Verificar se a próxima palavra começa com "c" e não tem "/" no final
-        i + 1 < palavrasFrase.length &&
-        palavrasFrase[i + 1].startsWith("c") &&
-        !palavrasFrase[i + 1].endsWith("/")
-      ) {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else if (
-        // Verificar se a próxima palavra começa com "c" e não tem "/" no final
-        i + 1 < palavrasFrase.length &&
-        palavrasFrase[i + 1].startsWith("com") &&
-        !palavrasFrase[i + 1].endsWith("/")
-      ) {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else if (
-        // Verificar se a próxima palavra começa com "c" e não tem "/" no final
-        i + 1 < palavrasFrase.length &&
-        palavrasFrase[i + 1].startsWith("cm") &&
-        !palavrasFrase[i + 1].endsWith("/")
-      ) {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else if (
-        // Verificar se a próxima palavra começa com "c" e não tem "/" no final
-        i + 1 < palavrasFrase.length &&
-        palavrasFrase[i + 1].startsWith("om") &&
-        !palavrasFrase[i + 1].endsWith("/")
-      ) {
         palavraCorrigida = melhorCorrespondencia + " c/";
       } else {
         palavraCorrigida = melhorCorrespondencia;
@@ -154,37 +91,17 @@ function corrigirPalavrasParecidas(frase) {
         palavrasFrase[i + 1] === "pacoca" ||
         palavrasFrase[i + 1] === "paçoca"
       ) {
-        palavraCorrigida = melhorCorrespondencia + " c/ c";
-      } else if (
-        // Verificar se a próxima palavra começa com "c" e não tem "/" no final
-        i + 1 < palavrasFrase.length &&
-        palavrasFrase[i + 1].startsWith("c") &&
-        !palavrasFrase[i + 1].endsWith("/")
-      ) {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else if (
-        // Verificar se a próxima palavra começa com "c" e não tem "/" no final
-        i + 1 < palavrasFrase.length &&
-        palavrasFrase[i + 1].startsWith("com") &&
-        !palavrasFrase[i + 1].endsWith("/")
-      ) {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else if (
-        // Verificar se a próxima palavra começa com "c" e não tem "/" no final
-        i + 1 < palavrasFrase.length &&
-        palavrasFrase[i + 1].startsWith("cm") &&
-        !palavrasFrase[i + 1].endsWith("/")
-      ) {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else if (
-        // Verificar se a próxima palavra começa com "c" e não tem "/" no final
-        i + 1 < palavrasFrase.length &&
-        palavrasFrase[i + 1].startsWith("om") &&
-        !palavrasFrase[i + 1].endsWith("/")
-      ) {
         palavraCorrigida = melhorCorrespondencia + " c/";
       } else {
         palavraCorrigida = melhorCorrespondencia;
+      }
+
+      if (melhorCorrespondencia == "moda") {
+        palavraCorrigida = "a " + melhorCorrespondencia;
+      }
+
+      if (palavrasFrase[i + 1] === "pizzaiolo") {
+        palavraCorrigida = melhorCorrespondencia + " do";
       }
     }
 
@@ -192,12 +109,32 @@ function corrigirPalavrasParecidas(frase) {
   }
 
   const string = palavrasCorrigidas.join(" ");
-  console.log(string);
-  const result = string.replace(
-    / com|com | com |om | om | om|cm | cm | cm|c\/ om|c\/ cm|c\/ com|c\/ c/g,
-    "c/"
-  );
 
+  var palavras = string.split(" ");
+  var palavrasUnicas = [...new Set(palavras)];
+  var stringUnica = palavrasUnicas.join(" ");
+
+  if (
+    palavrasFrase[1] == "c" ||
+    palavrasFrase[2] == "c" ||
+    palavrasFrase[3] == "c" ||
+    palavrasFrase[4] == "c" ||
+    palavrasFrase[5] == "c" ||
+    palavrasFrase[6] == "c" ||
+    palavrasFrase[7] == "c" ||
+    palavrasFrase[8] == "c" ||
+    palavrasFrase[9] == "c" ||
+    palavrasFrase[10] == "c" ||
+    palavrasFrase[11] == "c" ||
+    palavrasFrase[12] == "c"
+  ) {
+    let result = stringUnica.replace(/c/, "c/");
+
+    return result;
+  }
+  result = stringUnica.replace(/cm|om|com/, "c/");
+
+  result = result.replace(/1\/2|meia|meio/g, "1/2");
   return result;
 }
 
@@ -234,4 +171,4 @@ function levenshteinDistance(a, b) {
   return matrix[b.length][a.length];
 }
 
-module.exports = { corrigirPalavrasParecidas };
+// module.exports = { corrigirPalavrasParecidas };
