@@ -247,40 +247,89 @@ async function encontrarObjetosIguais(frase) {
 }
 
 async function encontrarObjetos(frase) {
+  const expressao = /1\/2/;
+  const contemOcorrencia = expressao.test(frase);
   const dados = await Requests.listarPizzas();
-  const regex = /1\/2\s(.*?)\se\s1\/2\s(.*?)$/;
-  const matches = frase.match(regex);
 
-  if (matches) {
-    const sabor1 = matches[1];
-    const sabor2 = matches[2];
+  if (contemOcorrencia) {
+    const regex = /1\/2\s(.*?)\se\s1\/2\s(.*?)$/;
+    const matches = frase.match(regex);
 
-    const options = {
-      keys: ["nome"],
-      threshold: -1,
-    };
+    if (matches) {
+      const sabor1 = matches[1];
+      const sabor2 = matches[2];
 
-    const fuse = new Fuse(dados, options);
+      const options = {
+        keys: ["nome"],
+        threshold: -1,
+      };
 
-    const resultadosSabor1 = fuse.search(sabor1);
-    const resultadosSabor2 = fuse.search(sabor2);
+      const fuse = new Fuse(dados, options);
 
-    const objetosIguais = [];
+      const resultadosSabor1 = fuse.search(sabor1);
+      const resultadosSabor2 = fuse.search(sabor2);
 
-    resultadosSabor1.forEach((resultado) => {
-      const objeto = resultado.item;
-      objetosIguais.push(objeto);
-    });
+      const objetosIguais = [];
 
-    resultadosSabor2.forEach((resultado) => {
-      const objeto = resultado.item;
-      objetosIguais.push(objeto);
-    });
+      resultadosSabor1.forEach((resultado) => {
+        const objeto = resultado.item;
+        objetosIguais.push(objeto);
+      });
 
-    return objetosIguais;
+      resultadosSabor2.forEach((resultado) => {
+        const objeto = resultado.item;
+        objetosIguais.push(objeto);
+      });
+
+      return objetosIguais;
+    } else {
+      const options = {
+        keys: ["nome"],
+        threshold: -1, // Defina um valor de limiar adequado aqui
+      };
+
+      const fuse = new Fuse(dados, options);
+      const resultados = fuse.search(frase);
+
+      const objetosEncontrados = resultados.map((resultado) => resultado.item);
+      return objetosEncontrados;
+    }
   } else {
-    console.log("Sabores não encontrados na frase.");
-    return [];
+    const regex = /(.+?)\se\s(.+?)$/;
+    const matches = frase.match(regex);
+
+    if (matches) {
+      const sabor1 = matches[1].trim();
+      const sabor2 = matches[2].trim();
+
+      const options = {
+        keys: ["nome"],
+        threshold: -1, // Defina um valor de limiar adequado aqui
+      };
+
+      const fuse = new Fuse(dados, options);
+
+      const resultadosSabor1 = fuse.search(sabor1);
+      const resultadosSabor2 = fuse.search(sabor2);
+
+      const objetosEncontrados = resultadosSabor1
+        .concat(resultadosSabor2)
+        .map((resultado) => resultado.item);
+
+      return objetosEncontrados;
+    } else {
+      const options = {
+        keys: ["nome"],
+        threshold: -1, // Defina um valor de limiar adequado aqui
+      };
+
+      const fuse = new Fuse(dados, options);
+      const resultados = fuse.search(frase);
+
+      const objetosEncontrados = resultados.map((resultado) => resultado.item);
+
+      return objetosEncontrados;
+    }
   }
 }
 

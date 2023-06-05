@@ -1,13 +1,12 @@
-const { Requests } = require("./requests");
 const { encontrarObjetos } = require("./scripts");
 
 async function somarValorTotal(response, msg, client) {
   let valor = 0;
-
+  let maiorValor = -Infinity;
   if (response.cidade == 1) {
-    valor = 7;
+    valor += 7;
   } else if (response.cidade == 2) {
-    valor = 9;
+    valor += 9;
   }
 
   if (response.refrigerante == "Coca-cola 2 litros") {
@@ -17,48 +16,77 @@ async function somarValorTotal(response, msg, client) {
   }
 
   for (let i = 1; i <= 10; i++) {
+    if (response["bordarecheada" + i] == "catupiry") {
+      valor += 10;
+    } else if (response["bordarecheada" + i] == "cheddar") {
+      valor += 10;
+    } else if (response["bordarecheada" + i] == "chocolate") {
+      valor += 12;
+    }
+
     if (response["sabor" + i] != null) {
       const resultado = await encontrarObjetos(response["sabor" + i]);
       console.log(resultado);
       if (resultado.length == 1) {
         if (response["tamanho" + i] == "grande") {
-          valor += resultado.grande;
-          return valor;
+          valor += resultado[0].grande;
         }
 
         if (response["tamanho" + i] == "média") {
-          valor += resultado.media;
-          return valor;
+          valor += resultado[0].media;
         }
       }
 
       if (resultado.length == 2) {
+        const maiorValorSabor = Math.max(
+          resultado[0].grande,
+          resultado[1].grande
+        );
         if (response["tamanho" + i] == "grande") {
-          let maiorValor = -Infinity;
-
-          for (let i = 0; i < resultado.length; i++) {
-            if (resultado[i].grande > maiorValor) {
-              maiorValor = resultado[i].grande;
-              valor += maiorValor;
-              return valor;
-            }
-          }
+          valor += maiorValorSabor;
+        } else if (response["tamanho" + i] == "média") {
+          valor += resultado[0].media;
         }
+        // if (response["tamanho" + i] == "grande") {
+        //   if (resultado[i].grande > maiorValor) {
+        //     maiorValor = resultado[i].grande;
+        //     valor += maiorValor;
+        //   }
+        // }
 
-        if (response["tamanho" + i] == "média") {
-          let maiorValor = -Infinity;
-
-          for (let i = 0; i < resultado.length; i++) {
-            if (resultado[i].media > maiorValor) {
-              maiorValor = resultado[i].media;
-              valor += maiorValor;
-              return valor;
-            }
-          }
-        }
+        // if (response["tamanho" + i] == "média") {
+        //   if (resultado[i].media > maiorValor) {
+        //     maiorValor = resultado[i].media;
+        //     valor += maiorValor;
+        //   }
+        // }
       }
+      // if (resultado.length == 2) {
+      //   if (response["tamanho" + i] == "grande") {
+      //     if (resultado[0].grande > maiorValor) {
+      //       maiorValor = resultado[0].grande;
+      //       valor += maiorValor;
+      //     }
+      //     if (resultado[1].grande > maiorValor) {
+      //       maiorValor = resultado[1].grande;
+      //       valor += maiorValor;
+      //     }
+      //   }
+
+      //   if (response["tamanho" + i] == "média") {
+      //     if (resultado[0].media > maiorValor) {
+      //       maiorValor = resultado[0].media;
+      //       valor += maiorValor;
+      //     }
+      //     if (resultado[1].media > maiorValor) {
+      //       maiorValor = resultado[1].media;
+      //       valor += maiorValor;
+      //     }
+      //   }
+      // }
     }
   }
+  return valor;
 }
 
 module.exports = { somarValorTotal };

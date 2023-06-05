@@ -7,6 +7,7 @@ const {
   criarObjetoTamanho,
   desejaAlgoParaBeber,
   tamanho,
+  encontrarObjetos,
 } = require("./scripts");
 const { removerAcentos } = require("./atualizar.pizza");
 const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
@@ -32,10 +33,37 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
   }
 
   if (recuperarEtapa.etapa == "21") {
-    // const ordinal = obterRepresentacaoOrdinal(response.loop);
-    client.sendMessage(
-      msg.from,
-      `*${ordinal} PIZZA:*
+    const result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+
+    const removerAcento = removerAcentos(result);
+
+    let variavelum = true;
+    let variaveldois = true;
+    const fraseModificada = corrigirPalavrasParecidas(
+      removerAcento,
+      variavelum,
+      variaveldois
+    );
+
+    const ocorrencias = (fraseModificada.match(/1\/2/g) || []).length;
+
+    const sabor = criarObjetoSabor(msg.from, response.loop, fraseModificada);
+    const encontrar = await encontrarObjetos(fraseModificada);
+
+    console.log(fraseModificada);
+    console.log(encontrar);
+
+    if (ocorrencias != encontrar.length && ocorrencias) {
+      client.sendMessage(
+        msg.from,
+        `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
+      );
+    }
+
+    if (encontrar[0]) {
+      client.sendMessage(
+        msg.from,
+        `*${ordinal} PIZZA:*
 Há algum ingrediente que você gostaria de retirar ou adicionar ?
 
 Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você gostaria de acrescentar ou remover.
@@ -43,18 +71,18 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
 ⬇️ Se preferir manter a receita original, basta digitar o número 1.
 
 1 - Não quero adicionar e retirar nenhum ingrediente.`
-    );
-    var message = msg.body.replace(/1\/2|meia|meio/g, "1/2");
-    const retorno = removerAcentos(message);
-    const frasePronta = corrigirPalavrasParecidas(retorno);
-    const sabor = criarObjetoSabor(msg.from, response.loop, frasePronta);
-
-    Requests.atualizarEtapa(msg.from, { etapa: "22" });
-    Requests.atualizarPedido(sabor);
+      );
+      Requests.atualizarEtapa(msg.from, { etapa: "22" });
+      Requests.atualizarPedido(sabor);
+    } else {
+      client.sendMessage(
+        msg.from,
+        `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente o nome da pizza!`
+      );
+    }
   }
 
   if (recuperarEtapa.etapa == "22") {
-    // const ordinal = obterRepresentacaoOrdinal(response.loop);
     client.sendMessage(
       msg.from,
       `*${ordinal} PIZZA:*
@@ -83,7 +111,7 @@ Quer adicionar borda recheada ?
       });
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
-        Requests.atualizarEtapa(from, { etapa: "g" });
+        Requests.atualizarEtapa(msg.from, { etapa: "g" });
       } else {
         tamanho(msg.from, client, atualizar);
       }
@@ -98,7 +126,7 @@ Quer adicionar borda recheada ?
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
-        Requests.atualizarEtapa(from, { etapa: "g" });
+        Requests.atualizarEtapa(msg.from, { etapa: "g" });
       } else {
         tamanho(msg.from, client, atualizar);
       }
@@ -112,7 +140,7 @@ Quer adicionar borda recheada ?
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
-        Requests.atualizarEtapa(from, { etapa: "g" });
+        Requests.atualizarEtapa(msg.from, { etapa: "g" });
       } else {
         tamanho(msg.from, client, atualizar);
       }
@@ -126,7 +154,7 @@ Quer adicionar borda recheada ?
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
-        Requests.atualizarEtapa(from, { etapa: "g" });
+        Requests.atualizarEtapa(msg.from, { etapa: "g" });
       } else {
         tamanho(msg.from, client, atualizar);
       }

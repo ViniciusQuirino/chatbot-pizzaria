@@ -3,8 +3,8 @@ const dados = [
   { nome: "alho e tomate", media: "30,00", grande: "34,00" },
   { nome: "alface", media: "34,00", grande: "38,00" },
   { nome: "americano", media: "36,00", grande: "40,00" },
-  { nome: "atum", media: "34,00", grande: "38,00" },
   { nome: "atum especial", media: "37,00", grande: "41,00" },
+  { nome: "atum", media: "34,00", grande: "38,00" },
   { nome: "brasileira", media: "38,00", grande: "43,00" },
   { nome: "baiana", media: "32,00", grande: "36,00" },
   { nome: "bacon", media: "32,00", grande: "36,00" },
@@ -47,7 +47,31 @@ const dados = [
   { nome: "laka oreo", media: "35,00", grande: "40,00" },
 ];
 
-function corrigirPalavrasParecidas(frase) {
+function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
+  // Verifica se há "1/2" após "e" ou ","
+  frase = frase
+    .replace(/1\/2|meia|meio/g, "1/2")
+    .replace(/(\be\s+|,\s+)(?!1\/2)/g, "$1 1/2 ")
+    .replace(/1 /g, "")
+    .replace(/ pizza /g, "")
+    .replace(/ piza /g, "")
+    .replace(/ pzza /g, "")
+    .replace(/ izza /g, "")
+    .replace(/ quero| quero |quero/g, "")
+    .replace(/ queria| queria |queria/g, "")
+    .replace(/ gostaria| gostaria |gostaria/g, "")
+    .replace(/ queru| queru |queru/g, "")
+    .replace(/\s+/g, " ")
+    .replace(/(1\/2)\s*\1+/g, "$1");
+
+  frase = frase.trim();
+
+  if (frase.indexOf("1/2") !== -1 && frase.indexOf("1/2") !== 0) {
+    frase = "1/2 " + frase;
+  }
+
+  frase = frase.replace(/(1\/2)\s*\1+/g, "$1");
+
   let palavrasFrase = frase.toLowerCase().split(" ");
   palavrasFrase = palavrasFrase.filter(Boolean);
   const palavrasCorrigidas = [];
@@ -77,71 +101,109 @@ function corrigirPalavrasParecidas(frase) {
     }
 
     if (melhorCorrespondencia) {
-      // Verificar se a próxima palavra é "bacon"
-
-      if (palavrasFrase[i + 1] === "bacon") {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else {
-        palavraCorrigida = melhorCorrespondencia;
-      }
-
       if (
+        palavrasFrase[i + 1] === "bacon" ||
         palavrasFrase[i + 1] === "catupiry" ||
         palavrasFrase[i + 1] === "cheddar" ||
         palavrasFrase[i + 1] === "pacoca" ||
-        palavrasFrase[i + 1] === "paçoca"
+        palavrasFrase[i + 1] === "paçoca" ||
+        palavrasFrase[i + 1] === "barbecue" 
       ) {
         palavraCorrigida = melhorCorrespondencia + " c/";
+      } else if (melhorCorrespondencia == "moda") {
+        palavraCorrigida = "a " + melhorCorrespondencia;
+      } else if (melhorCorrespondencia == "pizzaiolo") {
+        palavraCorrigida = "do " + melhorCorrespondencia;
       } else {
         palavraCorrigida = melhorCorrespondencia;
-      }
-
-      if (melhorCorrespondencia == "moda") {
-        palavraCorrigida = "a " + melhorCorrespondencia;
-      }
-
-      if (palavrasFrase[i + 1] === "pizzaiolo") {
-        palavraCorrigida = melhorCorrespondencia + " do";
       }
     }
 
     palavrasCorrigidas.push(palavraCorrigida);
   }
 
-  const string = palavrasCorrigidas.join(" ");
+  let string = palavrasCorrigidas.join(" ");
 
   var palavras = string.split(" ");
   var palavrasUnicas = [];
 
   palavras.forEach((palavra) => {
-    if (palavra === "1/2" || !palavrasUnicas.includes(palavra)) {
+    if (
+      palavra === "bacon" ||
+      palavra === "cheddar" ||
+      palavra === "3" ||
+      palavra === "tres" ||
+      palavra === "moda" ||
+      palavra === "especial" ||
+      palavra === "palha" ||
+      palavra === "barbecue" ||
+      palavra === "lombo" ||
+      palavra === "presunto" ||
+      palavra === "frango" ||
+      palavra === "palmito" ||
+      palavra === "c/" ||
+      palavra === "4" ||
+      palavra === "quatro" ||
+      palavra === "queijos" ||
+      palavra === "atum" ||
+      palavra === "atum" ||
+      palavra === "nevada" ||
+      palavra === "banana" ||
+      palavra === "catupiry" ||
+      palavra === "pacoca" ||
+      palavra === "oreo" ||
+      palavra === "1/2" ||
+      !palavrasUnicas.includes(palavra)
+    ) {
       palavrasUnicas.push(palavra);
     }
   });
 
   var stringUnica = palavrasUnicas.join(" ");
+  result = stringUnica.replace(/cm|com/g, "c/");
+  result = result.replace(/ om /g, " c/ ");
 
-  if (
-    palavrasFrase[1] == "c" ||
-    palavrasFrase[2] == "c" ||
-    palavrasFrase[3] == "c" ||
-    palavrasFrase[4] == "c" ||
-    palavrasFrase[5] == "c" ||
-    palavrasFrase[6] == "c" ||
-    palavrasFrase[7] == "c" ||
-    palavrasFrase[8] == "c" ||
-    palavrasFrase[9] == "c" ||
-    palavrasFrase[10] == "c" ||
-    palavrasFrase[11] == "c" ||
-    palavrasFrase[12] == "c"
-  ) {
-    let result = stringUnica.replace(/c/, "c/");
+  console.log(variavelum);
+  console.log(variaveldois);
+  console.log(frase);
+
+  for (let i = 1; i <= 12; i++) {
+    if (palavrasFrase[i] == "c") {
+      result = result.replace(/ c/g, " c/");
+    }
+  }
+
+  result = result.replace(/c\/ c\//g, "c/");
+
+  if (variavelum && variaveldois) {
+    console.log("oi");
+    variavelum = false;
+    const retorno = corrigirPalavrasParecidas(result, variavelum, variaveldois);
+    return retorno;
+  } else if (!variavelum && variaveldois) {
+    console.log("obbbbb");
+    variavelum = false;
+    variaveldois = false;
+    const retorno = corrigirPalavrasParecidas(result, variavelum, variaveldois);
+    return retorno;
+  } else if (!variavelum && !variaveldois) {
+    let contador = 0;
+
+    result = result.replace(/1\/2/g, function (match) {
+      contador++;
+      if (contador === 2) {
+        return "e 1/2";
+      } else {
+        return match;
+      }
+    });
+    result = result.replace(/ c\/\//g, " c/");
+    result = result.replace(/ c\/\/\//g, " c/");
+    result = result.replace(/ c\/\/\/\//g, " c/");
+    result = result.replace(/ e e /g, " e ");
 
     return result;
   }
-  result = stringUnica.replace(/cm|om|com/, "c/");
-
-  return result;
 }
 
 function levenshteinDistance(a, b) {
@@ -177,4 +239,4 @@ function levenshteinDistance(a, b) {
   return matrix[b.length][a.length];
 }
 
-module.exports = { corrigirPalavrasParecidas };
+// module.exports = { corrigirPalavrasParecidas };

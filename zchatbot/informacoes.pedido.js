@@ -1,6 +1,6 @@
 const { obterRepresentacaoOrdinal } = require("./scripts");
 
-function gerarTemplateString(response, from, client) {
+function gerarTemplateString(response, from, client, valor) {
   let template = `*Numero do pedido:* ${response.id}
 *Quantidade*: ${response.qnt}
   `;
@@ -24,55 +24,89 @@ ${response["obs" + i] !== null ? `*Obs:* ${response["obs" + i]}` : ""}${
     }`;
   }
 
-  if (
-    response.formadepagamento == "pix" ||
-    response.formadepagamento == "cartão"
-  ) {
-    template += `
+  if (response.endereco != null) {
+    if (
+      response.formadepagamento == "pix" ||
+      response.formadepagamento == "cartão"
+    ) {
+      template += `
 ${
   response.refrigerante !== null
     ? `*Refrigerante:* ${response.qntrefrigerante}x - ${response.refrigerante}`
     : ""
 }${response.refrigerante !== null ? "\n" : ""}*Forma de pagamento:* ${
-      response.formadepagamento
-    }
+        response.formadepagamento
+      }
+*Telefone:* ${response.telefone.slice(2, 13)}
+  
 ${
   response.endereco !== null
     ? `*Endereço de entrega:* ${response.endereco} - ${
         response.cidade == 1 ? "Igaraçu do Tietê" : "Barra Bonita"
       }`
     : ""
-}${response.endereco !== null ? "\n" : ""}*Telefone:* ${response.telefone.slice(
-      2,
-      13
-    )}`;
+}
+            
+*Valor total:* R$ ${valor},00`;
 
-    client.sendMessage(from, template);
-  } else if (response.formadepagamento == "dinheiro") {
-    template += `
+      client.sendMessage(from, template);
+    } else if (response.formadepagamento == "dinheiro") {
+      template += `
 ${
   response.refrigerante !== null
     ? `*Refrigerante:* ${response.qntrefrigerante}x - ${response.refrigerante}`
     : ""
 }${response.refrigerante !== null ? "\n" : ""}*Forma de pagamento:* ${
-      response.formadepagamento
-    }
+        response.formadepagamento
+      }
+*Telefone:* ${response.telefone.slice(2, 13)}
+  
+${response.troco !== "" ? `*Troco:* ${response.troco}` : "*Troco:* não precisa"}
 ${
   response.endereco !== null
     ? `*Endereço de entrega:* ${response.endereco} - ${
         response.cidade == 1 ? "Igaraçu do Tietê" : "Barra Bonita"
       }`
     : ""
-}${response.endereco !== null ? "\n" : ""}*Telefone:* ${response.telefone.slice(
-      2,
-      13
-    )}
+}
+        
+*Valor total:* R$ ${valor},00`;
+    }
+  } else {
+    if (
+      response.formadepagamento == "pix" ||
+      response.formadepagamento == "cartão"
+    ) {
+      template += `
 ${
-  response.troco !== "" ? `*Troco:* ${response.troco}` : "*Troco:* não precisa"
-}`;
+  response.refrigerante !== null
+    ? `*Refrigerante:* ${response.qntrefrigerante}x - ${response.refrigerante}`
+    : ""
+}${response.refrigerante !== null ? "\n" : ""}*Forma de pagamento:* ${
+        response.formadepagamento
+      }
+*Telefone:* ${response.telefone.slice(2, 13)}
+             
+*Valor total:* R$ ${valor},00`;
 
-    client.sendMessage(from, template);
+      client.sendMessage(from, template);
+    } else if (response.formadepagamento == "dinheiro") {
+      template += `
+${
+  response.refrigerante !== null
+    ? `*Refrigerante:* ${response.qntrefrigerante}x - ${response.refrigerante}`
+    : ""
+}${response.refrigerante !== null ? "\n" : ""}*Forma de pagamento:* ${
+        response.formadepagamento
+      }
+*Telefone:* ${response.telefone.slice(2, 13)}
+${response.troco !== "" ? `*Troco:* ${response.troco}` : "*Troco:* não precisa"}
+    
+*Valor total:* R$ ${valor},00`;
+    }
   }
+
+  client.sendMessage(from, template);
 }
 
 module.exports = { gerarTemplateString };

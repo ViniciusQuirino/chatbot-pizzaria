@@ -60,19 +60,18 @@ const client = new Client({
 });
 
 client.on("message", async (msg) => {
-  
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
 
   const date = new Date();
   const h = date.getHours();
 
   if (
-    recuperarEtapa !== undefined &&
-    recuperarEtapa.ativado == true &&
-    msg.from == "5514998760815@c.us"
+    (recuperarEtapa !== undefined &&
+      recuperarEtapa.ativado == true &&
+      msg.from == "5514998760815@c.us") ||
     // msg.from == "5514996056869@c.us" ||
     // msg.from == "5514991342480"
-    // msg.from == "5514998593589@c.us"
+    msg.from == "5514998593589@c.us"
   ) {
     const message = msg.body.toLowerCase();
     let desativar = message.slice(0, 9);

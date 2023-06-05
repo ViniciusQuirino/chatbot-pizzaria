@@ -9,6 +9,7 @@ const {
   desejaAlgoParaBeber,
   encontrarObjetosIguais,
   melhorarFrase,
+  encontrarObjetos,
 } = require("./scripts");
 const { gerarTemplateString } = require("./informacoes.pedido");
 const { somarValorTotal } = require("./valor.total");
@@ -82,6 +83,7 @@ Tempo p/ retirar: ${response.temporetirada}
     const verificarResposta = verificarNumero(msg.body);
     if (verificarResposta) {
       const resposta = +verificarResposta;
+      console.log(resposta);
       if (resposta == 1) {
         client.sendMessage(
           msg.from,
@@ -97,7 +99,7 @@ Qual o *tamanho* que você quer ?
         Requests.criarPedido({ telefone: msg.from, qnt: 1 });
         Requests.atualizarEtapa(msg.from, { etapa: "bord" });
       }
-      if (resposta >= 2) {
+      if (resposta >= 2 && resposta <= 10) {
         client.sendMessage(
           msg.from,
           `Certo, então são ${resposta} pizzas. Agora me responde uma coisa, todas são *tamanho* grande ?
@@ -107,6 +109,13 @@ Qual o *tamanho* que você quer ?
         );
         Requests.criarPedido({ telefone: msg.from, qnt: resposta });
         Requests.atualizarEtapa(msg.from, { etapa: "1" });
+      } else if (resposta > 10) {
+        client.sendMessage(
+          msg.from,
+          `*Atenção ⚠️*
+*Por nossa assistente virtual voce pode pedir 10 pizzas no máximo*
+*Caso queira pedir mais que 10 pizzas chame no numero: 14998908820*`
+        );
       }
     } else if (verificarResposta == "") {
       client.sendMessage(
@@ -153,12 +162,30 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
 
   if (recuperarEtapa.etapa == "d") {
     let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+
     const retorno = removerAcentos(result);
-    const frasePronta = corrigirPalavrasParecidas(retorno);
-    let frase = melhorarFrase(frasePronta);
-    console.log(frase);
-    const encontrar = await encontrarObjetosIguais(frase);
+
+    let variavelum = true;
+    let variaveldois = true;
+    const frasePronta = corrigirPalavrasParecidas(
+      retorno,
+      variavelum,
+      variaveldois
+    );
+
+    const ocorrencias = (frasePronta.match(/1\/2/g) || []).length;
+    const encontrar = await encontrarObjetos(frasePronta);
+
+    console.log(ocorrencias);
+    console.log(frasePronta);
     console.log(encontrar);
+
+    if (ocorrencias != encontrar.length && ocorrencias) {
+      client.sendMessage(
+        msg.from,
+        `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
+      );
+    }
 
     if (encontrar[0]) {
       client.sendMessage(
@@ -171,7 +198,7 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
 
 1 - Não quero adicionar e retirar nenhum ingrediente.`
       );
-      Requests.atualizarPedido({ telefone: msg.from, sabor1: frase });
+      Requests.atualizarPedido({ telefone: msg.from, sabor1: frasePronta });
       Requests.atualizarEtapa(msg.from, { etapa: "e" });
     } else {
       client.sendMessage(
@@ -440,9 +467,9 @@ Se não, digite apenas o numero 1
         telefone: msg.from,
         formadepagamento: "cartão",
       });
-      gerarTemplateString(response, msg.from, client);
       const valor = await somarValorTotal(response, msg, client);
-      console.log(valor);
+      gerarTemplateString(response, msg.from, client, valor);
+
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
@@ -451,9 +478,9 @@ Se não, digite apenas o numero 1
         telefone: msg.from,
         formadepagamento: "pix",
       });
-      gerarTemplateString(response, msg.from, client);
       const valor = await somarValorTotal(response, msg, client);
-      console.log(valor);
+      gerarTemplateString(response, msg.from, client, valor);
+
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
@@ -478,9 +505,9 @@ Qual vai ser a forma de pagamento ?
       troco: `${msg.body == "1" ? "" : msg.body}`,
     });
 
-    gerarTemplateString(response, msg.from, client);
     const valor = await somarValorTotal(response, msg, client);
-    console.log(valor);
+    gerarTemplateString(response, msg.from, client, valor);
+
     desejaConfirmarOPedido(msg.from, client);
     Requests.atualizarEtapa(msg.from, { etapa: "conf" });
   }
