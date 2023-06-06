@@ -8,9 +8,12 @@ const {
   desejaAlgoParaBeber,
   tamanho,
   encontrarObjetos,
+  dificuldade,
 } = require("./scripts");
 const { removerAcentos } = require("./atualizar.pizza");
 const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
+const { numeroDeTelefone } = require("./pedido");
+const { corrigirFrase } = require("./caso.especifico");
 
 async function grandeEMedia(recuperarEtapa, msg, client) {
   const response = await Requests.recuperarPedido(msg.from);
@@ -33,29 +36,31 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
   }
 
   if (recuperarEtapa.etapa == "21") {
-    const result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
-
-    const removerAcento = removerAcentos(result);
+    let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+    const retorno = removerAcentos(result);
 
     let variavelum = true;
     let variaveldois = true;
-    const fraseModificada = corrigirPalavrasParecidas(
-      removerAcento,
-      variavelum,
-      variaveldois
-    );
+    let frase = corrigirPalavrasParecidas(retorno, variavelum, variaveldois);
 
-    const ocorrencias = (fraseModificada.match(/1\/2/g) || []).length;
+    const frasePronta = corrigirFrase(frase);
 
-    const sabor = criarObjetoSabor(msg.from, response.loop, fraseModificada);
-    const encontrar = await encontrarObjetos(fraseModificada);
+    variavelum = true;
+    variaveldois = true;
+    frase = corrigirPalavrasParecidas(frasePronta, variavelum, variaveldois);
 
-    console.log(fraseModificada);
+    const ocorrencias = (frase.match(/1\/2/g) || []).length;
+    const encontrar = await encontrarObjetos(frase);
+
+    console.log(ocorrencias);
+    console.log(frase);
     console.log(encontrar);
+
+    const sabor = criarObjetoSabor(msg.from, response.loop, frase);
 
     if (ocorrencias != encontrar.length && ocorrencias) {
       client.sendMessage(
-        msg.from,
+        numeroDeTelefone,
         `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
       );
     }
@@ -79,6 +84,7 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
         msg.from,
         `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente o nome da pizza!`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -172,11 +178,12 @@ Quer adicionar borda recheada ?
 
   ⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
-  *1* - Não quero
-  *2* - Catupiry R$ 10,00
-  *3* - Cheddar R$ 10,00
-  *4* - Chocolate R$ 12,00`
+*1* - Não quero
+*2* - Catupiry R$ 10,00
+*3* - Cheddar R$ 10,00
+*4* - Chocolate R$ 12,00`
       );
+      dificuldade(msg, client);
     }
   }
 }

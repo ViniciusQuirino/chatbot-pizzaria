@@ -48,8 +48,6 @@ ${
 }
             
 *Valor total:* R$ ${valor},00`;
-
-      client.sendMessage(from, template);
     } else if (response.formadepagamento == "dinheiro") {
       template += `
 ${
@@ -88,8 +86,6 @@ ${
 *Telefone:* ${response.telefone.slice(2, 13)}
              
 *Valor total:* R$ ${valor},00`;
-
-      client.sendMessage(from, template);
     } else if (response.formadepagamento == "dinheiro") {
       template += `
 ${

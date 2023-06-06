@@ -13,7 +13,12 @@ const { Requests } = require("./zchatbot/requests");
 const { pedidos } = require("./zchatbot/pedido");
 const { maisDeUma } = require("./zchatbot/todas.grandes");
 const { grandeEMedia } = require("./zchatbot/grande.media");
-const { listarPizzas } = require("./zchatbot/scripts");
+const {
+  listarPizzas,
+  audio,
+  ativarchatbot,
+  desativarchatbot,
+} = require("./zchatbot/scripts");
 const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
 
 const port = process.env.PORT || 7005;
@@ -77,6 +82,9 @@ client.on("message", async (msg) => {
     let desativar = message.slice(0, 9);
     let ativar = message.slice(0, 6);
     if (ativar != "ativar" && desativar != "desativar" && h >= 5 && h < 23) {
+      if (msg.mediaKey != undefined && recuperarEtapa !== "comp") {
+        audio(msg.from, client);
+      }
       pedidos(recuperarEtapa, msg, client);
       listarPizzas(msg, client);
       atualizarPizza(msg, client);
@@ -95,6 +103,8 @@ client.on("message", async (msg) => {
         grandeEMedia(recuperarEtapa, msg, client);
       }
     }
+    ativarchatbot(msg, client);
+    desativarchatbot(msg, client);
   }
 });
 

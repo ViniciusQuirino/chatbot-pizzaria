@@ -1,6 +1,7 @@
 const Fuse = require("fuse.js");
 const dados = [
   { nome: "a moda", media: "40,00", grande: "45,00" },
+  { nome: "a moda da casa", media: "40,00", grande: "45,00" },
   { nome: "alho e tomate", media: "30,00", grande: "34,00" },
   { nome: "alface", media: "34,00", grande: "38,00" },
   { nome: "americano", media: "36,00", grande: "40,00" },
@@ -110,6 +111,7 @@ function encontrarObjetos(frase) {
   }
 }
 function corrigirFrase(frase) {
+  frase = frase.replace(/1\/2/g, "");
   frase = frase.replace(/\s+/g, " ");
   const objetosEncontrados = encontrarObjetos(frase);
 
@@ -123,11 +125,22 @@ function corrigirFrase(frase) {
 
     // Remover todas as aspas (simples e duplas)
     fraseCorrigida = fraseCorrigida.replace(/['"]+/g, "");
+    fraseCorrigida = fraseCorrigida.replace(
+      /a moda da casa,/g,
+      "a moda da casa"
+    );
+
+    fraseCorrigida = fraseCorrigida.replace(
+      /a moda da casa/g,
+      "a moda da casa,"
+    );
+
+    fraseCorrigida = fraseCorrigida.trim();
 
     return fraseCorrigida;
   }
 
   return frase;
 }
-let a = corrigirFrase("atum especial banana nevada");
-console.log(a);
+
+module.exports = { corrigirFrase };

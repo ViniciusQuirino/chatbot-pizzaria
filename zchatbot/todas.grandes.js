@@ -7,10 +7,13 @@ const {
   criarObjetoObs,
   desejaAlgoParaBeber,
   sabor,
-  encontrarObjetos
+  encontrarObjetos,
+  dificuldade,
 } = require("./scripts");
 const { removerAcentos } = require("./atualizar.pizza");
 const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
+const { numeroDeTelefone } = require("./pedido");
+const { corrigirFrase } = require("./caso.especifico");
 
 async function maisDeUma(recuperarEtapa, msg, client) {
   const response = await Requests.recuperarPedido(msg.from);
@@ -40,33 +43,47 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
 *2* - Média 🍕`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "20" });
+    } else if (msg.body != "1" && msg.body != "2") {
+      client.sendMessage(
+        msg.from,
+        `*Atenção ⚠️*
+Todas são tamanho grande ?
+
+⬇️ Escolha uma das opções abaixo digitando apenas o numero.
+  
+*1* - Sim, as 2 pizzas são tamanho grande.
+*2* - Não, tem pizza que vai ser tamanho médio.`
+      );
+      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "2") {
-    const result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
-
-    const removerAcento = removerAcentos(result);
+    let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+    const retorno = removerAcentos(result);
 
     let variavelum = true;
     let variaveldois = true;
-    const fraseModificada = corrigirPalavrasParecidas(
-      removerAcento,
-      variavelum,
-      variaveldois
-    );
+    let frase = corrigirPalavrasParecidas(retorno, variavelum, variaveldois);
 
-    const ocorrencias = (fraseModificada.match(/1\/2/g) || []).length;
+    const frasePronta = corrigirFrase(frase);
 
-    const sabor = criarObjetoSabor(msg.from, response.loop, fraseModificada);
-    const encontrar = await encontrarObjetos(fraseModificada);
+    variavelum = true;
+    variaveldois = true;
+    frase = corrigirPalavrasParecidas(frasePronta, variavelum, variaveldois);
 
-    console.log(fraseModificada);
+    const ocorrencias = (frase.match(/1\/2/g) || []).length;
+    const encontrar = await encontrarObjetos(frase);
+
+    console.log(ocorrencias);
+    console.log(frase);
     console.log(encontrar);
+
+    const sabor = criarObjetoSabor(msg.from, response.loop, frase);
 
     if (ocorrencias != encontrar.length && ocorrencias) {
       client.sendMessage(
-        msg.from,
+        numeroDeTelefone,
         `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
       );
     }
@@ -90,6 +107,7 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
         msg.from,
         `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente o nome da pizza!`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -190,6 +208,7 @@ Quer adicionar borda recheada ?
 *3* - Cheddar R$ 10,00
 *4* - Chocolate R$ 12,00`
       );
+      dificuldade(msg, client);
     }
   }
 }

@@ -24,6 +24,7 @@ const dados = [
   { nome: "mista", media: "34,00", grande: "38,00" },
   { nome: "moda do pizzaiolo", media: "40,00", grande: "45,00" },
   { nome: "mussarela", media: "33,00", grande: "37,00" },
+  { nome: "queijo", media: "33,00", grande: "37,00" },
   { nome: "palmito c/ catupiry", media: "34,00", grande: "38,00" },
   { nome: "pepperoni", media: "40,00", grande: "44,00" },
   { nome: "portuguesa", media: "36,00", grande: "40,00" },
@@ -107,7 +108,7 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
         palavrasFrase[i + 1] === "cheddar" ||
         palavrasFrase[i + 1] === "pacoca" ||
         palavrasFrase[i + 1] === "paçoca" ||
-        palavrasFrase[i + 1] === "barbecue" 
+        palavrasFrase[i + 1] === "barbecue"
       ) {
         palavraCorrigida = melhorCorrespondencia + " c/";
       } else if (melhorCorrespondencia == "moda") {
@@ -201,6 +202,8 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     result = result.replace(/ c\/\/\//g, " c/");
     result = result.replace(/ c\/\/\/\//g, " c/");
     result = result.replace(/ e e /g, " e ");
+    result = result.replace(/1\/2 e 1\/2/g, "1/2");
+    result = result.replace(/,/g, "");
 
     return result;
   }
@@ -239,4 +242,4 @@ function levenshteinDistance(a, b) {
   return matrix[b.length][a.length];
 }
 
-// module.exports = { corrigirPalavrasParecidas };
+module.exports = { corrigirPalavrasParecidas };

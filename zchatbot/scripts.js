@@ -1,6 +1,7 @@
 const URL_CHATBOT = "http://localhost:7005";
 const axios = require("axios");
 const { Requests } = require("./requests");
+const { numeroDeTelefone } = require("./pedido");
 const Fuse = require("fuse.js");
 
 const cardapio = async (from) => {
@@ -95,6 +96,15 @@ const desejaAlgoParaBeber = async (from, client) => {
   );
 };
 
+const audio = (from, client) => {
+  client.sendMessage(
+    from,
+    `*Desculpe, sou uma assistente virtual e não consigo compreender áudios.*
+
+Siga o passo a passo para que eu possa realizar seu pedido`
+  );
+};
+
 const sabor = async (from, client, response) => {
   const ordinal = obterRepresentacaoOrdinal(response.loop);
 
@@ -167,6 +177,7 @@ function criarObjetoTelefone(from, quantidade) {
 
   return objeto;
 }
+
 function criarObjetoTamanho(from, numero, message) {
   var objeto = {
     telefone: from,
@@ -220,6 +231,50 @@ function criarObjetoBordaRecheada(from, numero, message) {
   return objeto;
 }
 
+async function desativarchatbot(msg, client) {
+  let message = msg.body.toLowerCase();
+
+  let desativar = message.slice(0, 9);
+  let telefone = message.split("/");
+
+  if (desativar == "desativar") {
+    try {
+      await Requests.updateEtapa(`55${telefone[1]}@c.us`, {
+        ativado: false,
+        etapa: "des",
+      });
+      client.sendMessage(msg.from, "Chatbot desativado.");
+    } catch (error) {
+      client.sendMessage(
+        msg.from,
+        "Não existe esse numero no banco de dados. Não se esqueça do ddd."
+      );
+    }
+  }
+}
+
+async function ativarchatbot(msg, client) {
+  let message = msg.body.toLowerCase();
+
+  let ativar = message.slice(0, 6);
+  let telefone = message.split("/");
+
+  if (ativar == "ativar") {
+    try {
+      await Requests.updateEtapa(`55${telefone[1]}@c.us`, {
+        ativado: true,
+        etapa: "a",
+      });
+      client.sendMessage(msg.from, "Chatbot ativado.");
+    } catch (error) {
+      client.sendMessage(
+        msg.from,
+        "Não existe esse numero no banco de dados. Não se esqueça do ddd."
+      );
+    }
+  }
+}
+
 async function listarPizzas(msg, client) {
   let message = msg.body.toLowerCase();
   let listar = message.includes("listar/pizzas");
@@ -239,11 +294,16 @@ async function listarPizzas(msg, client) {
   }
 }
 
-async function encontrarObjetosIguais(frase) {
-  const dados = await Requests.listarPizzas();
-  const objetosIguais = dados.filter((objeto) => frase.includes(objeto.nome));
-
-  return objetosIguais;
+async function dificuldade(msg, client) {
+  const response = await Requests.atualizarEtapa(msg.from, {
+    problema: "e",
+  });
+  if (response.problema == 3) {
+    client.sendMessage(
+      numeroDeTelefone,
+      `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+    );
+  }
 }
 
 async function encontrarObjetos(frase) {
@@ -369,7 +429,10 @@ module.exports = {
   criarObjetoObs,
   criarObjetoBordaRecheada,
   listarPizzas,
-  encontrarObjetosIguais,
   melhorarFrase,
   encontrarObjetos,
+  audio,
+  dificuldade,
+  desativarchatbot,
+  ativarchatbot,
 };

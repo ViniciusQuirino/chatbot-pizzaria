@@ -1,4 +1,4 @@
-const numeroDeTelefone = "5514998536591@c.us";
+const numeroDeTelefone = "5514998760815@c.us";
 const { Requests } = require("./requests");
 const {
   cardapio,
@@ -7,14 +7,14 @@ const {
   verificarNumero,
   desejaConfirmarOPedido,
   desejaAlgoParaBeber,
-  encontrarObjetosIguais,
-  melhorarFrase,
   encontrarObjetos,
+  dificuldade,
 } = require("./scripts");
 const { gerarTemplateString } = require("./informacoes.pedido");
 const { somarValorTotal } = require("./valor.total");
 const { removerAcentos } = require("./atualizar.pizza");
 const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
+const { corrigirFrase } = require("./caso.especifico");
 
 async function pedidos(recuperarEtapa, msg, client) {
   if (recuperarEtapa.etapa == "a") {
@@ -76,6 +76,7 @@ Tempo p/ retirar: ${response.temporetirada}
 *3* - Promoções
 *4* - Redes Sociais`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -113,7 +114,7 @@ Qual o *tamanho* que você quer ?
         client.sendMessage(
           msg.from,
           `*Atenção ⚠️*
-*Por nossa assistente virtual voce pode pedir 10 pizzas no máximo*
+*Com a nossa assistente virtual voce pode pedir 10 pizzas no máximo*
 *Caso queira pedir mais que 10 pizzas chame no numero: 14998908820*`
         );
       }
@@ -123,6 +124,7 @@ Qual o *tamanho* que você quer ?
         `Atenção ⚠️
 *Quantas pizzas* você vai querer ? Digite *apenas o numero.*`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -157,32 +159,34 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
 *1 - Grande 🍕*
 *2 - Média 🍕*`
       );
+      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "d") {
     let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
-
     const retorno = removerAcentos(result);
 
     let variavelum = true;
     let variaveldois = true;
-    const frasePronta = corrigirPalavrasParecidas(
-      retorno,
-      variavelum,
-      variaveldois
-    );
+    let frase = corrigirPalavrasParecidas(retorno, variavelum, variaveldois);
 
-    const ocorrencias = (frasePronta.match(/1\/2/g) || []).length;
-    const encontrar = await encontrarObjetos(frasePronta);
+    const frasePronta = corrigirFrase(frase);
+
+    variavelum = true;
+    variaveldois = true;
+    frase = corrigirPalavrasParecidas(frasePronta, variavelum, variaveldois);
+
+    const ocorrencias = (frase.match(/1\/2/g) || []).length;
+    const encontrar = await encontrarObjetos(frase);
 
     console.log(ocorrencias);
-    console.log(frasePronta);
+    console.log(frase);
     console.log(encontrar);
 
     if (ocorrencias != encontrar.length && ocorrencias) {
       client.sendMessage(
-        msg.from,
+        numeroDeTelefone,
         `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
       );
     }
@@ -198,13 +202,14 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
 
 1 - Não quero adicionar e retirar nenhum ingrediente.`
       );
-      Requests.atualizarPedido({ telefone: msg.from, sabor1: frasePronta });
+      Requests.atualizarPedido({ telefone: msg.from, sabor1: frase });
       Requests.atualizarEtapa(msg.from, { etapa: "e" });
     } else {
       client.sendMessage(
         msg.from,
         `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente o nome da pizza!`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -286,6 +291,7 @@ Quer adicionar borda recheada ?
 *3* - Cheddar R$ 10,00
 *4* - Chocolate R$ 12,00`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -332,6 +338,7 @@ Você deseja algo para *beber* ? 🥤
 *2* - Coca-Cola 2 Litros R$ 14,00
 *3* - Conquista Guaraná 2 Litros R$ 8,00`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -351,6 +358,7 @@ Você deseja algo para *beber* ? 🥤
 
 *Quantos refrigerantes* você quer, digite a quantidade por favor!!!`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -371,7 +379,7 @@ Você deseja algo para *beber* ? 🥤
         msg.from,
         `Blzaa 😃
 
-Nosso *endereço* fica localizado em igaraçu, rua X N:50`
+Nosso *endereço* fica localizado em Igaraçu, Rua Josepha Rodrigues Moreira - N:48`
       );
       client.sendMessage(
         msg.from,
@@ -401,31 +409,46 @@ Igaraçu x Barra: 9,00 reais
 *1* - Sim, quero que entregue.
 *2* - Não, vou ir buscar.`
       );
+      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "i") {
-    client.sendMessage(
-      msg.from,
-      `⏩ Digite o seu *endereço* por favor.
-
+    if (msg.body == "1" || msg.body == "2") {
+      client.sendMessage(
+        msg.from,
+        `⏩ Digite o seu *endereço* por favor.
+  
 *Nome da rua, numero*
 *Exemplo*: Rua antônio manfio 1042`
-    );
-    if (msg.body == "1") {
-      Requests.atualizarPedido({
-        telefone: msg.from,
-        cidade: 1,
-      });
-      Requests.atualizarEtapa(msg.from, { etapa: "j" });
-    }
+      );
+      if (msg.body == "1") {
+        Requests.atualizarPedido({
+          telefone: msg.from,
+          cidade: 1,
+        });
+        Requests.atualizarEtapa(msg.from, { etapa: "j" });
+      }
 
-    if (msg.body == "2") {
-      Requests.atualizarPedido({
-        telefone: msg.from,
-        cidade: 2,
-      });
-      Requests.atualizarEtapa(msg.from, { etapa: "j" });
+      if (msg.body == "2") {
+        Requests.atualizarPedido({
+          telefone: msg.from,
+          cidade: 2,
+        });
+        Requests.atualizarEtapa(msg.from, { etapa: "j" });
+      }
+    } else if (msg.body != "1" || msg.body != "2") {
+      client.sendMessage(
+        msg.from,
+        `*Atenção*
+⬇️ Qual é a cidade ?
+
+⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
+  
+*1* - Igaraçu do Tietê
+*2* - Barra Bonita`
+      );
+      dificuldade(msg, client);
     }
   }
 
@@ -496,6 +519,7 @@ Qual vai ser a forma de pagamento ?
 *2* - Cartão
 *3* - Pix`
       );
+      dificuldade(msg, client);
     }
   }
 
@@ -516,7 +540,9 @@ Qual vai ser a forma de pagamento ?
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
-        `Seu pedido foi *confirmado com sucesso*. Obrigado pela confiança! 😃🍕`
+        `Seu pedido foi *confirmado com sucesso*. Obrigado pela confiança!
+
+Nossa equipe está animada para preparar a sua deliciosa pizza e entregá-la com todo cuidado e sabor. 😃🍕`
       );
 
       const response = await Requests.recuperarPedido(msg.from);
@@ -555,6 +581,7 @@ Tem um cliente precisando de ajuda!`
     if (msg.body != 1 && msg.body != 2) {
       client.sendMessage(msg.from, `Atenção ⚠️`);
       desejaConfirmarOPedido(msg.from, client);
+      dificuldade(msg, client);
     }
   }
 
@@ -569,4 +596,4 @@ Agradecemos pela sua colaboração!`
   }
 }
 
-module.exports = { pedidos };
+module.exports = { pedidos, numeroDeTelefone };
