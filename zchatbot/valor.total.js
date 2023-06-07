@@ -1,5 +1,6 @@
 const { encontrarObjetos, calcularValorIngredientes } = require("./scripts");
 const { Requests } = require("./requests");
+
 async function somarValorTotal(response) {
   const dados = await Requests.listarPizzas();
   let valor = 0;
@@ -7,13 +8,21 @@ async function somarValorTotal(response) {
   if (response.cidade == 1) {
     valor += 7;
   } else if (response.cidade == 2) {
-    valor += 9;
+    valor += 10;
   }
 
   if (response.refrigerante == "Coca-cola 2 litros") {
-    valor += response.qntrefrigerante * 14;
+    for (let i = 0; i < dados.length; i++) {
+      if (dados[i].refri === "Coca-cola 2 Litros") {
+        valor += response.qntrefrigerante * dados[i].valor;
+      }
+    }
   } else if (response.refrigerante == "Conquista guaraná 2 litros") {
-    valor += response.qntrefrigerante * 8;
+    for (let i = 0; i < dados.length; i++) {
+      if (dados[i].refri === "Conquista Guaraná 2 Litros") {
+        valor += response.qntrefrigerante * dados[i].valor;
+      }
+    }
   }
 
   const dataAtual = new Date();
@@ -21,15 +30,24 @@ async function somarValorTotal(response) {
 
   for (let i = 1; i <= 10; i++) {
     if (response["bordarecheada" + i] == "catupiry") {
-      valor += 10;
+      const objetoBordaCatupiry = dados.find(
+        (objeto) => objeto.borda === "Catupiry"
+      );
+      valor += objetoBordaCatupiry.valor;
     } else if (response["bordarecheada" + i] == "cheddar") {
-      valor += 10;
+      const objetoBordaCheddar = dados.find(
+        (objeto) => objeto.borda === "Cheddar"
+      );
+      valor += objetoBordaCheddar.valor;
     } else if (response["bordarecheada" + i] == "chocolate") {
-      valor += 12;
+      const objetoBordaChocolate = dados.find(
+        (objeto) => objeto.borda === "Chocolate"
+      );
+      valor += objetoBordaChocolate.valor;
     }
 
     if (response["adcingrediente" + i] != null) {
-      valor += calcularValorIngredientes(response["adcingrediente" + i]);
+      valor += calcularValorIngredientes(response["adcingrediente" + i], dados);
     }
 
     if (response["sabor" + i] != null) {
@@ -37,11 +55,19 @@ async function somarValorTotal(response) {
       console.log(resultado);
       if (resultado.length == 1) {
         if (response["tamanho" + i] == "grande") {
-          const valorPizza =
-            diaSemana >= 1 && diaSemana <= 4 && isPromocao(resultado[0].nome)
-              ? 30.0
-              : resultado[0].grande;
-          valor += valorPizza;
+          if (
+            diaSemana >= 1 &&
+            diaSemana <= 4 &&
+            isPromocao(resultado[0].nome)
+          ) {
+            valor += 30;
+          } else if (
+            diaSemana >= 1 &&
+            diaSemana <= 4 &&
+            !isPromocao(resultado[0].nome)
+          ) {
+            valor += resultado[0].grande;
+          }
         } else if (response["tamanho" + i] == "média") {
           valor += resultado[0].media;
         }
@@ -52,6 +78,13 @@ async function somarValorTotal(response) {
         );
         if (response["tamanho" + i] == "grande") {
           if (
+            diaSemana >= 1 &&
+            diaSemana <= 4 &&
+            isPromocao(resultado[0].nome) &&
+            isPromocao(resultado[1].nome)
+          ) {
+            valor += 30;
+          } else if (
             diaSemana >= 1 &&
             diaSemana <= 4 &&
             isPromocao(resultado[0].nome)

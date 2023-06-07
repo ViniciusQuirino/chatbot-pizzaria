@@ -1,13 +1,9 @@
 const URL_CHATBOT = "http://localhost:7005";
 const axios = require("axios");
 const { Requests } = require("./requests");
-const { numeroDeTelefone } = require("./pedido");
 const Fuse = require("fuse.js");
 
-const cardapio = async (from) => {
-  const date = new Date();
-  const dia = date.getDay();
-
+const cardapio = async (from, dia) => {
   if (dia <= 4) {
     await axios.post(`${URL_CHATBOT}/send-media`, {
       number: from,
@@ -62,7 +58,7 @@ Você quer que *entregue* ?
 
 Valores:
 Dentro de igaraçu: 7,00 reais
-Igaraçu x Barra: 9,00 reais
+Igaraçu x Barra: 10,00 reais
 
 ⬇️ Escolha uma das opções abaixo digitando apenas o numero.
 
@@ -326,12 +322,50 @@ async function listarPizzas(msg, client) {
     let texto = "";
 
     for (let dados of response) {
-      texto += `
+      if (dados.nome != undefined) {
+        texto += `
 *____________________________*
 *Id:* ${dados.id}
 *Nome:* ${dados.nome}
 *Média:* ${dados.media},00
 *Grande:* ${dados.grande},00`;
+      }
+    }
+    client.sendMessage(msg.from, texto);
+  }
+}
+async function listarProdutos(msg, client) {
+  let message = msg.body.toLowerCase();
+  let listar = message.includes("listar/produtos");
+
+  if (listar) {
+    const response = await Requests.listarProdutoss();
+    let texto = "";
+
+    for (let dados of response) {
+      if (dados.refri != null) {
+        texto += `
+*____________________________*
+*Id:* ${dados.idd}
+*Refrigerante:* ${dados.refri}
+*Valor:* ${dados.valor}`;
+      }
+
+      if (dados.borda != null) {
+        texto += `
+*____________________________*
+*Id:* ${dados.idd}
+*Borda:* ${dados.borda}
+*Valor:* ${dados.valor}`;
+      }
+
+      if (dados.ingredientes != null) {
+        texto += `
+*____________________________*
+*Id:* ${dados.idd}
+*Ingrediente:* ${dados.ingredientes}
+*Valor:* ${dados.valor}`;
+      }
     }
     client.sendMessage(msg.from, texto);
   }
@@ -342,8 +376,9 @@ async function dificuldade(msg, client) {
     problema: "e",
   });
   if (response.problema == 3) {
+    //numeroDeTelefone
     client.sendMessage(
-      numeroDeTelefone,
+      "5514998760815",
       `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
     );
   }
@@ -467,11 +502,11 @@ function interpretarIngredientes(ingredientesString) {
     8: "calabresa",
     9: "frango",
     10: "presunto",
-    11: "batata Palha",
+    11: "batata palha",
     12: "ovo",
     13: "parmesão",
     14: "provolone",
-    15: "bacon Cubos",
+    15: "bacon cubos",
   };
 
   const ingredientesSelecionados = ingredientesString.split("-");
@@ -487,23 +522,41 @@ function interpretarIngredientes(ingredientesString) {
   return ingredientesNomes[0];
 }
 
-function calcularValorIngredientes(ingredientes) {
+function calcularValorIngredientes(ingredientes, dados) {
+  const Bacon = dados.find((objeto) => objeto.ingredientes === "bacon");
+  const Milho = dados.find((objeto) => objeto.ingredientes === "milho");
+  const Catupiry = dados.find((objeto) => objeto.ingredientes === "catupiry");
+  const Cheddar = dados.find((objeto) => objeto.ingredientes === "cheddar");
+  const Cebola = dados.find((objeto) => objeto.ingredientes === "cebola");
+  const Tomate = dados.find((objeto) => objeto.ingredientes === "tomate");
+  const Mussarela = dados.find((objeto) => objeto.ingredientes === "mussarela");
+  const Calabresa = dados.find((objeto) => objeto.ingredientes === "calabresa");
+  const Frango = dados.find((objeto) => objeto.ingredientes === "frango");
+  const Presunto = dados.find((objeto) => objeto.ingredientes === "presunto");
+  const Batata = dados.find((objeto) => objeto.ingredientes === "batata palha");
+  const Ovo = dados.find((objeto) => objeto.ingredientes === "ovo");
+  const Parmesão = dados.find((objeto) => objeto.ingredientes === "parmesão");
+  const Provolone = dados.find((objeto) => objeto.ingredientes === "provolone");
+  const BaconCubos = dados.find(
+    (objeto) => objeto.ingredientes === "bacon cubos"
+  );
+
   const precos = {
-    1: 8, // Bacon
-    2: 5, // Milho
-    3: 7, // Catupiry
-    4: 7, // Cheddar
-    5: 2, // Cebola
-    6: 2, // Tomate
-    7: 10, // Mussarela
-    8: 8, // Calabresa
-    9: 8, // Frango
-    10: 8, // Presunto
-    11: 6, // Batata Palha
-    12: 3, // Ovo
-    13: 10, // Parmesão
-    14: 12, // Provolone
-    15: 8, // Bacon Cubos
+    1: Bacon.valor, // Bacon
+    2: Milho.valor, // Milho
+    3: Catupiry.valor, // Catupiry
+    4: Cheddar.valor, // Cheddar
+    5: Cebola.valor, // Cebola
+    6: Tomate.valor, // Tomate
+    7: Mussarela.valor, // Mussarela
+    8: Calabresa.valor, // Calabresa
+    9: Frango.valor, // Frango
+    110: Presunto.valor, // Presunto
+    11: Batata.valor, // Batata Palha
+    12: Ovo.valor, // Ovo
+    13: Parmesão.valor, // Parmesão
+    14: Provolone.valor, // Provolone
+    15: BaconCubos.valor, // Bacon Cubos
   };
 
   const ingredientesArray = ingredientes.split("-");
@@ -536,6 +589,7 @@ module.exports = {
   criarObjetoBordaRecheada,
   criarObjetoIngrediente,
   listarPizzas,
+  listarProdutos,
   melhorarFrase,
   encontrarObjetos,
   audio,

@@ -15,12 +15,14 @@ const { maisDeUma } = require("./zchatbot/todas.grandes");
 const { grandeEMedia } = require("./zchatbot/grande.media");
 const {
   listarPizzas,
+  listarProdutos,
   audio,
   ativarchatbot,
   desativarchatbot,
   tempo,
 } = require("./zchatbot/scripts");
 const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
+const { atualizarProduto } = require("./zchatbot/atualizar.produtos");
 
 const port = process.env.PORT || 7005;
 
@@ -72,12 +74,12 @@ client.on("message", async (msg) => {
   const h = date.getHours();
 
   if (
-    recuperarEtapa !== undefined &&
-    recuperarEtapa.ativado == true &&
-    msg.from == "5514998760815@c.us"
+    (recuperarEtapa !== undefined &&
+      recuperarEtapa.ativado == true &&
+      msg.from == "5514998760815@c.us")  ||
     // msg.from == "5514996056869@c.us" ||
     // msg.from == "5514991342480"
-    // msg.from == "5514998593589@c.us"
+    msg.from == "5514998593589@c.us"
   ) {
     const message = msg.body.toLowerCase();
     let desativar = message.slice(0, 9);
@@ -96,7 +98,9 @@ client.on("message", async (msg) => {
       }
       pedidos(recuperarEtapa, msg, client);
       listarPizzas(msg, client);
+      listarProdutos(msg, client);
       atualizarPizza(msg, client);
+      atualizarProduto(msg, client);
       if (
         recuperarEtapa.etapa == "1" ||
         recuperarEtapa.etapa == "2" ||

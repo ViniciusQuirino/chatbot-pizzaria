@@ -53,8 +53,18 @@ class Requests {
     return response.data;
   }
 
+  static async listarProdutoss() {
+    let response = await api.get(`/produtos`);
+    return response.data;
+  }
+
   static async atualizarPizzas(id, body) {
     let response = await api.patch(`/pizzas/${id}`, body);
+    return response.data;
+  }
+
+  static async atualizarProdutos(id, body) {
+    let response = await api.patch(`/produtos/${id}`, body);
     return response.data;
   }
 }

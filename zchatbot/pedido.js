@@ -16,6 +16,7 @@ const { removerAcentos } = require("./atualizar.pizza");
 const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
 const { corrigirFrase } = require("./caso.especifico");
 const { ingredientes } = require("./ingredientes");
+const { dados } = require("./corrigir.palavras");
 
 async function pedidos(recuperarEtapa, msg, client) {
   if (recuperarEtapa.etapa == "a") {
@@ -23,53 +24,52 @@ async function pedidos(recuperarEtapa, msg, client) {
     client.sendMessage(
       msg.from,
       `Olá! 😃
-Eu sou o assistente virtual da *Pizzaria Primo* e estou aqui para te ajudar. Temos uma variedade de opções deliciosas no nosso cardápio.
+Eu sou o assistente virtual da *Pizzas Primo Delivery* e estou aqui para te ajudar. Temos uma variedade de opções deliciosas no nosso cardápio.
 
 Tempo de entrega: ${response.tempoentrega}
 Tempo p/ retirar: ${response.temporetirada}
 
 ⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
-*1* - Cardápio
+*1* - Cardápio e Promoções
 *2* - Fazer pedido
-*3* - Promoções
-*4* - Redes Sociais`
+*3* - Redes Sociais`
     );
     Requests.atualizarEtapa(msg.from, { etapa: "b" });
   }
 
   if (recuperarEtapa.etapa == "b") {
+    const dataAtual = new Date();
+    const diaSemana = dataAtual.getDay(); // 0 (Domingo) a 6 (Sábado)
     if (msg.body == "1") {
-      await cardapio(msg.from);
-      gostouDoNossoCardapio(msg.from, client);
-      Requests.atualizarEtapa(msg.from, { etapa: "c" });
-    }
-    if (msg.body == "2") {
-      await cardapio(msg.from);
-      gostouDoNossoCardapio(msg.from, client);
-      Requests.atualizarEtapa(msg.from, { etapa: "c" });
-    }
-    if (msg.body == "3") {
-      await cardapio(msg.from);
-      const date = new Date();
-      const dia = date.getDay();
+      if (diaSemana >= 5) {
+        client.sendMessage(
+          msg.from,
+          `Nossa promoção é valida apenas de *SEGUNDA A SEXTA*`
+        );
+      }
+
+      await cardapio(msg.from, diaSemana);
 
       gostouDoNossoCardapio(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "c" });
-    }
-    if (msg.body == "4") {
+    } else if (msg.body == "2") {
+      await cardapio(msg.from, diaSemana);
+
+      gostouDoNossoCardapio(msg.from, client);
+      Requests.atualizarEtapa(msg.from, { etapa: "c" });
+    } else if (msg.body == "3") {
+      await cardapio(msg.from, diaSemana);
+
+      gostouDoNossoCardapio(msg.from, client);
+      Requests.atualizarEtapa(msg.from, { etapa: "c" });
+
       client.sendMessage(
         msg.from,
         `https://www.instagram.com/pizzasprimodelivery/`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "a" });
-    }
-    if (
-      msg.body != "1" &&
-      msg.body != "2" &&
-      msg.body != "3" &&
-      msg.body != "4"
-    ) {
+    } else if (msg.body != "1" && msg.body != "2" && msg.body != "3") {
       client.sendMessage(
         msg.from,
         `Atenção ⚠️
@@ -103,14 +103,13 @@ Qual o *tamanho* que você quer ?
         );
         Requests.criarPedido({ telefone: msg.from, qnt: 1 });
         Requests.atualizarEtapa(msg.from, { etapa: "bord" });
-      }
-      if (resposta >= 2 && resposta <= 10) {
+      } else if (resposta >= 2 && resposta <= 10) {
         client.sendMessage(
           msg.from,
           `Certo, então são ${resposta} pizzas. Agora me responde uma coisa, todas são *tamanho* grande ?
   
-1 - Sim, as ${resposta} pizzas são tamanho grande.
-2 - Não, tem pizza que vai ser tamanho médio.`
+*1* - Sim, as ${resposta} pizzas são tamanho grande.
+*2* - Não, tem pizza que vai ser tamanho médio.`
         );
         Requests.criarPedido({ telefone: msg.from, qnt: resposta });
         Requests.atualizarEtapa(msg.from, { etapa: "1" });
@@ -182,15 +181,16 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     frase = corrigirPalavrasParecidas(frasePronta, variavelum, variaveldois);
 
     const ocorrencias = (frase.match(/1\/2/g) || []).length;
-    const encontrar = await encontrarObjetos(frase);
+    const encontrar = await encontrarObjetos(frase, dados);
 
     console.log(ocorrencias);
     console.log(frase);
     console.log(encontrar);
 
     if (ocorrencias != encontrar.length && ocorrencias) {
+      //numeroDeTelefone
       client.sendMessage(
-        numeroDeTelefone,
+        "5514998760815",
         `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
       );
     }
@@ -437,7 +437,7 @@ Você quer que *entregue* ?
 
 Valores:
 Dentro de igaraçu: 7,00 reais
-Igaraçu x Barra: 9,00 reais
+Igaraçu x Barra: 10,00 reais
 
 ⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
@@ -605,9 +605,10 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
         
 Um de nossos colaboradores já vai te atender.`
       );
-      client.sendMessage(numeroDeTelefone, `${msg.from.slice(2, 13)}`);
+      // numeroDeTelefone
+      client.sendMessage("5514998760815", `${msg.from.slice(2, 13)}`);
       client.sendMessage(
-        numeroDeTelefone,
+        "5514998760815",
         `Atenção ⚠️
 Tem um cliente precisando de ajuda!`
       );
@@ -635,4 +636,4 @@ Agradecemos pela sua colaboração!`
   }
 }
 
-module.exports = { pedidos, numeroDeTelefone };
+module.exports = { pedidos };

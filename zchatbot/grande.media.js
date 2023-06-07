@@ -12,13 +12,17 @@ const {
 } = require("./scripts");
 const { removerAcentos } = require("./atualizar.pizza");
 const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
-const { numeroDeTelefone } = require("./pedido");
 const { corrigirFrase } = require("./caso.especifico");
 const { ingredientes } = require("./ingredientes");
+const { dados } = require("./corrigir.palavras");
 
 async function grandeEMedia(recuperarEtapa, msg, client) {
   const response = await Requests.recuperarPedido(msg.from);
-  const ordinal = obterRepresentacaoOrdinal(response.loop);
+  let ordinal = "";
+  if (response != null) {
+    ordinal = obterRepresentacaoOrdinal(response.loop);
+  }
+
   if (recuperarEtapa.etapa == "20") {
     client.sendMessage(
       msg.from,
@@ -51,7 +55,7 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
     frase = corrigirPalavrasParecidas(frasePronta, variavelum, variaveldois);
 
     const ocorrencias = (frase.match(/1\/2/g) || []).length;
-    const encontrar = await encontrarObjetos(frase);
+    const encontrar = await encontrarObjetos(frase, dados);
 
     console.log(ocorrencias);
     console.log(frase);
@@ -60,8 +64,9 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
     const sabor = criarObjetoSabor(msg.from, response.loop, frase);
 
     if (ocorrencias != encontrar.length && ocorrencias) {
+      // numeroDeTelefone
       client.sendMessage(
-        numeroDeTelefone,
+        "5514998760815",
         `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
       );
     }
