@@ -1,4 +1,7 @@
-const { obterRepresentacaoOrdinal } = require("./scripts");
+const {
+  obterRepresentacaoOrdinal,
+  interpretarIngredientes,
+} = require("./scripts");
 
 function gerarTemplateString(response, from, client, valor) {
   let template = `*Numero do pedido:* ${response.id}
@@ -7,6 +10,10 @@ function gerarTemplateString(response, from, client, valor) {
 
   for (let i = 1; i <= response.qnt; i++) {
     const ordinal = obterRepresentacaoOrdinal(i);
+    let ing = "";
+    if (response["adcingrediente" + i] != null) {
+      ing = interpretarIngredientes(response["adcingrediente" + i]);
+    }
 
     template += `
 ${response.qnt > 1 ? `*${ordinal} PIZZA:*` : ""}${
@@ -21,6 +28,8 @@ ${
     }
 ${response["obs" + i] !== null ? `*Obs:* ${response["obs" + i]}` : ""}${
       response["obs" + i] !== null ? "\n" : ""
+    }${response["adcingrediente" + i] !== null ? `*Adicional:* ${ing}` : ""}${
+      response["adcingrediente" + i] !== null ? "\n" : ""
     }`;
   }
 

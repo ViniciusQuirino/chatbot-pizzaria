@@ -14,6 +14,7 @@ const { removerAcentos } = require("./atualizar.pizza");
 const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
 const { numeroDeTelefone } = require("./pedido");
 const { corrigirFrase } = require("./caso.especifico");
+const { ingredientes } = require("./ingredientes");
 
 async function grandeEMedia(recuperarEtapa, msg, client) {
   const response = await Requests.recuperarPedido(msg.from);
@@ -69,13 +70,15 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*
-Há algum ingrediente que você gostaria de retirar ou adicionar ?
+Há algum ingrediente que você gostaria de *retirar ou adicionar ?*
+  
+Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
+*Ex:* retirar cebola
 
-Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você gostaria de acrescentar ou remover.
+⬇️ Se preferir manter a receita original, digite 1. Para adicionar ingrediente, escolha a opção 2.
 
-⬇️ Se preferir manter a receita original, basta digitar o número 1.
-
-1 - Não quero adicionar e retirar nenhum ingrediente.`
+*1* - Não quero adicionar e retirar nenhum ingrediente.
+*2* - Acrescentar ingrediente`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "22" });
       Requests.atualizarPedido(sabor);
@@ -89,9 +92,10 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
   }
 
   if (recuperarEtapa.etapa == "22") {
-    client.sendMessage(
-      msg.from,
-      `*${ordinal} PIZZA:*
+    if (msg.body == "1") {
+      client.sendMessage(
+        msg.from,
+        `*${ordinal} PIZZA:*
 Quer adicionar borda recheada ?
 
 ⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
@@ -100,14 +104,57 @@ Quer adicionar borda recheada ?
 2 - Catupiry R$ 10,00
 3 - Cheddar R$ 10,00
 4 - Chocolate R$ 12,00`
-    );
-    Requests.atualizarEtapa(msg.from, { etapa: "23" });
+      );
+      Requests.atualizarEtapa(msg.from, { etapa: "23" });
+    } else if (msg.body == "2") {
+      client.sendMessage(
+        msg.from,
+        `*${ordinal} PIZZA:*
+Ingredientes para acrescentar:
 
-    if (msg.body != "1") {
+*0* - Voltar
+        
+*1* - Bacon R$ 8,00
+*2* - Milho R$ 5,00
+*3* - Catupiry R$ 7,00
+*4* - Cheddar R$ 7,00
+*5* - Cebola R$ 2,00
+*6* - Tomate R$ 2,00
+*7* - Mussarela R$ 10,00
+*8* - Calabresa R$ 8,00
+*9* - Frango R$ 8,00
+*10* - Presunto R$ 8,00
+*11* - Batata Palha R$ 6,00
+*12* - Ovo R$ 3,00
+*13* - Parmesão R$ 10,00
+*14* - Provolone R$ 12,00
+*15* - Bacon Cubos R$ 8,00`
+      );
+      Requests.atualizarEtapa(msg.from, { etapa: "ing" });
+    } else if (msg.body != "1" && msg.body != "2") {
+      client.sendMessage(
+        msg.from,
+        `*${ordinal} PIZZA:*
+Quer adicionar *borda recheada* ?
+  
+⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
+  
+*1* - Não quero
+*2* - Catupiry R$ 10,00
+*3* - Cheddar R$ 10,00
+*4* - Chocolate R$ 12,00`
+      );
+
       const obs = criarObjetoObs(msg.from, response.loop, msg.body);
       Requests.atualizarPedido(obs);
+
+      Requests.atualizarEtapa(msg.from, { etapa: "23" });
     }
   }
+
+  // -----------------------------------------------
+  ingredientes(msg, client, recuperarEtapa);
+  // -----------------------------------------------
 
   if (recuperarEtapa.etapa == "23") {
     if (msg.body == "1") {

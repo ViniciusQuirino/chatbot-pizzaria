@@ -177,12 +177,10 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
   result = result.replace(/c\/ c\//g, "c/");
 
   if (variavelum && variaveldois) {
-    console.log("oi");
     variavelum = false;
     const retorno = corrigirPalavrasParecidas(result, variavelum, variaveldois);
     return retorno;
   } else if (!variavelum && variaveldois) {
-    console.log("obbbbb");
     variavelum = false;
     variaveldois = false;
     const retorno = corrigirPalavrasParecidas(result, variavelum, variaveldois);
@@ -242,4 +240,4 @@ function levenshteinDistance(a, b) {
   return matrix[b.length][a.length];
 }
 
-module.exports = { corrigirPalavrasParecidas };
+module.exports = { corrigirPalavrasParecidas, dados };

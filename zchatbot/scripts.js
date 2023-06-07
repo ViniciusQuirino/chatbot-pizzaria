@@ -231,6 +231,24 @@ function criarObjetoBordaRecheada(from, numero, message) {
   return objeto;
 }
 
+function criarObjetoIngrediente(from, numero, message, request) {
+  var objeto = {
+    telefone: from,
+  };
+
+  if (numero >= 0 && numero <= 10) {
+    var propriedadeIngrediente = "adcingrediente" + numero;
+    if (request["adcingrediente" + numero] == null) {
+      objeto[propriedadeIngrediente] = message;
+    } else if (request["adcingrediente" + numero] != null) {
+      objeto[propriedadeIngrediente] =
+        request["adcingrediente" + numero] + `-${message}`;
+    }
+  }
+
+  return objeto;
+}
+
 async function desativarchatbot(msg, client) {
   let message = msg.body.toLowerCase();
 
@@ -239,7 +257,7 @@ async function desativarchatbot(msg, client) {
 
   if (desativar == "desativar") {
     try {
-      await Requests.updateEtapa(`55${telefone[1]}@c.us`, {
+      await Requests.atualizarEtapa(`55${telefone[1]}@c.us`, {
         ativado: false,
         etapa: "des",
       });
@@ -261,7 +279,7 @@ async function ativarchatbot(msg, client) {
 
   if (ativar == "ativar") {
     try {
-      await Requests.updateEtapa(`55${telefone[1]}@c.us`, {
+      await Requests.atualizarEtapa(`55${telefone[1]}@c.us`, {
         ativado: true,
         etapa: "a",
       });
@@ -272,6 +290,31 @@ async function ativarchatbot(msg, client) {
         "Não existe esse numero no banco de dados. Não se esqueça do ddd."
       );
     }
+  }
+}
+
+async function tempo(msg, client) {
+  let message = msg.body.toLowerCase();
+
+  let comando = message.slice(0, 7);
+  let tempo = message.split("/");
+
+  if (comando == "entrega") {
+    await Requests.atualizarTempo({ tempoentrega: tempo[1] });
+
+    client.sendMessage(
+      msg.from,
+      `Tempo de entrega atualizado para: ${tempo[1]}`
+    );
+  }
+
+  if (comando == "retirar") {
+    await Requests.atualizarTempo({ temporetirada: tempo[1] });
+
+    client.sendMessage(
+      msg.from,
+      `Tempo para retirar atualizado para: ${tempo[1]}`
+    );
   }
 }
 
@@ -306,10 +349,9 @@ async function dificuldade(msg, client) {
   }
 }
 
-async function encontrarObjetos(frase) {
+async function encontrarObjetos(frase, dados) {
   const expressao = /1\/2/;
   const contemOcorrencia = expressao.test(frase);
-  const dados = await Requests.listarPizzas();
 
   if (contemOcorrencia) {
     const regex = /1\/2\s(.*?)\se\s1\/2\s(.*?)$/;
@@ -413,6 +455,70 @@ function melhorarFrase(frase) {
   return frase; // Retorna a frase modificada ou a frase original se não houve alterações
 }
 
+function interpretarIngredientes(ingredientesString) {
+  const ingredientes = {
+    1: "bacon",
+    2: "milho",
+    3: "catupiry",
+    4: "cheddar",
+    5: "cebola",
+    6: "tomate",
+    7: "mussarela",
+    8: "calabresa",
+    9: "frango",
+    10: "presunto",
+    11: "batata Palha",
+    12: "ovo",
+    13: "parmesão",
+    14: "provolone",
+    15: "bacon Cubos",
+  };
+
+  const ingredientesSelecionados = ingredientesString.split("-");
+  const ingredientesNomes = ingredientesSelecionados.map(
+    (ingrediente) => ingredientes[ingrediente]
+  );
+
+  if (ingredientesNomes.length > 1) {
+    const ultimoIngrediente = ingredientesNomes.pop();
+    return ingredientesNomes.join(", ") + " e " + ultimoIngrediente;
+  }
+
+  return ingredientesNomes[0];
+}
+
+function calcularValorIngredientes(ingredientes) {
+  const precos = {
+    1: 8, // Bacon
+    2: 5, // Milho
+    3: 7, // Catupiry
+    4: 7, // Cheddar
+    5: 2, // Cebola
+    6: 2, // Tomate
+    7: 10, // Mussarela
+    8: 8, // Calabresa
+    9: 8, // Frango
+    10: 8, // Presunto
+    11: 6, // Batata Palha
+    12: 3, // Ovo
+    13: 10, // Parmesão
+    14: 12, // Provolone
+    15: 8, // Bacon Cubos
+  };
+
+  const ingredientesArray = ingredientes.split("-");
+
+  let valorTotal = 0;
+  for (let i = 0; i < ingredientesArray.length; i++) {
+    const ingrediente = ingredientesArray[i];
+    if (precos.hasOwnProperty(ingrediente)) {
+      valorTotal += precos[ingrediente];
+    }
+  }
+
+  return valorTotal;
+}
+
 module.exports = {
   cardapio,
   gostouDoNossoCardapio,
@@ -428,6 +534,7 @@ module.exports = {
   criarObjetoSabor,
   criarObjetoObs,
   criarObjetoBordaRecheada,
+  criarObjetoIngrediente,
   listarPizzas,
   melhorarFrase,
   encontrarObjetos,
@@ -435,4 +542,7 @@ module.exports = {
   dificuldade,
   desativarchatbot,
   ativarchatbot,
+  tempo,
+  interpretarIngredientes,
+  calcularValorIngredientes,
 };

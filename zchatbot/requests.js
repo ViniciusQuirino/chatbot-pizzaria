@@ -28,6 +28,11 @@ class Requests {
     return response.data;
   }
 
+  static async atualizarTempo(body) {
+    let response = await api.patch(`/tempo`, body);
+    return response.data;
+  }
+
   static async criarPedido(body) {
     let response = await api.post(`/pedidos`, body);
     return response.data;

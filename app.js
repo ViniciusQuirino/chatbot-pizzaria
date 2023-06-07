@@ -18,6 +18,7 @@ const {
   audio,
   ativarchatbot,
   desativarchatbot,
+  tempo,
 } = require("./zchatbot/scripts");
 const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
 
@@ -71,18 +72,26 @@ client.on("message", async (msg) => {
   const h = date.getHours();
 
   if (
-    (recuperarEtapa !== undefined &&
-      recuperarEtapa.ativado == true &&
-      msg.from == "5514998760815@c.us") ||
+    recuperarEtapa !== undefined &&
+    recuperarEtapa.ativado == true &&
+    msg.from == "5514998760815@c.us"
     // msg.from == "5514996056869@c.us" ||
     // msg.from == "5514991342480"
-    msg.from == "5514998593589@c.us"
+    // msg.from == "5514998593589@c.us"
   ) {
     const message = msg.body.toLowerCase();
     let desativar = message.slice(0, 9);
     let ativar = message.slice(0, 6);
-    if (ativar != "ativar" && desativar != "desativar" && h >= 5 && h < 23) {
-      if (msg.mediaKey != undefined && recuperarEtapa !== "comp") {
+    let comando = message.slice(0, 7);
+    if (
+      ativar != "ativar" &&
+      desativar != "desativar" &&
+      comando != "entrega" &&
+      comando != "retirar" &&
+      h >= 5 &&
+      h < 23
+    ) {
+      if (msg.mediaKey != undefined && msg.duration != undefined) {
         audio(msg.from, client);
       }
       pedidos(recuperarEtapa, msg, client);
@@ -103,9 +112,10 @@ client.on("message", async (msg) => {
         grandeEMedia(recuperarEtapa, msg, client);
       }
     }
-    ativarchatbot(msg, client);
-    desativarchatbot(msg, client);
   }
+  ativarchatbot(msg, client);
+  desativarchatbot(msg, client);
+  tempo(msg, client);
 });
 
 client.initialize();

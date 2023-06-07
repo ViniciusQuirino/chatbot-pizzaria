@@ -1,8 +1,9 @@
-const { encontrarObjetos } = require("./scripts");
-
-async function somarValorTotal(response, msg, client) {
+const { encontrarObjetos, calcularValorIngredientes } = require("./scripts");
+const { Requests } = require("./requests");
+async function somarValorTotal(response) {
+  const dados = await Requests.listarPizzas();
   let valor = 0;
-  let maiorValor = -Infinity;
+
   if (response.cidade == 1) {
     valor += 7;
   } else if (response.cidade == 2) {
@@ -15,6 +16,9 @@ async function somarValorTotal(response, msg, client) {
     valor += response.qntrefrigerante * 8;
   }
 
+  const dataAtual = new Date();
+  const diaSemana = dataAtual.getDay(); // 0 (Domingo) a 6 (Sábado)
+
   for (let i = 1; i <= 10; i++) {
     if (response["bordarecheada" + i] == "catupiry") {
       valor += 10;
@@ -24,69 +28,60 @@ async function somarValorTotal(response, msg, client) {
       valor += 12;
     }
 
+    if (response["adcingrediente" + i] != null) {
+      valor += calcularValorIngredientes(response["adcingrediente" + i]);
+    }
+
     if (response["sabor" + i] != null) {
-      const resultado = await encontrarObjetos(response["sabor" + i]);
+      const resultado = await encontrarObjetos(response["sabor" + i], dados);
       console.log(resultado);
       if (resultado.length == 1) {
         if (response["tamanho" + i] == "grande") {
-          valor += resultado[0].grande;
-        }
-
-        if (response["tamanho" + i] == "média") {
+          const valorPizza =
+            diaSemana >= 1 && diaSemana <= 4 && isPromocao(resultado[0].nome)
+              ? 30.0
+              : resultado[0].grande;
+          valor += valorPizza;
+        } else if (response["tamanho" + i] == "média") {
           valor += resultado[0].media;
         }
-      }
-
-      if (resultado.length == 2) {
+      } else if (resultado.length == 2) {
         const maiorValorSabor = Math.max(
           resultado[0].grande,
           resultado[1].grande
         );
         if (response["tamanho" + i] == "grande") {
-          valor += maiorValorSabor;
+          if (
+            diaSemana >= 1 &&
+            diaSemana <= 4 &&
+            isPromocao(resultado[0].nome)
+          ) {
+            valor += maiorValorSabor;
+          } else if (
+            diaSemana >= 1 &&
+            diaSemana <= 4 &&
+            !isPromocao(resultado[0].nome)
+          ) {
+            valor += maiorValorSabor;
+          }
         } else if (response["tamanho" + i] == "média") {
           valor += resultado[0].media;
         }
-        // if (response["tamanho" + i] == "grande") {
-        //   if (resultado[i].grande > maiorValor) {
-        //     maiorValor = resultado[i].grande;
-        //     valor += maiorValor;
-        //   }
-        // }
-
-        // if (response["tamanho" + i] == "média") {
-        //   if (resultado[i].media > maiorValor) {
-        //     maiorValor = resultado[i].media;
-        //     valor += maiorValor;
-        //   }
-        // }
       }
-      // if (resultado.length == 2) {
-      //   if (response["tamanho" + i] == "grande") {
-      //     if (resultado[0].grande > maiorValor) {
-      //       maiorValor = resultado[0].grande;
-      //       valor += maiorValor;
-      //     }
-      //     if (resultado[1].grande > maiorValor) {
-      //       maiorValor = resultado[1].grande;
-      //       valor += maiorValor;
-      //     }
-      //   }
-
-      //   if (response["tamanho" + i] == "média") {
-      //     if (resultado[0].media > maiorValor) {
-      //       maiorValor = resultado[0].media;
-      //       valor += maiorValor;
-      //     }
-      //     if (resultado[1].media > maiorValor) {
-      //       maiorValor = resultado[1].media;
-      //       valor += maiorValor;
-      //     }
-      //   }
-      // }
     }
   }
   return valor;
+}
+
+function isPromocao(nomePizza) {
+  const pizzasPromocao = [
+    "alho e tomate",
+    "calabresa",
+    "milho c/ catupiry",
+    "lombo",
+    "presunto",
+  ];
+  return pizzasPromocao.includes(nomePizza.toLowerCase());
 }
 
 module.exports = { somarValorTotal };

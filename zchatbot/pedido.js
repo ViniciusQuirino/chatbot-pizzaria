@@ -15,6 +15,7 @@ const { somarValorTotal } = require("./valor.total");
 const { removerAcentos } = require("./atualizar.pizza");
 const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
 const { corrigirFrase } = require("./caso.especifico");
+const { ingredientes } = require("./ingredientes");
 
 async function pedidos(recuperarEtapa, msg, client) {
   if (recuperarEtapa.etapa == "a") {
@@ -22,7 +23,7 @@ async function pedidos(recuperarEtapa, msg, client) {
     client.sendMessage(
       msg.from,
       `Olá! 😃
-Eu sou o assistente virtual da Pizzaria Primo e estou aqui para te ajudar. Temos uma variedade de opções deliciosas no nosso cardápio.
+Eu sou o assistente virtual da *Pizzaria Primo* e estou aqui para te ajudar. Temos uma variedade de opções deliciosas no nosso cardápio.
 
 Tempo de entrega: ${response.tempoentrega}
 Tempo p/ retirar: ${response.temporetirada}
@@ -50,6 +51,9 @@ Tempo p/ retirar: ${response.temporetirada}
     }
     if (msg.body == "3") {
       await cardapio(msg.from);
+      const date = new Date();
+      const dia = date.getDay();
+
       gostouDoNossoCardapio(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "c" });
     }
@@ -84,7 +88,7 @@ Tempo p/ retirar: ${response.temporetirada}
     const verificarResposta = verificarNumero(msg.body);
     if (verificarResposta) {
       const resposta = +verificarResposta;
-      console.log(resposta);
+
       if (resposta == 1) {
         client.sendMessage(
           msg.from,
@@ -194,13 +198,15 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     if (encontrar[0]) {
       client.sendMessage(
         msg.from,
-        `Há algum ingrediente que você gostaria de retirar ou adicionar ?
+        `Há algum ingrediente que você gostaria de *retirar ou adicionar ?*
   
-Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você gostaria de acrescentar ou remover.
+Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
+*Ex:* retirar cebola
 
-⬇️ Se preferir manter a receita original, basta digitar o número 1.
+⬇️ Se preferir manter a receita original, digite 1. Para adicionar ingrediente, escolha a opção 2.
 
-1 - Não quero adicionar e retirar nenhum ingrediente.`
+*1* - Não quero adicionar e retirar nenhum ingrediente.
+*2* - Acrescentar ingrediente`
       );
       Requests.atualizarPedido({ telefone: msg.from, sabor1: frase });
       Requests.atualizarEtapa(msg.from, { etapa: "e" });
@@ -227,7 +233,32 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
 *4* - Chocolate R$ 12,00`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "f" });
-    } else if (msg.body != "1") {
+    } else if (msg.body == "2") {
+      client.sendMessage(
+        msg.from,
+        `Ingredientes para acrescentar:
+
+*0* - Voltar
+
+*1* - Bacon R$ 8,00
+*2* - Milho R$ 5,00
+*3* - Catupiry R$ 7,00
+*4* - Cheddar R$ 7,00
+*5* - Cebola R$ 2,00
+*6* - Tomate R$ 2,00
+*7* - Mussarela R$ 10,00
+*8* - Calabresa R$ 8,00
+*9* - Frango R$ 8,00
+*10* - Presunto R$ 8,00
+*11* - Batata Palha R$ 6,00
+*12* - Ovo R$ 3,00
+*13* - Parmesão R$ 10,00
+*14* - Provolone R$ 12,00
+*15* - Bacon Cubos R$ 8,00`
+      );
+
+      Requests.atualizarEtapa(msg.from, { etapa: "ing" });
+    } else if (msg.body != "1" && msg.body != "2") {
       client.sendMessage(
         msg.from,
         `Quer adicionar *borda recheada* ?
@@ -243,6 +274,10 @@ Caso deseje fazer alguma alteração, por favor, escreva o ingrediente que você
       Requests.atualizarEtapa(msg.from, { etapa: "f" });
     }
   }
+
+  // -----------------------------------------------
+  ingredientes(msg, client, recuperarEtapa);
+  // -----------------------------------------------
 
   if (recuperarEtapa.etapa == "f") {
     if (msg.body == "1") {
@@ -585,7 +620,11 @@ Tem um cliente precisando de ajuda!`
     }
   }
 
-  if (recuperarEtapa.etapa == "comp" && msg.mediaKey != undefined) {
+  if (
+    recuperarEtapa.etapa == "comp" &&
+    msg.duration == undefined &&
+    msg.mediaKey != undefined
+  ) {
     client.sendMessage(
       msg.from,
       `Obrigado por nos enviar o comprovante!
