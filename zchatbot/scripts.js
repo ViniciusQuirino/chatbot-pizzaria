@@ -2,6 +2,7 @@ const URL_CHATBOT = "http://localhost:7005";
 const axios = require("axios");
 const { Requests } = require("./requests");
 const Fuse = require("fuse.js");
+const CronJob = require("cron").CronJob;
 
 const cardapio = async (from, dia) => {
   if (dia <= 4) {
@@ -40,6 +41,17 @@ const cardapio = async (from, dia) => {
   }
 };
 
+function cronJob() {
+  const date = new Date();
+  const h = date.getHours();
+  const job = new CronJob("0 * * * *", async () => {
+    if (h >= 5 && h <= 23) {
+      Requests.encerrarAtendimento()
+    }
+  });
+  job.start();
+}
+
 const gostouDoNossoCardapio = async (from, client) => {
   client.sendMessage(
     from,
@@ -52,7 +64,7 @@ Quantas pizzas você vai querer ? Digite *apenas o numero.*`
 const querQueEntregue = async (from, client) => {
   client.sendMessage(
     from,
-    `Blzaa 😃
+    `Certo 😃
       
 Você quer que *entregue* ?
 
@@ -60,7 +72,7 @@ Valores:
 Dentro de igaraçu: 7,00 reais
 Igaraçu x Barra: 10,00 reais
 
-⬇️ Escolha uma das opções abaixo digitando apenas o numero.
+⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
 *1* - Sim, quero que entregue.
 *2* - Não, vou ir buscar.`
@@ -84,7 +96,7 @@ const desejaAlgoParaBeber = async (from, client) => {
     from,
     `Ok, você deseja algo para beber ?
 
-⬇️ Escolha uma das opções abaixo digitante apenas o numero.
+⬇️ Escolha uma das opções abaixo digitante *apenas o numero.*
 
 *1* - Não quero.
 *2* - Coca-Cola 2 Litros R$ 14,00
@@ -121,7 +133,7 @@ const tamanho = async (from, client, response) => {
     from,
     `Qual é o *tamanho da ${ordinal} PIZZA ?*
 
-⬇️ Escolha uma das opções abaixo digitante apenas o numero.
+⬇️ Escolha uma das opções abaixo digitante *apenas o numero.*
 
 *1* - Grande 🍕
 *2* - Média 🍕`
@@ -597,6 +609,7 @@ module.exports = {
   desativarchatbot,
   ativarchatbot,
   tempo,
+  cronJob,
   interpretarIngredientes,
   calcularValorIngredientes,
 };

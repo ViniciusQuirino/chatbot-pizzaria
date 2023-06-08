@@ -48,6 +48,11 @@ class Requests {
     return response.data;
   }
 
+  static async encerrarAtendimento(from) {
+    let response = await api.get(`/pedidos`);
+    return response.data;
+  }
+
   static async listarPizzas() {
     let response = await api.get(`/pizzas`);
     return response.data;

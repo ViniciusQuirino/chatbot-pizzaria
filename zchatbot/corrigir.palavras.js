@@ -200,9 +200,22 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     result = result.replace(/ c\/\/\//g, " c/");
     result = result.replace(/ c\/\/\/\//g, " c/");
     result = result.replace(/ e e /g, " e ");
+    result = result.replace(/ ee /g, " e ");
+    result = result.replace(/,,/g, " e ");
+    result = result.replace(/ e e /g, " e ");
     result = result.replace(/1\/2 e 1\/2/g, "1/2");
     result = result.replace(/,/g, "");
 
+    const ocorrencia = result.match(/1\/2/g);
+
+    if (ocorrencia.length == 3 && result.startsWith("1/2 alho e 1/2 tomate")) {
+      result = result.replace(
+        /1\/2 alho e 1\/2 tomate/g,
+        "1/2 alho e tomate e"
+      );
+    } else if (ocorrencia.length == 2) {
+      result = result.replace(/1\/2 alho e 1\/2 tomate/g, "alho e tomate");
+    }
     return result;
   }
 }

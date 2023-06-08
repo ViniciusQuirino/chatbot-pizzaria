@@ -20,6 +20,7 @@ const {
   ativarchatbot,
   desativarchatbot,
   tempo,
+  cronJob
 } = require("./zchatbot/scripts");
 const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
 const { atualizarProduto } = require("./zchatbot/atualizar.produtos");
@@ -66,30 +67,36 @@ const client = new Client({
   },
   authStrategy: new LocalAuth(),
 });
-
+let imprevisto = false;
+cronJob()
 client.on("message", async (msg) => {
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
 
   const date = new Date();
   const h = date.getHours();
 
-  if (
+  const message = msg.body.toLowerCase();
+  const separar = message.split("/");
+
+  if (separar[1] == "ativo") {
+    imprevisto = true;
+    client.sendMessage(msg.from, `Imprevisto ativado`);
+  } else if (separar[1] == "inativo") {
+    imprevisto = false;
+    client.sendMessage(msg.from, `Imprevisto desativado`);
+  } else if (
     (recuperarEtapa !== undefined &&
       recuperarEtapa.ativado == true &&
-      msg.from == "5514998760815@c.us")  ||
-    // msg.from == "5514996056869@c.us" ||
-    // msg.from == "5514991342480"
+      !imprevisto &&
+      msg.from == "5514998760815@c.us") ||
     msg.from == "5514998593589@c.us"
   ) {
-    const message = msg.body.toLowerCase();
-    let desativar = message.slice(0, 9);
-    let ativar = message.slice(0, 6);
-    let comando = message.slice(0, 7);
     if (
-      ativar != "ativar" &&
-      desativar != "desativar" &&
-      comando != "entrega" &&
-      comando != "retirar" &&
+      separar[0] != "ativar" &&
+      separar[0] != "desativar" &&
+      separar[0] != "entrega" &&
+      separar[0] != "retirar" &&
+      separar[0] != "inativo" &&
       h >= 5 &&
       h < 23
     ) {

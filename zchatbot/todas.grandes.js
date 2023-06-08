@@ -41,7 +41,7 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
         msg.from,
         `Qual é o *tamanho da ${ordinal} PIZZA ?*
 
-⬇️ Escolha uma das opções abaixo digitante apenas o numero.
+⬇️ Escolha uma das opções abaixo digitante *apenas o numero.*
 
 *1* - Grande 🍕
 *2* - Média 🍕`
@@ -53,7 +53,7 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
         `*Atenção ⚠️*
 Todas são tamanho grande ?
 
-⬇️ Escolha uma das opções abaixo digitando apenas o numero.
+⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
   
 *1* - Sim, as 2 pizzas são tamanho grande.
 *2* - Não, tem pizza que vai ser tamanho médio.`

@@ -412,7 +412,7 @@ Você deseja algo para *beber* ? 🥤
     if (msg.body == "2") {
       client.sendMessage(
         msg.from,
-        `Blzaa 😃
+        `Okay 😃
 
 Nosso *endereço* fica localizado em Igaraçu, Rua Josepha Rodrigues Moreira - N:48`
       );
