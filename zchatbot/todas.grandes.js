@@ -88,7 +88,7 @@ Todas são tamanho grande ?
     if (ocorrencias != encontrar.length && ocorrencias) {
        //numeroDeTelefone
       client.sendMessage(
-        "5514998760815",
+        "5514998760815@c.us",
         `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
       );
     }

@@ -59,7 +59,7 @@ function cronJob() {
 
   // const enviarMensagem = new CronJob("* * * * *", async () => {
   //   const data = {
-  //     number: "5514998760815",
+  //     number: "5514998760815@c.us",
   //     message: `Hello world!`,
   //   };
 
@@ -422,7 +422,7 @@ async function dificuldade(msg, client) {
   if (response.problema == 3) {
     //numeroDeTelefone
     client.sendMessage(
-      "5514998760815",
+      "5514998760815@c.us",
       `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
     );
   }
@@ -431,6 +431,13 @@ async function dificuldade(msg, client) {
 async function encontrarObjetos(frase, dados) {
   const expressao = /1\/2/;
   const contemOcorrencia = expressao.test(frase);
+
+  if (frase === "alho e tomate") {
+    let obj = dados.find(function (pizza) {
+      return pizza.nome === "alho e tomate";
+    });
+    return [obj];
+  }
 
   if (contemOcorrencia) {
     const regex = /1\/2\s(.*?)\se\s1\/2\s(.*?)$/;

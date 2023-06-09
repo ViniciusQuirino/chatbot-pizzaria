@@ -42,14 +42,14 @@ Tempo p/ retirar: ${response.temporetirada}
     const dataAtual = new Date();
     const diaSemana = dataAtual.getDay(); // 0 (Domingo) a 6 (Sábado)
     if (msg.body == "1") {
+      await cardapio(msg.from, diaSemana);
+
       if (diaSemana >= 5) {
         client.sendMessage(
           msg.from,
           `Nossa promoção é valida apenas de *SEGUNDA A SEXTA*`
         );
       }
-
-      await cardapio(msg.from, diaSemana);
 
       gostouDoNossoCardapio(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "c" });
@@ -75,10 +75,9 @@ Tempo p/ retirar: ${response.temporetirada}
         `Atenção ⚠️
 ⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
-*1* - Cardápio
+*1* - Cardápio e Promoções
 *2* - Fazer pedido
-*3* - Promoções
-*4* - Redes Sociais`
+*3* - Redes Sociais`
       );
       dificuldade(msg, client);
     }
@@ -190,7 +189,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     if (ocorrencias != encontrar.length && ocorrencias) {
       //numeroDeTelefone
       client.sendMessage(
-        "5514998760815",
+        "5514998760815@c.us",
         `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
       );
     }
@@ -526,6 +525,7 @@ Se não, digite apenas o numero 1
         formadepagamento: "cartão",
       });
       const valor = await somarValorTotal(response, msg, client);
+      console.log(valor);
       gerarTemplateString(response, msg.from, client, valor);
 
       desejaConfirmarOPedido(msg.from, client);
@@ -537,6 +537,7 @@ Se não, digite apenas o numero 1
         formadepagamento: "pix",
       });
       const valor = await somarValorTotal(response, msg, client);
+      console.log(valor);
       gerarTemplateString(response, msg.from, client, valor);
 
       desejaConfirmarOPedido(msg.from, client);
@@ -565,6 +566,7 @@ Qual vai ser a forma de pagamento ?
     });
 
     const valor = await somarValorTotal(response, msg, client);
+    console.log(valor);
     gerarTemplateString(response, msg.from, client, valor);
 
     desejaConfirmarOPedido(msg.from, client);
@@ -606,9 +608,9 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
 Um de nossos colaboradores já vai te atender.`
       );
       // numeroDeTelefone
-      client.sendMessage("5514998760815", `${msg.from.slice(2, 13)}`);
+      client.sendMessage("5514998760815@c.us", `${msg.from.slice(2, 13)}`);
       client.sendMessage(
-        "5514998760815",
+        "5514998760815@c.us",
         `Atenção ⚠️
 Tem um cliente precisando de ajuda!`
       );

@@ -67,6 +67,8 @@ async function somarValorTotal(response) {
             !isPromocao(resultado[0].nome)
           ) {
             valor += resultado[0].grande;
+          } else if (diaSemana >= 5) {
+            valor += resultado[0].grande;
           }
         } else if (response["tamanho" + i] == "média") {
           valor += resultado[0].media;
@@ -95,6 +97,8 @@ async function somarValorTotal(response) {
             diaSemana <= 4 &&
             !isPromocao(resultado[0].nome)
           ) {
+            valor += maiorValorSabor;
+          } else if (diaSemana >= 5) {
             valor += maiorValorSabor;
           }
         } else if (response["tamanho" + i] == "média") {
