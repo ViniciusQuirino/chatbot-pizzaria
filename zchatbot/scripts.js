@@ -59,7 +59,7 @@ function cronJob() {
 
   const enviarMensagem = new CronJob("* * * * *", async () => {
     const data = {
-      number: telefone,
+      number: "5514998760815",
       message: `Hello world!`,
     };
 
