@@ -57,31 +57,31 @@ function cronJob() {
   job.start();
   jobDB.start();
 
-  // const enviarMensagem = new CronJob("* * * * *", async () => {
-  //   const data = {
-  //     number: telefone,
-  //     message: `Hello world!`,
-  //   };
+  const enviarMensagem = new CronJob("* * * * *", async () => {
+    const data = {
+      number: telefone,
+      message: `Hello world!`,
+    };
 
-  //   axios
-  //     .post("http://localhost:7005/send-message", data, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(data),
-  //     })
-  //     .then((response) => response.data)
-  //     .then((res) => {
-  //       // Faça o que você precisa com a resposta
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // });
+    axios
+      .post("https://chatbot-om08.onrender.com/send-message", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      .then((response) => response.data)
+      .then((res) => {
+        // Faça o que você precisa com a resposta
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
 
   job.start();
   jobDB.start();
-  // enviarMensagem.start();
+  enviarMensagem.start();
 }
 
 const gostouDoNossoCardapio = async (from, client) => {
