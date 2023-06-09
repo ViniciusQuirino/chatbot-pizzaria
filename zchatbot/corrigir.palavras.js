@@ -58,9 +58,16 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     .replace(/ piza /g, "")
     .replace(/ pzza /g, "")
     .replace(/ izza /g, "")
+    .replace(/3 queijo/g, "3 queijos")
+    .replace(/tres queijo/g, "3 queijos")
+    .replace(/4 queijo/g, "4 queijos")
+    .replace(/quatro queijo/g, "4 queijos")
     .replace(/ quero| quero |quero/g, "")
     .replace(/ queria| queria |queria/g, "")
     .replace(/ gostaria| gostaria |gostaria/g, "")
+    .replace(/chocuduo/g, "chocoduo")
+    .replace(/chucuduo/g, "chocoduo")
+    .replace(/chucoduo/g, "chocoduo")
     .replace(/ queru| queru |queru/g, "")
     .replace(/\s+/g, " ")
     .replace(/(1\/2)\s*\1+/g, "$1");
@@ -102,21 +109,23 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     }
 
     if (melhorCorrespondencia) {
-      if (
-        palavrasFrase[i + 1] === "bacon" ||
-        palavrasFrase[i + 1] === "catupiry" ||
-        palavrasFrase[i + 1] === "cheddar" ||
-        palavrasFrase[i + 1] === "pacoca" ||
-        palavrasFrase[i + 1] === "paçoca" ||
-        palavrasFrase[i + 1] === "barbecue"
-      ) {
-        palavraCorrigida = melhorCorrespondencia + " c/";
-      } else if (melhorCorrespondencia == "moda") {
-        palavraCorrigida = "a " + melhorCorrespondencia;
-      } else if (melhorCorrespondencia == "pizzaiolo") {
-        palavraCorrigida = "do " + melhorCorrespondencia;
-      } else {
-        palavraCorrigida = melhorCorrespondencia;
+      if (melhorCorrespondencia !== "alface") {
+        if (
+          palavrasFrase[i + 1] === "bacon" ||
+          palavrasFrase[i + 1] === "catupiry" ||
+          palavrasFrase[i + 1] === "cheddar" ||
+          palavrasFrase[i + 1] === "pacoca" ||
+          palavrasFrase[i + 1] === "paçoca" ||
+          palavrasFrase[i + 1] === "barbecue"
+        ) {
+          palavraCorrigida = melhorCorrespondencia + " c/";
+        } else if (melhorCorrespondencia == "moda") {
+          palavraCorrigida = "a " + melhorCorrespondencia;
+        } else if (melhorCorrespondencia == "pizzaiolo") {
+          palavraCorrigida = "do " + melhorCorrespondencia;
+        } else {
+          palavraCorrigida = melhorCorrespondencia;
+        }
       }
     }
 
@@ -164,10 +173,6 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
   result = stringUnica.replace(/cm|com/g, "c/");
   result = result.replace(/ om /g, " c/ ");
 
-  console.log(variavelum);
-  console.log(variaveldois);
-  console.log(frase);
-
   for (let i = 1; i <= 12; i++) {
     if (palavrasFrase[i] == "c") {
       result = result.replace(/ c/g, " c/");
@@ -206,16 +211,79 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     result = result.replace(/1\/2 e 1\/2/g, "1/2");
     result = result.replace(/,/g, "");
 
+    result = result.replace(/alface c\/ bacon/g, "alface e bacon");
+    result = result.replace(/calabresa c\/ bacon/g, "calabresa e bacon");
+    result = result.replace(/moda c\/ bacon/g, "moda e bacon");
+    result = result.replace(/tomate c\/ bacon/g, "tomate e bacon");
+    result = result.replace(/americano c\/ bacon/g, "americano e bacon");
+    result = result.replace(/atum c\/ bacon/g, "atum e bacon");
+    result = result.replace(/especial c\/ bacon/g, "especial e bacon");
+    result = result.replace(/brasileira c\/ bacon/g, "brasileira e bacon");
+    result = result.replace(/baiana c\/ bacon/g, "baiana e bacon");
+    result = result.replace(/bacon c\/ bacon/g, "bacon e bacon");
+    result = result.replace(/brocolis c\/ bacon/g, "brocolis e bacon");
+    result = result.replace(/palha c\/ bacon/g, "palha e bacon");
+    result = result.replace(/doritos c\/ bacon/g, "doritos e bacon");
+    result = result.replace(/barbecue c\/ bacon/g, "barbecue e bacon");
+    result = result.replace(/catupiry c\/ bacon/g, "catupiry e bacon");
+    result = result.replace(/lombo c\/ bacon/g, "lombo e bacon");
+    result = result.replace(/cheddar c\/ bacon/g, "cheddar e bacon");
+    result = result.replace(/marguerita c\/ bacon/g, "marguerita e bacon");
+    result = result.replace(/mista c\/ bacon/g, "mista e bacon");
+    result = result.replace(/mussarela c\/ bacon/g, "mussarela e bacon");
+    result = result.replace(/pizzaiolo c\/ bacon/g, "pizzaiolo e bacon");
+    result = result.replace(/pepperoni c\/ bacon/g, "pepperoni e bacon");
+    result = result.replace(/portuguesa c\/ bacon/g, "portuguesa e bacon");
+    result = result.replace(/presunto c\/ bacon/g, "presunto e bacon");
+    result = result.replace(/provolone c\/ bacon/g, "provolone e bacon");
+    result = result.replace(/salame c\/ bacon/g, "salame e bacon");
+    result = result.replace(/toscana c\/ bacon/g, "toscana e bacon");
+    result = result.replace(/queijo c\/ bacon/g, "queijo e bacon");
+    result = result.replace(/vegetariana c\/ bacon/g, "vegetariana e bacon");
+    result = result.replace(/banana c\/ bacon/g, "banana e bacon");
+    result = result.replace(/nevada c\/ bacon/g, "nevada e bacon");
+    result = result.replace(/chocoduo c\/ bacon/g, "chocoduo e bacon");
+    result = result.replace(/pacoca c\/ bacon/g, "pacoca e bacon");
+    result = result.replace(/laka c\/ bacon/g, "laka e bacon");
+    result = result.replace(/oreo c\/ bacon/g, "oreo e bacon");
+    result = result.replace(/casa c\/ bacon/g, "casa e bacon");
+
     const ocorrencia = result.match(/1\/2/g);
 
-    if (ocorrencia.length == 3 && result.startsWith("1/2 alho e 1/2 tomate")) {
-      result = result.replace(
-        /1\/2 alho e 1\/2 tomate/g,
-        "1/2 alho e tomate e"
-      );
-    } else if (ocorrencia.length == 2) {
-      result = result.replace(/1\/2 alho e 1\/2 tomate/g, "alho e tomate");
+    if (ocorrencia) {
+      if (
+        ocorrencia.length == 2 &&
+        result.indexOf("1/2 alho e 1/2 tomate") !== -1 &&
+        result.indexOf("1/2 alho e 1/2 tomate") === 0
+      ) {
+        result = result.replace(/1\/2 alho e 1\/2 tomate/g, "alho e tomate");
+      } else if (
+        ocorrencia.length == 3 &&
+        result.indexOf("1/2 alho e 1/2 tomate") !== -1 &&
+        result.indexOf("1/2 alho e 1/2 tomate") === 0
+      ) {
+        result = result.replace(
+          /1\/2 alho e 1\/2 tomate/g,
+          "1/2 alho e tomate e"
+        );
+      } else if (
+        ocorrencia.length == 3 &&
+        result.indexOf("1/2 alho e 1/2 tomate") !== -1 &&
+        result.indexOf("1/2 alho e 1/2 tomate") > 0
+      ) {
+        result = result.replace(
+          /1\/2 alho e 1\/2 tomate/g,
+          "1/2 alho e tomate"
+        );
+      } else if (
+        ocorrencia.length == 3 &&
+        result.indexOf("1/2 alho 1/2 tomate") !== -1 &&
+        result.indexOf("1/2 alho 1/2 tomate") > 0
+      ) {
+        result = result.replace(/1\/2 alho 1\/2 tomate/g, "1/2 alho e tomate");
+      }
     }
+
     return result;
   }
 }
