@@ -46,10 +46,42 @@ function cronJob() {
   const h = date.getHours();
   const job = new CronJob("0 * * * *", async () => {
     if (h >= 5 && h <= 23) {
-      Requests.encerrarAtendimento()
+      Requests.encerrarAtendimento();
     }
   });
+
+  const jobDB = new CronJob("*/20 * * * *", async () => {
+    Requests.recuperarTempo();
+  });
+
   job.start();
+  jobDB.start();
+
+  // const enviarMensagem = new CronJob("* * * * *", async () => {
+  //   const data = {
+  //     number: telefone,
+  //     message: `Hello world!`,
+  //   };
+
+  //   axios
+  //     .post("http://localhost:7005/send-message", data, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(data),
+  //     })
+  //     .then((response) => response.data)
+  //     .then((res) => {
+  //       // Faça o que você precisa com a resposta
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // });
+
+  job.start();
+  jobDB.start();
+  // enviarMensagem.start();
 }
 
 const gostouDoNossoCardapio = async (from, client) => {
