@@ -33,6 +33,11 @@ class Requests {
     return response.data;
   }
 
+  static async ativarChatbot() {
+    let response = await api.get(`/etapas`);
+    return response.data;
+  }
+
   static async criarPedido(body) {
     let response = await api.post(`/pedidos`, body);
     return response.data;

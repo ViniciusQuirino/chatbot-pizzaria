@@ -47,7 +47,7 @@ Tempo p/ retirar: ${response.temporetirada}
       if (diaSemana >= 5) {
         client.sendMessage(
           msg.from,
-          `Nossa promoção é valida apenas de *SEGUNDA A SEXTA*`
+          `Nossa promoção é valida apenas de *SEGUNDA A QUINTA*`
         );
       }
 
@@ -582,7 +582,10 @@ Qual vai ser a forma de pagamento ?
 Nossa equipe está animada para preparar a sua deliciosa pizza e entregá-la com todo cuidado e sabor. 😃🍕`
       );
 
-      const response = await Requests.recuperarPedido(msg.from);
+      const response = await Requests.atualizarPedido({
+        telefone: msg.from,
+        pedidoconfirmado: true,
+      });
 
       if (response.formadepagamento == "pix") {
         client.sendMessage(
@@ -597,7 +600,7 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
         client.sendMessage(msg.from, "14998593589");
         Requests.atualizarEtapa(msg.from, { etapa: "comp" });
       } else if (response.formadepagamento != "pix") {
-        Requests.atualizarEtapa(msg.from, { etapa: "a" });
+        Requests.atualizarEtapa(msg.from, { etapa: "a", ativado: false });
       }
     }
     if (msg.body == "2") {
@@ -614,7 +617,7 @@ Um de nossos colaboradores já vai te atender.`
         `Atenção ⚠️
 Tem um cliente precisando de ajuda!`
       );
-      Requests.atualizarEtapa(msg.from, { etapa: "des" });
+      Requests.atualizarEtapa(msg.from, { etapa: "des", ativado: false });
     }
     if (msg.body != 1 && msg.body != 2) {
       client.sendMessage(msg.from, `Atenção ⚠️`);
@@ -634,7 +637,7 @@ Tem um cliente precisando de ajuda!`
       
 Agradecemos pela sua colaboração!`
     );
-    Requests.atualizarEtapa(msg.from, { etapa: "a" });
+    Requests.atualizarEtapa(msg.from, { etapa: "a", ativado: false });
   }
 }
 

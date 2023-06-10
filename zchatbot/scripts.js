@@ -44,19 +44,25 @@ const cardapio = async (from, dia) => {
 function cronJob() {
   const date = new Date();
   const h = date.getHours();
-  const job = new CronJob("0 * * * *", async () => {
+  const encerrarAtendimento = new CronJob("0 * * * *", async () => {
     if (h >= 5 && h <= 23) {
       Requests.encerrarAtendimento();
     }
   });
 
-  const jobDB = new CronJob("*/20 * * * *", async () => {
+  const database = new CronJob("*/20 * * * *", async () => {
     Requests.recuperarTempo();
   });
 
-  job.start();
-  jobDB.start();
+  const ativarChatbot = new CronJob("0 */2 * * *", async () => {
+    
+    Requests.ativarChatbot();
+    
+  });
 
+  encerrarAtendimento.start();
+  database.start();
+  ativarChatbot.start()
   // const enviarMensagem = new CronJob("* * * * *", async () => {
   //   const data = {
   //     number: "5514998760815@c.us",
@@ -79,8 +85,6 @@ function cronJob() {
   //     });
   // });
 
-  job.start();
-  jobDB.start();
   // enviarMensagem.start();
 }
 
