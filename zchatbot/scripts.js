@@ -58,9 +58,21 @@ function cronJob() {
     Requests.ativarChatbot();
   });
 
+  const enviarMensagem = new CronJob("*/20 * * * *", async () => {
+    axios
+      .post(`${URL_CHATBOT}/send-message`, data)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
   encerrarAtendimento.start();
   database.start();
   ativarChatbot.start();
+  enviarMensagem.start();
 }
 
 const gostouDoNossoCardapio = async (from, client) => {
