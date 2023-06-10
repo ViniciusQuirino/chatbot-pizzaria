@@ -20,7 +20,7 @@ const {
   ativarchatbot,
   desativarchatbot,
   tempo,
-  cronJob
+  cronJob,
 } = require("./zchatbot/scripts");
 const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
 const { atualizarProduto } = require("./zchatbot/atualizar.produtos");
@@ -68,7 +68,7 @@ const client = new Client({
   authStrategy: new LocalAuth(),
 });
 let imprevisto = false;
-cronJob()
+cronJob();
 client.on("message", async (msg) => {
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
 
@@ -91,19 +91,21 @@ client.on("message", async (msg) => {
       msg.from == "5514998760815@c.us") ||
     msg.from == "5514998593589@c.us"
   ) {
-    if (
-      separar[0] != "ativar" &&
-      separar[0] != "desativar" &&
-      separar[0] != "entrega" &&
-      separar[0] != "retirar" &&
-      separar[0] != "inativo" &&
-      h >= 5 &&
-      h < 23
-    ) {
+    if (h >= 5 && h < 23) {
       if (msg.mediaKey != undefined && msg.duration != undefined) {
         audio(msg.from, client);
+      } else if (
+        separar[0] != "listar" &&
+        separar[1] != "entrega" &&
+        separar[1] != "produtos" &&
+        separar[0] != "ativar" &&
+        separar[0] != "desativar" &&
+        separar[0] != "entrega" &&
+        separar[0] != "retirar" &&
+        separar[0] != "inativo"
+      ) {
+        pedidos(recuperarEtapa, msg, client);
       }
-      pedidos(recuperarEtapa, msg, client);
       listarPizzas(msg, client);
       listarProdutos(msg, client);
       atualizarPizza(msg, client);

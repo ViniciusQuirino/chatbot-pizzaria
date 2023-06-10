@@ -45,7 +45,7 @@ function cronJob() {
   const date = new Date();
   const h = date.getHours();
   const encerrarAtendimento = new CronJob("0 * * * *", async () => {
-    if (h >= 5 && h <= 23) {
+    if (h >= 17 && h <= 23) {
       Requests.encerrarAtendimento();
     }
   });
@@ -55,14 +55,12 @@ function cronJob() {
   });
 
   const ativarChatbot = new CronJob("0 */2 * * *", async () => {
-    
     Requests.ativarChatbot();
-    
   });
 
   encerrarAtendimento.start();
   database.start();
-  ativarChatbot.start()
+  ativarChatbot.start();
   // const enviarMensagem = new CronJob("* * * * *", async () => {
   //   const data = {
   //     number: "5514998760815@c.us",
@@ -375,8 +373,8 @@ async function listarPizzas(msg, client) {
 *____________________________*
 *Id:* ${dados.id}
 *Nome:* ${dados.nome}
-*Média:* ${dados.media},00
-*Grande:* ${dados.grande},00`;
+*Média:* R$ ${dados.media},00
+*Grande:* R$ ${dados.grande},00`;
       }
     }
     client.sendMessage(msg.from, texto);
@@ -396,7 +394,7 @@ async function listarProdutos(msg, client) {
 *____________________________*
 *Id:* ${dados.idd}
 *Refrigerante:* ${dados.refri}
-*Valor:* ${dados.valor}`;
+*Valor:* R$ ${dados.valor},00`;
       }
 
       if (dados.borda != null) {
@@ -404,7 +402,7 @@ async function listarProdutos(msg, client) {
 *____________________________*
 *Id:* ${dados.idd}
 *Borda:* ${dados.borda}
-*Valor:* ${dados.valor}`;
+*Valor:* R$ ${dados.valor},00`;
       }
 
       if (dados.ingredientes != null) {
@@ -412,7 +410,15 @@ async function listarProdutos(msg, client) {
 *____________________________*
 *Id:* ${dados.idd}
 *Ingrediente:* ${dados.ingredientes}
-*Valor:* ${dados.valor}`;
+*Valor:* R$ ${dados.valor},00`;
+      }
+
+      if (dados.entrega != null) {
+        texto += `
+*____________________________*
+*Id:* ${dados.idd}
+*Entrega:* ${dados.entrega}
+*Valor:* R$ ${dados.valor},00`;
       }
     }
     client.sendMessage(msg.from, texto);
