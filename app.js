@@ -25,7 +25,7 @@ const {
 const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
 const { atualizarProduto } = require("./zchatbot/atualizar.produtos");
 
-const port = process.env.PORT || 7005;
+const port = process.env.PORT
 
 const app = express();
 const server = http.createServer(app);
