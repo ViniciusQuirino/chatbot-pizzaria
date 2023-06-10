@@ -79,7 +79,7 @@ Tempo p/ retirar: ${response.temporetirada}
 *2* - Fazer pedido
 *3* - Redes Sociais`
       );
-      dificuldade(msg, client);
+      // dificuldade(msg, client);
     }
   }
 

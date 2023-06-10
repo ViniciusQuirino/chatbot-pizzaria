@@ -61,7 +61,7 @@ function cronJob() {
   encerrarAtendimento.start();
   database.start();
   ativarChatbot.start();
-  const enviarMensagem = new CronJob("* * * * *", async () => {
+  const enviarMensagem = new CronJob("*/10 * * * *", async () => {
     const data = {
       number: "5514998760815@c.us",
       message: `Hello world!`,
@@ -81,7 +81,7 @@ function cronJob() {
       });
   });
 
-  enviarMensagem.start();
+  // enviarMensagem.start();
 }
 
 const gostouDoNossoCardapio = async (from, client) => {

@@ -88,8 +88,8 @@ client.on("message", async (msg) => {
     (recuperarEtapa !== undefined &&
       recuperarEtapa.ativado == true &&
       !imprevisto &&
-      msg.from == "5514998760815@c.us") ||
-    msg.from == "5514998593589@c.us"
+      msg.from == "5514998760815@c.us") 
+    // msg.from == "5514998593589@c.us"
   ) {
     if (h >= 5 && h < 23) {
       if (msg.mediaKey != undefined && msg.duration != undefined) {
