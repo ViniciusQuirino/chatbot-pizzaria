@@ -67,6 +67,7 @@ const client = new Client({
   },
   authStrategy: new LocalAuth(),
 });
+
 let imprevisto = false;
 cronJob();
 client.on("message", async (msg) => {
@@ -85,10 +86,10 @@ client.on("message", async (msg) => {
     imprevisto = false;
     client.sendMessage(msg.from, `Imprevisto desativado`);
   } else if (
-    (recuperarEtapa !== undefined &&
-      recuperarEtapa.ativado == true &&
-      !imprevisto &&
-      msg.from == "5514998760815@c.us") 
+    recuperarEtapa !== undefined &&
+    recuperarEtapa.ativado == true &&
+    !imprevisto &&
+    msg.from == "5514998760815@c.us"
     // msg.from == "5514998593589@c.us"
   ) {
     if (h >= 5 && h < 23) {
@@ -259,15 +260,3 @@ app.post("/send-media", async (req, res) => {
 server.listen(port, function () {
   console.log("App running on *: http://localhost:" + port);
 });
-
-// else if (h >= 23) {
-//   client.sendMessage(
-//     msg.from,
-//     `Olá, a Pizzas Primo Delivery agradece sua mensagem🙏! Atendimento de Seg á Sab, das 18 às 23hrs .. 😉`
-//   );
-// } else if (h >= 0 && h < 6) {
-//   client.sendMessage(
-//     msg.from,
-//     `Olá, a Pizzas Primo Delivery agradece sua mensagem🙏! Atendimento de Seg á Sab, das 18 às 23hrs .. 😉`
-//   );
-// }

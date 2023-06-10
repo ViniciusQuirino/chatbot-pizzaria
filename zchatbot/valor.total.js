@@ -6,9 +6,17 @@ async function somarValorTotal(response) {
   let valor = 0;
 
   if (response.cidade == 1) {
-    valor += 7;
+    for (let i = 0; i < dados.length; i++) {
+      if (dados[i].entrega === "Igaraçu do Tietê") {
+        valor += dados[i].valor;
+      }
+    }
   } else if (response.cidade == 2) {
-    valor += 10;
+    for (let i = 0; i < dados.length; i++) {
+      if (dados[i].entrega === "Barra Bonita") {
+        valor += dados[i].valor;
+      }
+    }
   }
 
   if (response.refrigerante == "Coca-cola 2 litros") {
