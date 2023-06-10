@@ -89,7 +89,7 @@ client.on("message", async (msg) => {
     recuperarEtapa !== undefined &&
     recuperarEtapa.ativado == true &&
     recuperarEtapa.ativado2 == true &&
-    !imprevisto 
+    !imprevisto
     // msg.from == "5514998760815@c.us"
     // msg.from == "5514998593589@c.us"
   ) {
