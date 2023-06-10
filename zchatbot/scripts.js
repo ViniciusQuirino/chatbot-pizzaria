@@ -1,4 +1,4 @@
-const URL_CHATBOT = "https://chatbot-pizzaria.onrender.com";
+const URL_CHATBOT = "https://chatbot-pizzaria-e4mm.onrender.com";
 const axios = require("axios");
 const { Requests } = require("./requests");
 const Fuse = require("fuse.js");
