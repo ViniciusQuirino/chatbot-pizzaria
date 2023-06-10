@@ -1,4 +1,4 @@
-const URL_CHATBOT = "https://chatbot-pizzaria-e4mm.onrender.com";
+const URL_CHATBOT = "https://chatbot-pizzaria.up.railway.app";
 const axios = require("axios");
 const { Requests } = require("./requests");
 const Fuse = require("fuse.js");
@@ -50,29 +50,35 @@ function cronJob() {
     }
   });
 
-  const database = new CronJob("*/20 * * * *", async () => {
-    Requests.chamarApi();
-  });
+  // const database = new CronJob("*/20 * * * *", async () => {
+  //   Requests.chamarApi();
+  // });
 
   const ativarChatbot = new CronJob("0 */2 * * *", async () => {
     Requests.ativarChatbot();
   });
 
-  const enviarMensagem = new CronJob("*/20 * * * *", async () => {
-    axios
-      .post(`${URL_CHATBOT}/send-message`, data)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  });
+  //   const enviarMensagem = new CronJob("*/20 * * * *", async () => {
+  //     const data = {
+  //       number: telefone,
+  //       message: `Lamentamos, mas devido à falta de resposta ou interação, este *atendimento* foi *encerrado.* Caso precise realizar um pedido futuramente por favor, entre em contato novamente. Estaremos aqui prontamente para atendê-lo.
+
+  // Obrigado e até a próxima! 😃`,
+  //     };
+  //     axios
+  //       .post(`${URL_CHATBOT}/send-message`, data)
+  //       .then((res) => {
+  //         console.log(res.data);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   });
 
   encerrarAtendimento.start();
-  database.start();
+  // database.start();
   ativarChatbot.start();
-  enviarMensagem.start();
+  // enviarMensagem.start();
 }
 
 const gostouDoNossoCardapio = async (from, client) => {
