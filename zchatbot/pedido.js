@@ -56,6 +56,13 @@ Tempo p/ retirar: ${response.temporetirada}
     } else if (msg.body == "2") {
       await cardapio(msg.from, diaSemana);
 
+      if (diaSemana >= 5) {
+        client.sendMessage(
+          msg.from,
+          `Gostariamos de compartilhar com você que temos promoção de *SEGUNDO A QUINTA*`
+        );
+      }
+
       gostouDoNossoCardapio(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "c" });
     } else if (msg.body == "3") {
