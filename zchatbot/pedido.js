@@ -1,4 +1,4 @@
-const numeroDeTelefone = "5514998760815@c.us";
+const numeroDeTelefone = "5514998908820@c.us";
 const { Requests } = require("./requests");
 const {
   cardapio,
@@ -196,7 +196,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     if (ocorrencias != encontrar.length && ocorrencias) {
       //numeroDeTelefone
       client.sendMessage(
-        "5514998760815@c.us",
+        "5514998908820@c.us",
         `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
       );
     }
@@ -620,7 +620,7 @@ Um de nossos colaboradores já vai te atender.`
       // numeroDeTelefone
       client.sendMessage("5514998760815@c.us", `${msg.from.slice(2, 13)}`);
       client.sendMessage(
-        "5514998760815@c.us",
+        "5514998908820@c.us",
         `Atenção ⚠️
 Tem um cliente precisando de ajuda!`
       );

@@ -429,7 +429,7 @@ async function dificuldade(msg, client) {
   if (response.problema == 3) {
     //numeroDeTelefone
     client.sendMessage(
-      "5514998760815@c.us",
+      "5514998908820@c.us",
       `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
     );
   }
