@@ -25,7 +25,7 @@ const {
 const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
 const { atualizarProduto } = require("./zchatbot/atualizar.produtos");
 
-const port = process.env.PORT
+const port = process.env.PORT;
 
 const app = express();
 const server = http.createServer(app);
@@ -88,6 +88,7 @@ client.on("message", async (msg) => {
   } else if (
     recuperarEtapa !== undefined &&
     recuperarEtapa.ativado == true &&
+    recuperarEtapa.ativado2 == true &&
     !imprevisto &&
     msg.from == "5514998760815@c.us"
     // msg.from == "5514998593589@c.us"

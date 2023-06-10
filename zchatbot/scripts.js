@@ -296,6 +296,7 @@ async function desativarchatbot(msg, client) {
     try {
       await Requests.atualizarEtapa(`55${telefone[1]}@c.us`, {
         ativado: false,
+        ativado2: false,
         etapa: "des",
       });
       client.sendMessage(msg.from, "Chatbot desativado.");
@@ -318,6 +319,7 @@ async function ativarchatbot(msg, client) {
     try {
       await Requests.atualizarEtapa(`55${telefone[1]}@c.us`, {
         ativado: true,
+        ativado2: true,
         etapa: "a",
       });
       client.sendMessage(msg.from, "Chatbot ativado.");

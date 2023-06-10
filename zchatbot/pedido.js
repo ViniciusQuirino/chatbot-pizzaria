@@ -607,7 +607,7 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
         client.sendMessage(msg.from, "14998593589");
         Requests.atualizarEtapa(msg.from, { etapa: "comp" });
       } else if (response.formadepagamento != "pix") {
-        Requests.atualizarEtapa(msg.from, { etapa: "a", ativado: false });
+        Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
       }
     }
     if (msg.body == "2") {
@@ -624,7 +624,7 @@ Um de nossos colaboradores já vai te atender.`
         `Atenção ⚠️
 Tem um cliente precisando de ajuda!`
       );
-      Requests.atualizarEtapa(msg.from, { etapa: "des", ativado: false });
+      Requests.atualizarEtapa(msg.from, { etapa: "des", ativado2: false });
     }
     if (msg.body != 1 && msg.body != 2) {
       client.sendMessage(msg.from, `Atenção ⚠️`);
@@ -644,7 +644,7 @@ Tem um cliente precisando de ajuda!`
       
 Agradecemos pela sua colaboração!`
     );
-    Requests.atualizarEtapa(msg.from, { etapa: "a", ativado: false });
+    Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
   }
 }
 
