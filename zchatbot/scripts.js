@@ -51,7 +51,7 @@ function cronJob() {
   });
 
   const database = new CronJob("*/20 * * * *", async () => {
-    Requests.recuperarTempo();
+    Requests.chamarApi();
   });
 
   const ativarChatbot = new CronJob("0 */2 * * *", async () => {
@@ -61,29 +61,27 @@ function cronJob() {
   encerrarAtendimento.start();
   database.start();
   ativarChatbot.start();
-  // const enviarMensagem = new CronJob("* * * * *", async () => {
-  //   const data = {
-  //     number: "5514998760815@c.us",
-  //     message: `Hello world!`,
-  //   };
+  const enviarMensagem = new CronJob("* * * * *", async () => {
+    const data = {
+      number: "5514998760815@c.us",
+      message: `Hello world!`,
+    };
 
-  //   axios
-  //     .post("https://chatbot-om08.onrender.com/send-message", data, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(data),
-  //     })
-  //     .then((response) => response.data)
-  //     .then((res) => {
-  //       // Faça o que você precisa com a resposta
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // });
+    axios
+      .post("https://chatbot-om08.onrender.com/send-message", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      .then((response) => response.data)
+      .then((res) => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  });
 
-  // enviarMensagem.start();
+  enviarMensagem.start();
 }
 
 const gostouDoNossoCardapio = async (from, client) => {

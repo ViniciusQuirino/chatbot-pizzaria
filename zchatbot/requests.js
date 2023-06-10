@@ -77,6 +77,11 @@ class Requests {
     let response = await api.patch(`/produtos/${id}`, body);
     return response.data;
   }
+
+  static async chamarApi() {
+    let response = await api.get(`/tempo/oi`);
+    return response.data;
+  }
 }
 
 module.exports = { Requests };
