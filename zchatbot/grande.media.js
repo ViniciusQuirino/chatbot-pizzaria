@@ -65,10 +65,10 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
 
     if (ocorrencias != encontrar.length && ocorrencias) {
       // numeroDeTelefone
-      client.sendMessage(
-        "5514998908820@c.us",
-        `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
-      );
+      // client.sendMessage(
+      //   "5514998908820@c.us",
+      //   `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
+      // );
     }
 
     if (encontrar[0]) {

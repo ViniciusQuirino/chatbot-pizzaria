@@ -75,7 +75,7 @@ async function somarValorTotal(response) {
             !isPromocao(resultado[0].nome)
           ) {
             valor += resultado[0].grande;
-          } else if (diaSemana >= 5) {
+          } else {
             valor += resultado[0].grande;
           }
         } else if (response["tamanho" + i] == "média") {
@@ -86,7 +86,9 @@ async function somarValorTotal(response) {
           resultado[0].grande,
           resultado[1].grande
         );
+        console.log(maiorValorSabor);
         if (response["tamanho" + i] == "grande") {
+          console.log("oi");
           if (
             diaSemana >= 1 &&
             diaSemana <= 4 &&
@@ -106,11 +108,11 @@ async function somarValorTotal(response) {
             !isPromocao(resultado[0].nome)
           ) {
             valor += maiorValorSabor;
-          } else if (diaSemana >= 5) {
+          } else {
             valor += maiorValorSabor;
           }
         } else if (response["tamanho" + i] == "média") {
-          valor += resultado[0].media;
+          valor += maiorValorSabor;
         }
       }
     }

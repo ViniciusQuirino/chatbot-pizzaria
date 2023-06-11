@@ -13,6 +13,7 @@ const { Requests } = require("./zchatbot/requests");
 const { pedidos } = require("./zchatbot/pedido");
 const { maisDeUma } = require("./zchatbot/todas.grandes");
 const { grandeEMedia } = require("./zchatbot/grande.media");
+// const { audioTwo } = require("./audio.ogg");
 const {
   listarPizzas,
   listarProdutos,
@@ -25,7 +26,7 @@ const {
 const { atualizarPizza } = require("./zchatbot/atualizar.pizza");
 const { atualizarProduto } = require("./zchatbot/atualizar.produtos");
 
-const port = process.env.PORT;
+const port = process.env.PORT || 7005;
 
 const app = express();
 const server = http.createServer(app);
@@ -86,12 +87,13 @@ client.on("message", async (msg) => {
     imprevisto = false;
     client.sendMessage(msg.from, `Imprevisto desativado`);
   } else if (
-    recuperarEtapa !== undefined &&
-    recuperarEtapa.ativado == true &&
-    recuperarEtapa.ativado2 == true &&
-    !imprevisto
-    // msg.from == "5514998760815@c.us"
-    // msg.from == "5514998593589@c.us"
+    (recuperarEtapa !== undefined &&
+      recuperarEtapa.ativado == true &&
+      recuperarEtapa.ativado2 == true &&
+      !imprevisto &&
+      msg.from == "5514998760815@c.us") ||
+    msg.from == "5515998135077@c.us" ||
+    msg.from == "5514998593589@c.us"
   ) {
     if (h >= 5 && h < 23) {
       if (msg.mediaKey != undefined && msg.duration != undefined) {
@@ -106,6 +108,21 @@ client.on("message", async (msg) => {
         separar[0] != "retirar" &&
         separar[0] != "inativo"
       ) {
+        if (recuperarEtapa.etapa == "bord") {
+          if (msg.body == "1") {
+            const mediaPath = MessageMedia.fromFilePath("./ex.ogg");
+
+            await client.sendMessage(msg.from, mediaPath, {
+              sendAudioAsVoice: true,
+            });
+          } else if (msg.body == "2") {
+            const mediaPath = MessageMedia.fromFilePath("./ex.ogg");
+
+            await client.sendMessage(msg.from, mediaPath, {
+              sendAudioAsVoice: true,
+            });
+          }
+        }
         pedidos(recuperarEtapa, msg, client);
       }
       listarPizzas(msg, client);
@@ -261,3 +278,7 @@ app.post("/send-media", async (req, res) => {
 server.listen(port, function () {
   console.log("App running on *: http://localhost:" + port);
 });
+
+// que digite apenas o sabor da pizza que deseja. Nas próximas etapas vou te perguntar se quer retirar algum ingrediente ou se quer adicionar. Se quer a pizza com borda ou não. Entre outras perguntas...
+
+// Aqui nessa etapa, digite apenas a pizza que deseja, aqui não precisa colocar pra retirar cebola ou algum outro ingrediente. aqui nesta etapa é só o sabor da pizza que você quer. As próximas perguntas é sobre adicionar ou retirar ingrediente e adicionar borda. Portanto aqui você digita apenas o sabor da pizza. Se caso quiser meio a meio, digite meio e o sabor da pizza que deseja. Meio e o sabor da pizza que deseja. Obrigado pela colaboração. Estamos sempre buscando inovação para que nosso atendimento seja rápido e eficiente.

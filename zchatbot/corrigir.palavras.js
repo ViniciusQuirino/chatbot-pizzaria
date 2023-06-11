@@ -48,6 +48,7 @@ const dados = [
   { nome: "laka oreo", media: "35,00", grande: "40,00" },
 ];
 
+
 function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
   // Verifica se há "1/2" após "e" ou ","
   frase = frase

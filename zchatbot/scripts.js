@@ -1,4 +1,5 @@
-const URL_CHATBOT = "https://chatbot-pizzaria.up.railway.app";
+// const URL_CHATBOT = "https://chatbot-pizzaria.up.railway.app";
+const URL_CHATBOT = "http://localhost:7005";
 const axios = require("axios");
 const { Requests } = require("./requests");
 const Fuse = require("fuse.js");
@@ -428,10 +429,10 @@ async function dificuldade(msg, client) {
   });
   if (response.problema == 3) {
     //numeroDeTelefone
-    client.sendMessage(
-      "5514998908820@c.us",
-      `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
-    );
+    // client.sendMessage(
+    //   "5514998908820@c.us",
+    //   `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+    // );
   }
 }
 

@@ -1,4 +1,4 @@
-const numeroDeTelefone = "5514998908820@c.us";
+// const numeroDeTelefone = "5514998908820@c.us";
 const { Requests } = require("./requests");
 const {
   cardapio,
@@ -17,6 +17,7 @@ const { corrigirPalavrasParecidas } = require("./corrigir.palavras");
 const { corrigirFrase } = require("./caso.especifico");
 const { ingredientes } = require("./ingredientes");
 const { dados } = require("./corrigir.palavras");
+const { removerPalavras } = require("./remover.palavras");
 
 async function pedidos(recuperarEtapa, msg, client) {
   if (recuperarEtapa.etapa == "a") {
@@ -139,23 +140,10 @@ Qual o *tamanho* que você quer ?
 
   if (recuperarEtapa.etapa == "bord") {
     if (msg.body == "1") {
-      client.sendMessage(
-        msg.from,
-        `Qual o *sabor* da pizza que deseja ?
-
-Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
-      );
-
       Requests.atualizarPedido({ telefone: msg.from, tamanho1: "grande" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
     }
     if (msg.body == "2") {
-      client.sendMessage(
-        msg.from,
-        `Qual o *sabor* da pizza que deseja ?
-
-Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
-      );
       Requests.atualizarPedido({ telefone: msg.from, tamanho1: "média" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
     }
@@ -174,8 +162,14 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
 
   if (recuperarEtapa.etapa == "d") {
     let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
-    const retorno = removerAcentos(result);
-
+    result = result.replace(/mais bacon/g, "");
+    result = result
+      .replace(/\(.*?\)/g, "")
+      .replace(/(['"])(.*?)\1/g, "")
+      .replace(/a moda do pizzaiolo/g, "moda do pizzaiolo");
+    let retorno = removerAcentos(result);
+    retorno = removerPalavras(retorno);
+    console.log(retorno);
     let variavelum = true;
     let variaveldois = true;
     let frase = corrigirPalavrasParecidas(retorno, variavelum, variaveldois);
@@ -195,10 +189,10 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
 
     if (ocorrencias != encontrar.length && ocorrencias) {
       //numeroDeTelefone
-      client.sendMessage(
-        "5514998908820@c.us",
-        `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
-      );
+      // client.sendMessage(
+      //   "5514998908820@c.us",
+      //   `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
+      // );
     }
 
     if (encontrar[0]) {
@@ -531,7 +525,7 @@ Se não, digite apenas o numero 1
         telefone: msg.from,
         formadepagamento: "cartão",
       });
-      const valor = await somarValorTotal(response, msg, client);
+      const valor = await somarValorTotal(response);
       console.log(valor);
       gerarTemplateString(response, msg.from, client, valor);
 
@@ -543,7 +537,7 @@ Se não, digite apenas o numero 1
         telefone: msg.from,
         formadepagamento: "pix",
       });
-      const valor = await somarValorTotal(response, msg, client);
+      const valor = await somarValorTotal(response);
       console.log(valor);
       gerarTemplateString(response, msg.from, client, valor);
 
@@ -572,8 +566,8 @@ Qual vai ser a forma de pagamento ?
       troco: `${msg.body == "1" ? "" : msg.body}`,
     });
 
-    const valor = await somarValorTotal(response, msg, client);
-    console.log(valor);
+    const valor = await somarValorTotal(response);
+    console.log("a", valor);
     gerarTemplateString(response, msg.from, client, valor);
 
     desejaConfirmarOPedido(msg.from, client);
@@ -618,12 +612,12 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
 Um de nossos colaboradores já vai te atender.`
       );
       // numeroDeTelefone
-      client.sendMessage("5514998760815@c.us", `${msg.from.slice(2, 13)}`);
-      client.sendMessage(
-        "5514998908820@c.us",
-        `Atenção ⚠️
-Tem um cliente precisando de ajuda!`
-      );
+      //       client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
+      //       client.sendMessage(
+      //         "5514998908820@c.us",
+      //         `Atenção ⚠️
+      // Tem um cliente precisando de ajuda!`
+      //       );
       Requests.atualizarEtapa(msg.from, { etapa: "des", ativado2: false });
     }
     if (msg.body != 1 && msg.body != 2) {
