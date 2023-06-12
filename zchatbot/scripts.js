@@ -1,5 +1,5 @@
-// const URL_CHATBOT = "https://chatbot-pizzaria.up.railway.app";
-const URL_CHATBOT = "http://localhost:7005";
+const URL_CHATBOT = "https://chatbot-pizzaria.up.railway.app";
+// const URL_CHATBOT = "http://localhost:7005";
 const axios = require("axios");
 const { Requests } = require("./requests");
 const Fuse = require("fuse.js");
