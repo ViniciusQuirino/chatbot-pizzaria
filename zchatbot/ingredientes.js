@@ -3,6 +3,7 @@ const {
   criarObjetoIngrediente,
   dificuldade,
   obterRepresentacaoOrdinal,
+  voltar,
 } = require("./scripts");
 
 const desejaAdicionarMais = async (msg, client, response, ordinal) => {
@@ -50,6 +51,7 @@ const ingredientes = async (msg, client, recuperarEtapa) => {
     "15",
   ];
   if (recuperarEtapa.etapa == "ing") {
+    voltar(msg, client);
     if (numeros.includes(msg.body)) {
       desejaAdicionarMais(msg, client, response, ordinal);
 
@@ -59,14 +61,18 @@ const ingredientes = async (msg, client, recuperarEtapa) => {
         msg.body,
         response
       );
-      console.log(ingrediente);
+     
       Requests.atualizarPedido(ingrediente);
       Requests.atualizarEtapa(msg.from, { etapa: "90" });
-    } else if (!numeros.includes(msg.body) && msg.body != "0") {
+    } else if (
+      !numeros.includes(msg.body) &&
+      msg.body != "0" &&
+      msg.body != "voltar"
+    ) {
+      dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `*Atenção* ⚠️
-⬇️ Escolha uma das opções abaixo digitando *apenas um numero.*
 
 Ingredientes para acrescentar:
 
@@ -88,18 +94,15 @@ Ingredientes para acrescentar:
 *14* - Provolone R$ 12,00
 *15* - Bacon Cubos R$ 8,00`
       );
-      dificuldade(msg, client);
     } else if (msg.body == "0") {
       if (response.qnt > 1) {
         client.sendMessage(
           msg.from,
           `*${ordinal} PIZZA:*
-Há algum ingrediente que você gostaria de *retirar ou adicionar ?*
+Tem algum ingrediente que você gostaria de *retirar ou adicionar ?*
     
 Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
-*Ex:* retirar cebola
-
-⬇️ Se preferir manter a receita original, digite 1. Para adicionar ingrediente, escolha a opção 2.
+*Ex:* retirar cebola.
 
 *1* - Não quero adicionar e retirar nenhum ingrediente.
 *2* - Acrescentar ingrediente`
@@ -108,12 +111,10 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
       } else if (response.qnt == 1) {
         client.sendMessage(
           msg.from,
-          `Há algum ingrediente que você gostaria de *retirar ou adicionar ?*
+          `Tem algum ingrediente que você gostaria de *retirar ou adicionar ?*
     
 Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
-*Ex:* retirar cebola
-
-⬇️ Se preferir manter a receita original, digite 1. Para adicionar ingrediente, escolha a opção 2.
+*Ex:* retirar cebola.
 
 *1* - Não quero adicionar e retirar nenhum ingrediente.
 *2* - Acrescentar ingrediente`
@@ -124,6 +125,7 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
   }
 
   if (recuperarEtapa.etapa == "90") {
+    voltar(msg, client);
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
@@ -154,8 +156,6 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
           msg.from,
           `*${ordinal} PIZZA:*
 Quer adicionar *borda recheada* ?
-  
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
 *1* - Não quero
 *2* - Catupiry R$ 10,00
@@ -172,8 +172,6 @@ Quer adicionar *borda recheada* ?
           msg.from,
           `Quer adicionar *borda recheada* ?
   
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
 *1* - Não quero
 *2* - Catupiry R$ 10,00
 *3* - Cheddar R$ 10,00
@@ -181,10 +179,10 @@ Quer adicionar *borda recheada* ?
         );
         Requests.atualizarEtapa(msg.from, { etapa: "f" });
       }
-    } else if (msg.body != "1" && msg.body != "2") {
+    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
       client.sendMessage(msg.from, `*Atenção* ⚠️`);
-      desejaAdicionarMais(msg, client, response, ordinal);
       dificuldade(msg, client);
+      desejaAdicionarMais(msg, client, response, ordinal);
     }
   }
 };

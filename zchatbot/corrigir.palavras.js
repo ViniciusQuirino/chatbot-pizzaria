@@ -1,5 +1,6 @@
 const dados = [
   { nome: "a moda", media: "40,00", grande: "45,00" },
+  { nome: "moda", media: "40,00", grande: "45,00" },
   { nome: "alho e tomate", media: "30,00", grande: "34,00" },
   { nome: "alface", media: "34,00", grande: "38,00" },
   { nome: "americano", media: "36,00", grande: "40,00" },

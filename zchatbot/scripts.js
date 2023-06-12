@@ -102,8 +102,6 @@ Valores:
 Dentro de igaraçu: 7,00 reais
 Igaraçu x Barra: 10,00 reais
 
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
 *1* - Sim, quero que entregue.
 *2* - Não, vou ir buscar.`
   );
@@ -114,8 +112,6 @@ const desejaConfirmarOPedido = async (from, client) => {
     from,
     `Todas as informações do pedido está correta, deseja confirmar ?
 
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
 *1* - Sim, confirmar.
 *2* - Não, tem coisa errada.`
   );
@@ -125,8 +121,6 @@ const desejaAlgoParaBeber = async (from, client) => {
   client.sendMessage(
     from,
     `Ok, você deseja algo para beber ?
-
-⬇️ Escolha uma das opções abaixo digitante *apenas o numero.*
 
 *1* - Não quero.
 *2* - Coca-Cola 2 Litros R$ 14,00
@@ -163,10 +157,8 @@ const tamanho = async (from, client, response) => {
     from,
     `Qual é o *tamanho da ${ordinal} PIZZA ?*
 
-⬇️ Escolha uma das opções abaixo digitante *apenas o numero.*
-
-*1* - Grande 🍕
-*2* - Média 🍕`
+*1 - Grande (8 pedaços) 🍕*
+*2 - Média (6 pedaços) 🍕*`
   );
   Requests.atualizarEtapa(from, { etapa: "20" });
 };
@@ -423,16 +415,43 @@ async function listarProdutos(msg, client) {
   }
 }
 
+function voltar(msg, client) {
+  const message = msg.body.toLowerCase();
+
+  if (message == "voltar") {
+    Requests.atualizarEtapa(msg.from, {
+      etapa: "c",
+    });
+    client.sendMessage(msg.from, "Ok, errar é humano e está tudo bem 😄");
+
+    client.sendMessage(
+      msg.from,
+      "Voltamos para o início para que possa refazer seu pedido."
+    );
+
+    client.sendMessage(
+      msg.from,
+      "Quantas pizzas você vai querer ? Digite *apenas o numero.*"
+    );
+  }
+}
+
 async function dificuldade(msg, client) {
+  client.sendMessage(
+    msg.from,
+    "⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*"
+  );
+
   const response = await Requests.atualizarEtapa(msg.from, {
     problema: "e",
   });
+
   if (response.problema == 3) {
-    //numeroDeTelefone
-    // client.sendMessage(
-    //   "5514998908820@c.us",
-    //   `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
-    // );
+    // numeroDeTelefone;
+    client.sendMessage(
+      "5514998908820@c.us",
+      `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+    );
   }
 }
 
@@ -657,6 +676,7 @@ module.exports = {
   ativarchatbot,
   tempo,
   cronJob,
+  voltar,
   interpretarIngredientes,
   calcularValorIngredientes,
 };

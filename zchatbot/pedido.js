@@ -9,6 +9,7 @@ const {
   desejaAlgoParaBeber,
   encontrarObjetos,
   dificuldade,
+  voltar,
 } = require("./scripts");
 const { gerarTemplateString } = require("./informacoes.pedido");
 const { somarValorTotal } = require("./valor.total");
@@ -25,7 +26,7 @@ async function pedidos(recuperarEtapa, msg, client) {
     client.sendMessage(
       msg.from,
       `Olá! 😃
-Eu sou o assistente virtual da *Pizzas Primo Delivery* e estou aqui para te ajudar. Temos uma variedade de opções deliciosas no nosso cardápio.
+Eu sou o *assistente virtual da Pizzas Primo Delivery* e estou aqui para te ajudar.
 
 Tempo de entrega: ${response.tempoentrega}
 Tempo p/ retirar: ${response.temporetirada}
@@ -35,6 +36,11 @@ Tempo p/ retirar: ${response.temporetirada}
 *1* - Cardápio e Promoções
 *2* - Fazer pedido
 *3* - Redes Sociais`
+    );
+
+    client.sendMessage(
+      msg.from,
+      `Se em algum momento você errar na hora de fazer o pedido, basta digitar *VOLTAR*`
     );
     Requests.atualizarEtapa(msg.from, { etapa: "b" });
   }
@@ -78,16 +84,15 @@ Tempo p/ retirar: ${response.temporetirada}
       );
       Requests.atualizarEtapa(msg.from, { etapa: "a" });
     } else if (msg.body != "1" && msg.body != "2" && msg.body != "3") {
+      dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `Atenção ⚠️
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
+        
 *1* - Cardápio e Promoções
 *2* - Fazer pedido
 *3* - Redes Sociais`
       );
-      // dificuldade(msg, client);
     }
   }
 
@@ -103,17 +108,15 @@ Tempo p/ retirar: ${response.temporetirada}
   
 Qual o *tamanho* que você quer ?
 
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
-*1 - Grande 🍕*
-*2 - Média 🍕*`
+*1 - Grande (8 pedaços) 🍕*
+*2 - Média (6 pedaços) 🍕*`
         );
         Requests.criarPedido({ telefone: msg.from, qnt: 1 });
         Requests.atualizarEtapa(msg.from, { etapa: "bord" });
       } else if (resposta >= 2 && resposta <= 10) {
         client.sendMessage(
           msg.from,
-          `Certo, então são ${resposta} pizzas. Agora me responde uma coisa, todas são *tamanho* grande ?
+          `Certo, então são ${resposta} pizzas. Todas são *tamanho* grande ?
   
 *1* - Sim, as ${resposta} pizzas são tamanho grande.
 *2* - Não, tem pizza que vai ser tamanho médio.`
@@ -134,42 +137,58 @@ Qual o *tamanho* que você quer ?
         `Atenção ⚠️
 *Quantas pizzas* você vai querer ? Digite *apenas o numero.*`
       );
-      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "bord") {
+    voltar(msg, client);
     if (msg.body == "1") {
+      client.sendMessage(
+        msg.from,
+        `Qual o *sabor* da pizza que deseja ?
+
+Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
+      );
       Requests.atualizarPedido({ telefone: msg.from, tamanho1: "grande" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
     }
     if (msg.body == "2") {
+      client.sendMessage(
+        msg.from,
+        `Qual o *sabor* da pizza que deseja ?
+
+Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
+      );
       Requests.atualizarPedido({ telefone: msg.from, tamanho1: "média" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
     }
-    if (msg.body != "1" && msg.body != "2") {
+    if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+      dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `Atenção ⚠️
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
-*1 - Grande 🍕*
-*2 - Média 🍕*`
+*1 - Grande (8 pedaços) 🍕*
+*2 - Média (6 pedaços) 🍕*`
       );
-      dificuldade(msg, client);
     }
   }
-
+  // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   if (recuperarEtapa.etapa == "d") {
+    voltar(msg, client);
     let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
     result = result.replace(/mais bacon/g, "");
-    result = result
-      .replace(/\(.*?\)/g, "")
-      .replace(/(['"])(.*?)\1/g, "")
-      .replace(/a moda do pizzaiolo/g, "moda do pizzaiolo");
+    result = result.replace(/brocolis com bacon/g, "brocolis");
+    result = result.replace(/brocolis com bacon/g, "brocolis");
+    result = result.replace(/brocolis c bacon/g, "brocolis");
+    result = result.replace(/brocolis c\/ bacon/g, "brocolis");
+    result = result.replace(/\(.*?\)/g, "").replace(/(['"])(.*?)\1/g, "");
+
     let retorno = removerAcentos(result);
-    retorno = removerPalavras(retorno);
-    console.log(retorno);
+
     let variavelum = true;
     let variaveldois = true;
     let frase = corrigirPalavrasParecidas(retorno, variavelum, variaveldois);
@@ -180,52 +199,90 @@ Qual o *tamanho* que você quer ?
     variaveldois = true;
     frase = corrigirPalavrasParecidas(frasePronta, variavelum, variaveldois);
 
+    frase = removerPalavras(frase);
+
     const ocorrencias = (frase.match(/1\/2/g) || []).length;
     const encontrar = await encontrarObjetos(frase, dados);
 
     console.log(ocorrencias);
     console.log(frase);
     console.log(encontrar);
-
-    if (ocorrencias != encontrar.length && ocorrencias) {
-      //numeroDeTelefone
-      // client.sendMessage(
-      //   "5514998908820@c.us",
-      //   `*Tem um cliente que deu problema e o chatbot não vai conseguir calcular o valor total corretamente, fique atento.*`
-      // );
-    }
-
-    if (encontrar[0]) {
+    if (
+      (encontrar[0] && !ocorrencias && msg.body != "voltar") ||
+      (encontrar[0] && encontrar[1] && ocorrencias && msg.body != "voltar")
+    ) {
       client.sendMessage(
         msg.from,
-        `Há algum ingrediente que você gostaria de *retirar ou adicionar ?*
+        `Tem ingrediente que você gostaria de *retirar ou adicionar ?*
   
 Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
 *Ex:* retirar cebola
-
-⬇️ Se preferir manter a receita original, digite 1. Para adicionar ingrediente, escolha a opção 2.
 
 *1* - Não quero adicionar e retirar nenhum ingrediente.
 *2* - Acrescentar ingrediente`
       );
       Requests.atualizarPedido({ telefone: msg.from, sabor1: frase });
       Requests.atualizarEtapa(msg.from, { etapa: "e" });
-    } else {
+    } else if (encontrar.length == 0 && msg.body != "voltar" && !ocorrencias) {
       client.sendMessage(
         msg.from,
-        `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente o nome da pizza!`
+        `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
+        
+*Ex:* frango com catupiry.
+*Ex:* meia atum especial e meia bacon.
+
+Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até amesmo se quer adicionar borda. 😋`
       );
-      dificuldade(msg, client);
+
+      const response = await Requests.atualizarEtapa(msg.from, {
+        problema: "e",
+      });
+
+      if (response.problema == 2) {
+        // numeroDeTelefone;
+        client.sendMessage(
+          "5514998908820@c.us",
+          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+        );
+      }
+    } else if (
+      ocorrencias != encontrar.length &&
+      ocorrencias &&
+      msg.body != "voltar"
+    ) {
+      client.sendMessage(
+        msg.from,
+        `Desculpa, mas não encontrei as pizzas que deseja com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
+        
+*Ex:* frango com catupiry.
+*Ex:* meia atum especial e meia bacon.
+
+Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até amesmo se quer adicionar borda. 😋`
+      );
+
+      const response = await Requests.atualizarEtapa(msg.from, {
+        problema: "e",
+      });
+
+      if (response.problema == 2) {
+        // numeroDeTelefone;
+        client.sendMessage(
+          "5514998908820@c.us",
+          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+        );
+      }
     }
   }
-
+  // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   if (recuperarEtapa.etapa == "e") {
+    voltar(msg, client);
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
         `Quer adicionar *borda recheada* ?
-  
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
   
 *1* - Não quero
 *2* - Catupiry R$ 10,00
@@ -258,13 +315,11 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
       );
 
       Requests.atualizarEtapa(msg.from, { etapa: "ing" });
-    } else if (msg.body != "1" && msg.body != "2") {
+    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
       client.sendMessage(
         msg.from,
         `Quer adicionar *borda recheada* ?
-  
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-  
+   
 *1* - Não quero
 *2* - Catupiry R$ 10,00
 *3* - Cheddar R$ 10,00
@@ -280,6 +335,7 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
   // -----------------------------------------------
 
   if (recuperarEtapa.etapa == "f") {
+    voltar(msg, client);
     if (msg.body == "1") {
       desejaAlgoParaBeber(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "g" });
@@ -312,25 +368,25 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
       msg.body != "1" &&
       msg.body != "2" &&
       msg.body != "3" &&
-      msg.body != "4"
+      msg.body != "4" &&
+      msg.body != "voltar"
     ) {
+      dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `Atenção ⚠️
 Quer adicionar borda recheada ?
-
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
 *1* - Não quero
 *2* - Catupiry R$ 10,00
 *3* - Cheddar R$ 10,00
 *4* - Chocolate R$ 12,00`
       );
-      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "g") {
+    voltar(msg, client);
     if (msg.body == "1") {
       querQueEntregue(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "ent" });
@@ -361,23 +417,27 @@ Quer adicionar borda recheada ?
       });
       Requests.atualizarEtapa(msg.from, { etapa: "h" });
     }
-    if (msg.body != "1" && msg.body != "2" && msg.body != "3") {
+    if (
+      msg.body != "1" &&
+      msg.body != "2" &&
+      msg.body != "3" &&
+      msg.body != "voltar"
+    ) {
+      dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `Atenção ⚠️
 Você deseja algo para *beber* ? 🥤
-
-⬇ Escolha uma das opções abaixo digitando *apenas o numero.*
  
 *1* - Não quero.
 *2* - Coca-Cola 2 Litros R$ 14,00
 *3* - Conquista Guaraná 2 Litros R$ 8,00`
       );
-      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "h") {
+    voltar(msg, client);
     const verificarResposta = verificarNumero(msg.body);
     if (verificarResposta) {
       querQueEntregue(msg.from, client);
@@ -386,18 +446,30 @@ Você deseja algo para *beber* ? 🥤
         qntrefrigerante: +verificarResposta,
       });
       Requests.atualizarEtapa(msg.from, { etapa: "ent" });
-    } else if (verificarResposta == "") {
+    } else if (verificarResposta == "" && msg.body != "voltar") {
       client.sendMessage(
         msg.from,
         `Atenção ⚠️
 
 *Quantos refrigerantes* você quer, digite a quantidade por favor!!!`
       );
-      dificuldade(msg, client);
+
+      const response = await Requests.atualizarEtapa(msg.from, {
+        problema: "e",
+      });
+
+      if (response.problema == 3) {
+        // numeroDeTelefone;
+        client.sendMessage(
+          "5514998908820@c.us",
+          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+        );
+      }
     }
   }
 
   if (recuperarEtapa.etapa == "ent") {
+    voltar(msg, client);
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
@@ -420,15 +492,14 @@ Nosso *endereço* fica localizado em Igaraçu, Rua Josepha Rodrigues Moreira - N
         msg.from,
         `Qual vai ser a forma de pagamento ?
   
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
 *1* - Dinheiro
 *2* - Cartão
 *3* - Pix`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "k" });
     }
-    if (msg.body != "1" && msg.body != "2") {
+    if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+      dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `Atenção ⚠️
@@ -439,16 +510,14 @@ Valores:
 Dentro de igaraçu: 7,00 reais
 Igaraçu x Barra: 10,00 reais
 
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
-
 *1* - Sim, quero que entregue.
 *2* - Não, vou ir buscar.`
       );
-      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "i") {
+    voltar(msg, client);
     if (msg.body == "1" || msg.body == "2") {
       client.sendMessage(
         msg.from,
@@ -472,27 +541,24 @@ Igaraçu x Barra: 10,00 reais
         });
         Requests.atualizarEtapa(msg.from, { etapa: "j" });
       }
-    } else if (msg.body != "1" || msg.body != "2") {
+    } else if (msg.body != "1" || (msg.body != "2" && msg.body != "voltar")) {
+      dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `*Atenção*
 ⬇️ Qual é a cidade ?
-
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
   
 *1* - Igaraçu do Tietê
 *2* - Barra Bonita`
       );
-      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "j") {
+    voltar(msg, client);
     client.sendMessage(
       msg.from,
       `Qual vai ser a forma de pagamento ?
-
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
 *1* - Dinheiro
 *2* - Cartão
@@ -503,6 +569,7 @@ Igaraçu x Barra: 10,00 reais
   }
 
   if (recuperarEtapa.etapa == "k") {
+    voltar(msg, client);
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
@@ -544,37 +611,44 @@ Se não, digite apenas o numero 1
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
-    if (msg.body != 1 && msg.body != 2 && msg.body != 3) {
+    if (
+      msg.body != 1 &&
+      msg.body != 2 &&
+      msg.body != 3 &&
+      msg.body != "voltar"
+    ) {
+      dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `Atenção ⚠️
 Qual vai ser a forma de pagamento ?
-  
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
 
 *1* - Dinheiro
 *2* - Cartão
 *3* - Pix`
       );
-      dificuldade(msg, client);
     }
   }
 
   if (recuperarEtapa.etapa == "l") {
-    const response = await Requests.atualizarPedido({
-      telefone: msg.from,
-      troco: `${msg.body == "1" ? "" : msg.body}`,
-    });
+    voltar(msg, client);
+    if (msg.body != "voltar") {
+      const response = await Requests.atualizarPedido({
+        telefone: msg.from,
+        troco: `${msg.body == "1" ? "" : msg.body}`,
+      });
 
-    const valor = await somarValorTotal(response);
-    console.log("a", valor);
-    gerarTemplateString(response, msg.from, client, valor);
+      const valor = await somarValorTotal(response);
+      console.log("a", valor);
+      gerarTemplateString(response, msg.from, client, valor);
 
-    desejaConfirmarOPedido(msg.from, client);
-    Requests.atualizarEtapa(msg.from, { etapa: "conf" });
+      desejaConfirmarOPedido(msg.from, client);
+      Requests.atualizarEtapa(msg.from, { etapa: "conf" });
+    }
   }
 
   if (recuperarEtapa.etapa == "conf") {
+    voltar(msg, client);
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
@@ -620,10 +694,10 @@ Um de nossos colaboradores já vai te atender.`
       //       );
       Requests.atualizarEtapa(msg.from, { etapa: "des", ativado2: false });
     }
-    if (msg.body != 1 && msg.body != 2) {
+    if (msg.body != 1 && msg.body != 2 && msg.body != "voltar") {
       client.sendMessage(msg.from, `Atenção ⚠️`);
-      desejaConfirmarOPedido(msg.from, client);
       dificuldade(msg, client);
+      desejaConfirmarOPedido(msg.from, client);
     }
   }
 
@@ -632,6 +706,7 @@ Um de nossos colaboradores já vai te atender.`
     msg.duration == undefined &&
     msg.mediaKey != undefined
   ) {
+    voltar(msg, client);
     client.sendMessage(
       msg.from,
       `Obrigado por nos enviar o comprovante!

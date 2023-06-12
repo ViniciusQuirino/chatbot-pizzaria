@@ -88,7 +88,7 @@ async function somarValorTotal(response) {
         );
         console.log(maiorValorSabor);
         if (response["tamanho" + i] == "grande") {
-          console.log("oi");
+        
           if (
             diaSemana >= 1 &&
             diaSemana <= 4 &&
