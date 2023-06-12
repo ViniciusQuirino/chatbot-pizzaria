@@ -99,7 +99,7 @@ const querQueEntregue = async (from, client) => {
 Você quer que *entregue* ?
 
 Valores:
-Dentro de igaraçu: 7,00 reais
+Igaraçu: *GRATIS*
 Igaraçu x Barra: 10,00 reais
 
 *1* - Sim, quero que entregue.
