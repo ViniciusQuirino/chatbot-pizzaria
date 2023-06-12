@@ -86,11 +86,11 @@ client.on("message", async (msg) => {
     imprevisto = false;
     client.sendMessage(msg.from, `Imprevisto desativado`);
   } else if (
-    (recuperarEtapa !== undefined &&
-      recuperarEtapa.ativado == true &&
-      recuperarEtapa.ativado2 == true &&
-      !imprevisto &&
-      msg.from == "5514998760815@c.us") 
+    recuperarEtapa !== undefined &&
+    recuperarEtapa.ativado == true &&
+    recuperarEtapa.ativado2 == true &&
+    !imprevisto
+    // msg.from == "5514998760815@c.us")
     // msg.from == "5515998135077@c.us" ||
     // msg.from == "5514998593589@c.us"
   ) {
