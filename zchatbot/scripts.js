@@ -50,36 +50,22 @@ function cronJob() {
       Requests.encerrarAtendimento();
     }
   });
+  const mudarValorDaEntregaSegunda = new CronJob("0 1 * * 1", async () => {
+    Requests.atualizarProdutos(22, { valor: 0 });
+  });
 
-  // const database = new CronJob("*/20 * * * *", async () => {
-  //   Requests.chamarApi();
-  // });
+  const mudarValorDaEntregaSexta = new CronJob("0 1 * * 5", async () => {
+    Requests.atualizarProdutos(22, { valor: 7 });
+  });
 
   const ativarChatbot = new CronJob("0 */2 * * *", async () => {
     Requests.ativarChatbot();
   });
 
-  //   const enviarMensagem = new CronJob("*/20 * * * *", async () => {
-  //     const data = {
-  //       number: telefone,
-  //       message: `Lamentamos, mas devido à falta de resposta ou interação, este *atendimento* foi *encerrado.* Caso precise realizar um pedido futuramente por favor, entre em contato novamente. Estaremos aqui prontamente para atendê-lo.
-
-  // Obrigado e até a próxima! 😃`,
-  //     };
-  //     axios
-  //       .post(`${URL_CHATBOT}/send-message`, data)
-  //       .then((res) => {
-  //         console.log(res.data);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   });
-
   encerrarAtendimento.start();
-  // database.start();
+  mudarValorDaEntregaSegunda.start();
+  mudarValorDaEntregaSexta.start();
   ativarChatbot.start();
-  // enviarMensagem.start();
 }
 
 const gostouDoNossoCardapio = async (from, client) => {
@@ -91,16 +77,18 @@ Quantas pizzas você vai querer ? Digite *apenas o numero.*`
   );
 };
 
-const querQueEntregue = async (from, client) => {
+const querQueEntregue = async (from, client, response) => {
   client.sendMessage(
     from,
-    `Certo 😃
-      
-Você quer que *entregue* ?
+    `Ok, você quer que *entregue* ?
 
 Valores:
-Igaraçu: *GRATIS*
-Igaraçu x Barra: 10,00 reais
+Igaraçu: ${
+      response[2].valor == 0 ? "*GRATIS*" : `${response[2].valor},00 reais`
+    }
+Igaraçu x Barra: ${
+      response[1].valor == 0 ? "*GRATIS*" : `${response[1].valor},00 reais`
+    }
 
 *1* - Sim, quero que entregue.
 *2* - Não, vou ir buscar.`
@@ -120,7 +108,7 @@ const desejaConfirmarOPedido = async (from, client) => {
 const desejaAlgoParaBeber = async (from, client) => {
   client.sendMessage(
     from,
-    `Ok, você deseja algo para beber ?
+    `Ok, você deseja algo para beber ? 🥤
 
 *1* - Não quero.
 *2* - Coca-Cola 2 Litros R$ 14,00
@@ -450,9 +438,13 @@ async function dificuldade(msg, client) {
     // numeroDeTelefone;
     client.sendMessage(
       "5514998908820@c.us",
-      `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+      `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!
+Numero do telefone abaixo:`
     );
+    client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
   }
+
+  return response;
 }
 
 async function encontrarObjetos(frase, dados) {

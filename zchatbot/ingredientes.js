@@ -72,9 +72,7 @@ const ingredientes = async (msg, client, recuperarEtapa) => {
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `*Atenção* ⚠️
-
-Ingredientes para acrescentar:
+        `Ingredientes para acrescentar:
 
 *0* - Voltar
 

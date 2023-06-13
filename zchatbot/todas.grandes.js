@@ -52,8 +52,7 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `*Atenção ⚠️*
-Todas são tamanho grande ?
+        `Todas são tamanho grande ?
   
 *1* - Sim, as 2 pizzas são tamanho grande.
 *2* - Não, tem pizza que vai ser tamanho médio.`
@@ -64,6 +63,13 @@ Todas são tamanho grande ?
   if (recuperarEtapa.etapa == "2") {
     voltar(msg, client);
     let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+    result = result.replace(/mais bacon/g, "");
+    result = result.replace(/brocolis com bacon/g, "brocolis");
+    result = result.replace(/brocolis com bacon/g, "brocolis");
+    result = result.replace(/brocolis c bacon/g, "brocolis");
+    result = result.replace(/brocolis c\/ bacon/g, "brocolis");
+    result = result.replace(/\//g, " ");
+    result = result.replace(/\(.*?\)/g, "").replace(/(['"])(.*?)\1/g, "");
     const retorno = removerAcentos(result);
 
     let variavelum = true;
@@ -112,7 +118,7 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
 *Ex:* frango com catupiry.
 *Ex:* meia atum especial e meia bacon.
 
-Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até amesmo se quer adicionar borda. 😋`
+Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
       );
 
       const response = await Requests.atualizarEtapa(msg.from, {
@@ -123,8 +129,10 @@ Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos pergunta
         // numeroDeTelefone;
         client.sendMessage(
           "5514998908820@c.us",
-          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!
+Numero do telefone abaixo:`
         );
+        client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
       }
     } else if (
       ocorrencias != encontrar.length &&
@@ -138,7 +146,7 @@ Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos pergunta
 *Ex:* frango com catupiry.
 *Ex:* meia atum especial e meia bacon.
 
-Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até amesmo se quer adicionar borda. 😋`
+Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
       );
 
       const response = await Requests.atualizarEtapa(msg.from, {
@@ -149,8 +157,10 @@ Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos pergunta
         // numeroDeTelefone;
         client.sendMessage(
           "5514998908820@c.us",
-          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!
+Numero do telefone abaixo:`
         );
+        client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
       }
     }
   }
@@ -225,7 +235,7 @@ Quer adicionar *borda recheada* ?
         telefone: msg.from,
         b: "loop",
       });
-      
+
       if (atualizar.qnt < atualizar.loop + "") {
         desejaAlgoParaBeber(msg.from, client);
         Requests.atualizarEtapa(msg.from, { etapa: "g" });
@@ -286,8 +296,7 @@ Quer adicionar *borda recheada* ?
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Atenção ⚠️
-Quer adicionar borda recheada ?
+        `Quer adicionar borda recheada ?
 
 *1* - Não quero
 *2* - Catupiry R$ 10,00

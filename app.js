@@ -73,8 +73,13 @@ cronJob();
 client.on("message", async (msg) => {
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
 
-  const date = new Date();
-  const h = date.getHours();
+  const dataAtual = new Date();
+  const horaAtual = dataAtual.getHours();
+  const minutosAtual = dataAtual.getMinutes();
+
+  const horaMinima = 17;
+  const horaMaxima = 22;
+  const minutosMaximos = 50;
 
   const message = msg.body.toLowerCase();
   const separar = message.split("/");
@@ -85,16 +90,33 @@ client.on("message", async (msg) => {
   } else if (separar[1] == "inativo") {
     imprevisto = false;
     client.sendMessage(msg.from, `Imprevisto desativado`);
+  }
+
+  if (
+    imprevisto &&
+    recuperarEtapa !== undefined &&
+    separar[0] != "imprevisto"
+  ) {
+    client.sendMessage(
+      msg.from,
+      `Devido a uma série de circunstâncias imprevistas, precisamos encerrar nossas atividades mais cedo do que o horário normal. 😔
+
+Lamentamos profundamente por qualquer inconveniente que isso possa causar. Agradecemos pela compreensão e paciência. Esperamos poder servi-lo em breve com nossas deliciosas pizzas. `
+    );
   } else if (
     recuperarEtapa !== undefined &&
     recuperarEtapa.ativado == true &&
     recuperarEtapa.ativado2 == true &&
     !imprevisto
-    // msg.from == "5514998760815@c.us")
+  ) {
+    // msg.from == "5514998760815@c.us"
     // msg.from == "5515998135077@c.us" ||
     // msg.from == "5514998593589@c.us"
-  ) {
-    if (h >= 5 && h < 23) {
+    if (
+      (horaAtual > horaMinima && horaAtual < horaMaxima) ||
+      (horaAtual === horaMinima && minutosAtual >= 0) ||
+      (horaAtual === horaMaxima && minutosAtual <= minutosMaximos)
+    ) {
       if (msg.mediaKey != undefined && msg.duration != undefined) {
         audio(msg.from, client);
       } else if (
@@ -105,23 +127,9 @@ client.on("message", async (msg) => {
         separar[0] != "desativar" &&
         separar[0] != "entrega" &&
         separar[0] != "retirar" &&
-        separar[0] != "inativo"
+        separar[0] != "inativo" &&
+        separar[0] != "imprevisto"
       ) {
-        // if (recuperarEtapa.etapa == "bord") {
-        //   if (msg.body == "1") {
-        //     const mediaPath = MessageMedia.fromFilePath("./ex.ogg");
-
-        //     await client.sendMessage(msg.from, mediaPath, {
-        //       sendAudioAsVoice: true,
-        //     });
-        //   } else if (msg.body == "2") {
-        //     const mediaPath = MessageMedia.fromFilePath("./ex.ogg");
-
-        //     await client.sendMessage(msg.from, mediaPath, {
-        //       sendAudioAsVoice: true,
-        //     });
-        //   }
-        // }
         pedidos(recuperarEtapa, msg, client);
       }
       listarPizzas(msg, client);
@@ -142,6 +150,11 @@ client.on("message", async (msg) => {
         maisDeUma(recuperarEtapa, msg, client);
         grandeEMedia(recuperarEtapa, msg, client);
       }
+    } else {
+      client.sendMessage(
+        msg.from,
+        `Olá, a *Pizzas Primo Delivery* agradece sua mensagem🙏🏼! Atendimento de Seg á Sab, das 18 às 23hrs.. 😉`
+      );
     }
   }
   ativarchatbot(msg, client);

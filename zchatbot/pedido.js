@@ -73,10 +73,7 @@ Tempo p/ retirar: ${response.temporetirada}
       gostouDoNossoCardapio(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "c" });
     } else if (msg.body == "3") {
-      await cardapio(msg.from, diaSemana);
-
-      gostouDoNossoCardapio(msg.from, client);
-      Requests.atualizarEtapa(msg.from, { etapa: "c" });
+      Requests.atualizarEtapa(msg.from, { etapa: "a" });
 
       client.sendMessage(
         msg.from,
@@ -87,9 +84,7 @@ Tempo p/ retirar: ${response.temporetirada}
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Atenção ⚠️
-        
-*1* - Cardápio e Promoções
+        `*1* - Cardápio e Promoções
 *2* - Fazer pedido
 *3* - Redes Sociais`
       );
@@ -166,9 +161,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Atenção ⚠️
-
-*1 - Grande (8 pedaços) 🍕*
+        `*1 - Grande (8 pedaços) 🍕*
 *2 - Média (6 pedaços) 🍕*`
       );
     }
@@ -185,6 +178,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     result = result.replace(/brocolis com bacon/g, "brocolis");
     result = result.replace(/brocolis c bacon/g, "brocolis");
     result = result.replace(/brocolis c\/ bacon/g, "brocolis");
+    result = result.replace(/\//g, " ");
     result = result.replace(/\(.*?\)/g, "").replace(/(['"])(.*?)\1/g, "");
 
     let retorno = removerAcentos(result);
@@ -231,7 +225,7 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
 *Ex:* frango com catupiry.
 *Ex:* meia atum especial e meia bacon.
 
-Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até amesmo se quer adicionar borda. 😋`
+Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
       );
 
       const response = await Requests.atualizarEtapa(msg.from, {
@@ -242,8 +236,10 @@ Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos pergunta
         // numeroDeTelefone;
         client.sendMessage(
           "5514998908820@c.us",
-          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!
+Numero do telefone abaixo:`
         );
+        client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
       }
     } else if (
       ocorrencias != encontrar.length &&
@@ -257,7 +253,7 @@ Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos pergunta
 *Ex:* frango com catupiry.
 *Ex:* meia atum especial e meia bacon.
 
-Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até amesmo se quer adicionar borda. 😋`
+Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
       );
 
       const response = await Requests.atualizarEtapa(msg.from, {
@@ -268,8 +264,10 @@ Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos pergunta
         // numeroDeTelefone;
         client.sendMessage(
           "5514998908820@c.us",
-          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!
+Numero do telefone abaixo:`
         );
+        client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
       }
     }
   }
@@ -374,8 +372,7 @@ Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos pergunta
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Atenção ⚠️
-Quer adicionar borda recheada ?
+        `Quer adicionar borda recheada ?
 
 *1* - Não quero
 *2* - Catupiry R$ 10,00
@@ -388,8 +385,10 @@ Quer adicionar borda recheada ?
   if (recuperarEtapa.etapa == "g") {
     voltar(msg, client);
     if (msg.body == "1") {
-      querQueEntregue(msg.from, client);
-      Requests.atualizarEtapa(msg.from, { etapa: "ent" });
+      const response = await Requests.atualizarEtapa(msg.from, {
+        etapa: "ent",
+      });
+      querQueEntregue(msg.from, client, response);
     }
 
     if (msg.body == "2") {
@@ -426,8 +425,7 @@ Quer adicionar borda recheada ?
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Atenção ⚠️
-Você deseja algo para *beber* ? 🥤
+        `Você deseja algo para *beber* ? 🥤
  
 *1* - Não quero.
 *2* - Coca-Cola 2 Litros R$ 14,00
@@ -439,19 +437,19 @@ Você deseja algo para *beber* ? 🥤
   if (recuperarEtapa.etapa == "h") {
     voltar(msg, client);
     const verificarResposta = verificarNumero(msg.body);
-    if (verificarResposta) {
-      querQueEntregue(msg.from, client);
+    if (verificarResposta && msg.body != "voltar") {
+      const response = await Requests.atualizarEtapa(msg.from, {
+        etapa: "ent",
+      });
+      querQueEntregue(msg.from, client, response);
       Requests.atualizarPedido({
         telefone: msg.from,
         qntrefrigerante: +verificarResposta,
       });
-      Requests.atualizarEtapa(msg.from, { etapa: "ent" });
     } else if (verificarResposta == "" && msg.body != "voltar") {
       client.sendMessage(
         msg.from,
-        `Atenção ⚠️
-
-*Quantos refrigerantes* você quer, digite a quantidade por favor!!!`
+        `*Quantos refrigerantes* você quer, digite a quantidade por favor!!!`
       );
 
       const response = await Requests.atualizarEtapa(msg.from, {
@@ -462,15 +460,17 @@ Você deseja algo para *beber* ? 🥤
         // numeroDeTelefone;
         client.sendMessage(
           "5514998908820@c.us",
-          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!`
+          `Tem um cliente com dificuldade para usar o chatbot, por favor ajude ele!
+Numero do telefone abaixo:`
         );
+        client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
       }
     }
   }
 
   if (recuperarEtapa.etapa == "ent") {
     voltar(msg, client);
-    if (msg.body == "1") {
+    if (msg.body == "1" && msg.body != "voltar") {
       client.sendMessage(
         msg.from,
         `⬇️ Qual é a cidade ?
@@ -479,14 +479,13 @@ Você deseja algo para *beber* ? 🥤
 *2* - Barra Bonita`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "i" });
-    }
-
-    if (msg.body == "2") {
+    } else if (msg.body == "2" && msg.body != "voltar") {
       client.sendMessage(
         msg.from,
-        `Okay 😃
+        `Endereço completo para que possa nos encontrar facilmente:
 
-Nosso *endereço* fica localizado em Igaraçu, Rua Josepha Rodrigues Moreira - N:48`
+Rua: Josepha Rodrigues Moreira, 48
+Cidade: Igaraçu do Tietẽ`
       );
       client.sendMessage(
         msg.from,
@@ -497,18 +496,19 @@ Nosso *endereço* fica localizado em Igaraçu, Rua Josepha Rodrigues Moreira - N
 *3* - Pix`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "k" });
-    }
-    if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
-      dificuldade(msg, client);
+    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+      const response = await dificuldade(msg, client);
       client.sendMessage(
-        msg.from,
-        `Atenção ⚠️
-
-Você quer que *entregue* ?
+        from,
+        `Ok, você quer que *entregue* ?
 
 Valores:
-Igaraçu: *GRATIS*
-Igaraçu x Barra: 10,00 reais
+Igaraçu: ${
+          response[2].valor == 0 ? "*GRATIS*" : `${response[2].valor},00 reais`
+        }
+Igaraçu x Barra: ${
+          response[1].valor == 0 ? "*GRATIS*" : `${response[1].valor},00 reais`
+        }
 
 *1* - Sim, quero que entregue.
 *2* - Não, vou ir buscar.`
@@ -518,7 +518,7 @@ Igaraçu x Barra: 10,00 reais
 
   if (recuperarEtapa.etapa == "i") {
     voltar(msg, client);
-    if (msg.body == "1" || msg.body == "2") {
+    if (msg.body == "1" || (msg.body == "2" && msg.body != "voltar")) {
       client.sendMessage(
         msg.from,
         `⏩ Digite o seu *endereço* por favor.
@@ -541,12 +541,11 @@ Igaraçu x Barra: 10,00 reais
         });
         Requests.atualizarEtapa(msg.from, { etapa: "j" });
       }
-    } else if (msg.body != "1" || (msg.body != "2" && msg.body != "voltar")) {
+    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `*Atenção*
-⬇️ Qual é a cidade ?
+        `Qual é a cidade ?
   
 *1* - Igaraçu do Tietê
 *2* - Barra Bonita`
@@ -556,21 +555,23 @@ Igaraçu x Barra: 10,00 reais
 
   if (recuperarEtapa.etapa == "j") {
     voltar(msg, client);
-    client.sendMessage(
-      msg.from,
-      `Qual vai ser a forma de pagamento ?
-
+    if (msg.body != "voltar") {
+      client.sendMessage(
+        msg.from,
+        `Qual vai ser a forma de pagamento ?
+  
 *1* - Dinheiro
 *2* - Cartão
 *3* - Pix`
-    );
-    Requests.atualizarPedido({ telefone: msg.from, endereco: msg.body });
-    Requests.atualizarEtapa(msg.from, { etapa: "k" });
+      );
+      Requests.atualizarPedido({ telefone: msg.from, endereco: msg.body });
+      Requests.atualizarEtapa(msg.from, { etapa: "k" });
+    }
   }
 
   if (recuperarEtapa.etapa == "k") {
     voltar(msg, client);
-    if (msg.body == "1") {
+    if (msg.body == "1" && msg.body != "voltar") {
       client.sendMessage(
         msg.from,
         `Você precisa de troco ?
@@ -587,7 +588,7 @@ Se não, digite apenas o numero 1
       });
       Requests.atualizarEtapa(msg.from, { etapa: "l" });
     }
-    if (msg.body == "2") {
+    if (msg.body == "2" && msg.body != "voltar") {
       const response = await Requests.atualizarPedido({
         telefone: msg.from,
         formadepagamento: "cartão",
@@ -599,7 +600,7 @@ Se não, digite apenas o numero 1
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
-    if (msg.body == "3") {
+    if (msg.body == "3" && msg.body != "voltar") {
       const response = await Requests.atualizarPedido({
         telefone: msg.from,
         formadepagamento: "pix",
@@ -620,8 +621,7 @@ Se não, digite apenas o numero 1
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Atenção ⚠️
-Qual vai ser a forma de pagamento ?
+        `Qual vai ser a forma de pagamento ?
 
 *1* - Dinheiro
 *2* - Cartão
@@ -649,7 +649,7 @@ Qual vai ser a forma de pagamento ?
 
   if (recuperarEtapa.etapa == "conf") {
     voltar(msg, client);
-    if (msg.body == "1") {
+    if (msg.body == "1" && msg.body != "voltar") {
       client.sendMessage(
         msg.from,
         `Seu pedido foi *confirmado com sucesso*. Obrigado pela confiança!
@@ -678,7 +678,7 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
         Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
       }
     }
-    if (msg.body == "2") {
+    if (msg.body == "2" && msg.body != "voltar") {
       client.sendMessage(
         msg.from,
         `Ok, aguarde um instante!
@@ -686,13 +686,14 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
 Um de nossos colaboradores já vai te atender.`
       );
       // numeroDeTelefone
-      //       client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
-      //       client.sendMessage(
-      //         "5514998908820@c.us",
-      //         `Atenção ⚠️
-      // Tem um cliente precisando de ajuda!`
-      //       );
-      Requests.atualizarEtapa(msg.from, { etapa: "des", ativado2: false });
+      client.sendMessage(
+        "5514998908820@c.us",
+        `Atenção ⚠️
+        
+O cliente do numero telefone abaixo está precisando de ajuda! Pois ele selecionou a opção que as informações do pedido não estão corretas.`
+      );
+      client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
+      Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
     }
     if (msg.body != 1 && msg.body != 2 && msg.body != "voltar") {
       client.sendMessage(msg.from, `Atenção ⚠️`);

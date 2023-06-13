@@ -82,13 +82,11 @@ async function somarValorTotal(response) {
           valor += resultado[0].media;
         }
       } else if (resultado.length == 2) {
-        const maiorValorSabor = Math.max(
-          resultado[0].grande,
-          resultado[1].grande
-        );
-        console.log(maiorValorSabor);
         if (response["tamanho" + i] == "grande") {
-        
+          const maiorValorSabor = Math.max(
+            resultado[0].grande,
+            resultado[1].grande
+          );
           if (
             diaSemana >= 1 &&
             diaSemana <= 4 &&
@@ -112,6 +110,10 @@ async function somarValorTotal(response) {
             valor += maiorValorSabor;
           }
         } else if (response["tamanho" + i] == "média") {
+          const maiorValorSabor = Math.max(
+            resultado[0].media,
+            resultado[1].media
+          );
           valor += maiorValorSabor;
         }
       }
