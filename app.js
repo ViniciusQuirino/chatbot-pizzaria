@@ -101,7 +101,7 @@ client.on("message", async (msg) => {
       msg.from,
       `Houve um imprevisto que afetou diretamente nossos planos, pedimos desculpas por qualquer inconveniente.
 
-Retornaremos amanhã, Obrigado pela compreensão.`
+Retornaremos amanhã, obrigado pela compreensão.`
     );
   } else if (
     recuperarEtapa !== undefined &&
