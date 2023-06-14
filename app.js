@@ -99,9 +99,9 @@ client.on("message", async (msg) => {
   ) {
     client.sendMessage(
       msg.from,
-      `Devido a uma série de circunstâncias imprevistas, precisamos encerrar nossas atividades mais cedo do que o horário normal. 😔
+      `Houve um imprevisto que afetou nossos planos, pedimos desculpas por qualquer inconveniente.
 
-Lamentamos profundamente por qualquer inconveniente que isso possa causar. Agradecemos pela compreensão e paciência. Esperamos poder servi-lo em breve com nossas deliciosas pizzas. `
+Retornaremos amanhã, Obrigado pela compreensão.`
     );
   } else if (
     recuperarEtapa !== undefined &&
