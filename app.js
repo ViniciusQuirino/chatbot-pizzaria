@@ -99,7 +99,7 @@ client.on("message", async (msg) => {
   ) {
     client.sendMessage(
       msg.from,
-      `Houve um imprevisto que afetou nossos planos, pedimos desculpas por qualquer inconveniente.
+      `Houve um imprevisto que afetou diretamente nossos planos, pedimos desculpas por qualquer inconveniente.
 
 Retornaremos amanhã, Obrigado pela compreensão.`
     );
