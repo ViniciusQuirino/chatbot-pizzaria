@@ -73,7 +73,7 @@ const gostouDoNossoCardapio = async (from, client) => {
     from,
     `Gostou do nosso cardápio ? 😃
 
-Quantas pizzas você vai querer ? Digite *apenas o numero.*`
+Quantas pizzas você vai querer ? Digite *apenas o NUMERO.*`
   );
 };
 
@@ -270,10 +270,10 @@ function criarObjetoIngrediente(from, numero, message, request) {
 async function desativarchatbot(msg, client) {
   let message = msg.body.toLowerCase();
 
-  let desativar = message.slice(0, 9);
-  let telefone = message.split("/");
+  const telefone = message.split("/");
+  const temBarra = message.includes("/");
 
-  if (desativar == "desativar") {
+  if (telefone[0] == "desativar" && temBarra) {
     try {
       await Requests.atualizarEtapa(`55${telefone[1]}@c.us`, {
         ativado: false,
@@ -293,10 +293,10 @@ async function desativarchatbot(msg, client) {
 async function ativarchatbot(msg, client) {
   let message = msg.body.toLowerCase();
 
-  let ativar = message.slice(0, 6);
-  let telefone = message.split("/");
+  const telefone = message.split("/");
+  const temBarra = message.includes("/");
 
-  if (ativar == "ativar") {
+  if (telefone[0] == "ativar" && temBarra) {
     try {
       await Requests.atualizarEtapa(`55${telefone[1]}@c.us`, {
         ativado: true,
@@ -316,10 +316,10 @@ async function ativarchatbot(msg, client) {
 async function tempo(msg, client) {
   let message = msg.body.toLowerCase();
 
-  let comando = message.slice(0, 7);
-  let tempo = message.split("/");
+  const tempo = message.split("/");
+  const temBarra = message.includes("/");
 
-  if (comando == "entrega") {
+  if (tempo[0] == "entrega" && temBarra) {
     await Requests.atualizarTempo({ tempoentrega: tempo[1] });
 
     client.sendMessage(
@@ -328,7 +328,7 @@ async function tempo(msg, client) {
     );
   }
 
-  if (comando == "retirar") {
+  if (tempo[0] == "retirar" && temBarra) {
     await Requests.atualizarTempo({ temporetirada: tempo[1] });
 
     client.sendMessage(
@@ -419,7 +419,7 @@ function voltar(msg, client) {
 
     client.sendMessage(
       msg.from,
-      "Quantas pizzas você vai querer ? Digite *apenas o numero.*"
+      "Quantas pizzas você vai querer ? Digite *apenas o NUMERO.*"
     );
   }
 }
@@ -427,7 +427,7 @@ function voltar(msg, client) {
 async function dificuldade(msg, client) {
   client.sendMessage(
     msg.from,
-    "⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*"
+    "⬇️ Escolha uma das opções abaixo digitando *apenas o NUMERO.*"
   );
 
   const response = await Requests.atualizarEtapa(msg.from, {

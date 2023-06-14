@@ -61,7 +61,7 @@ const ingredientes = async (msg, client, recuperarEtapa) => {
         msg.body,
         response
       );
-     
+
       Requests.atualizarPedido(ingrediente);
       Requests.atualizarEtapa(msg.from, { etapa: "90" });
     } else if (
@@ -97,10 +97,11 @@ const ingredientes = async (msg, client, recuperarEtapa) => {
         client.sendMessage(
           msg.from,
           `*${ordinal} PIZZA:*
-Tem algum ingrediente que você gostaria de *retirar ou adicionar ?*
-    
-Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
-*Ex:* retirar cebola.
+Tem ingrediente que você gostaria de *retirar ou adicionar ?*
+  
+Caso deseje remover algum ingrediente, escreva o ingrediente que você gostaria de retirar.
+
+*Exemplo:* quero retirar a cebola.
 
 *1* - Não quero adicionar e retirar nenhum ingrediente.
 *2* - Acrescentar ingrediente`
@@ -109,10 +110,11 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
       } else if (response.qnt == 1) {
         client.sendMessage(
           msg.from,
-          `Tem algum ingrediente que você gostaria de *retirar ou adicionar ?*
-    
-Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
-*Ex:* retirar cebola.
+          `Tem ingrediente que você gostaria de *retirar ou adicionar ?*
+  
+Caso deseje remover algum ingrediente, escreva o ingrediente que você gostaria de retirar.
+
+*Exemplo:* quero retirar a cebola.
 
 *1* - Não quero adicionar e retirar nenhum ingrediente.
 *2* - Acrescentar ingrediente`

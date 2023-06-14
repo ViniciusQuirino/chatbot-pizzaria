@@ -31,7 +31,7 @@ Eu sou o *assistente virtual da Pizzas Primo Delivery* e estou aqui para te ajud
 Tempo de entrega: ${response.tempoentrega}
 Tempo p/ retirar: ${response.temporetirada}
 
-⬇️ Escolha uma das opções abaixo digitando *apenas o numero.*
+⬇️ Escolha uma das opções abaixo digitando *apenas o NUMERO.*
 
 *1* - Cardápio e Promoções
 *2* - Fazer pedido
@@ -81,6 +81,10 @@ Tempo p/ retirar: ${response.temporetirada}
       );
       Requests.atualizarEtapa(msg.from, { etapa: "a" });
     } else if (msg.body != "1" && msg.body != "2" && msg.body != "3") {
+      client.sendMessage(
+        msg.from,
+        `Agora nosso atendimento é *AUTOMATIZADO!* Mais agilidade, respostas rápidas e um novo jeito de pedir sua pizza favorita. 😋`
+      );
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
@@ -101,7 +105,7 @@ Tempo p/ retirar: ${response.temporetirada}
           msg.from,
           `Certo, então é ${resposta} pizza.
   
-Qual o *tamanho* que você quer ?
+Qual o *tamanho* que você quer ? Digite *apenas o NUMERO*
 
 *1 - Grande (8 pedaços) 🍕*
 *2 - Média (6 pedaços) 🍕*`
@@ -111,7 +115,7 @@ Qual o *tamanho* que você quer ?
       } else if (resposta >= 2 && resposta <= 10) {
         client.sendMessage(
           msg.from,
-          `Certo, então são ${resposta} pizzas. Todas são *tamanho* grande ?
+          `Certo, então são ${resposta} pizzas. Todas são *tamanho* grande ? Digite *apenas o NUMERO*
   
 *1* - Sim, as ${resposta} pizzas são tamanho grande.
 *2* - Não, tem pizza que vai ser tamanho médio.`
@@ -129,8 +133,12 @@ Qual o *tamanho* que você quer ?
     } else if (verificarResposta == "") {
       client.sendMessage(
         msg.from,
-        `Atenção ⚠️
-*Quantas pizzas* você vai querer ? Digite *apenas o numero.*`
+        `Agora nosso atendimento é *AUTOMATIZADO!* Mais agilidade, respostas rápidas e um novo jeito de pedir sua pizza favorita. 😋`
+      );
+
+      client.sendMessage(
+        msg.from,
+        `Quantas pizzas você vai querer ? Digite *apenas o NUMERO.*`
       );
     }
   }
@@ -172,7 +180,8 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
   // -------------------------------------------------------------------------
   if (recuperarEtapa.etapa == "d") {
     voltar(msg, client);
-    let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+    let result = msg.body.replace(/1\/2|meia|meio/g, "");
+    result = result.replace(/1\/2|meia|meio/g, "1/2");
     result = result.replace(/mais bacon/g, "");
     result = result.replace(/brocolis com bacon/g, "brocolis");
     result = result.replace(/brocolis com bacon/g, "brocolis");
@@ -198,9 +207,9 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     const ocorrencias = (frase.match(/1\/2/g) || []).length;
     const encontrar = await encontrarObjetos(frase, dados);
 
-    console.log(ocorrencias);
     console.log(frase);
     console.log(encontrar);
+    
     if (
       (encontrar[0] && !ocorrencias && msg.body != "voltar") ||
       (encontrar[0] && encontrar[1] && ocorrencias && msg.body != "voltar")
@@ -209,8 +218,9 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
         msg.from,
         `Tem ingrediente que você gostaria de *retirar ou adicionar ?*
   
-Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
-*Ex:* retirar cebola
+Caso deseje remover algum ingrediente, escreva o ingrediente que você gostaria de retirar.
+
+*Exemplo:* quero retirar a cebola.
 
 *1* - Não quero adicionar e retirar nenhum ingrediente.
 *2* - Acrescentar ingrediente`
@@ -220,10 +230,10 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
     } else if (encontrar.length == 0 && msg.body != "voltar" && !ocorrencias) {
       client.sendMessage(
         msg.from,
-        `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
+        `Não encontrei nenhuma pizza com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
         
-*Ex:* frango com catupiry.
-*Ex:* meia atum especial e meia bacon.
+*Exemplo:* frango com catupiry.
+*Exemplo:* meia atum especial e meia bacon.
 
 Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
       );
@@ -248,12 +258,12 @@ Numero do telefone abaixo:`
     ) {
       client.sendMessage(
         msg.from,
-        `Desculpa, mas não encontrei as pizzas que deseja com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
+        `Não encontrei as pizzas que deseja com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
         
-*Ex:* frango com catupiry.
-*Ex:* meia atum especial e meia bacon.
+*Exemplo:* frango com catupiry.
+*Exemplo:* meia atum especial e meia bacon.
 
-Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
+Digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
       );
 
       const response = await Requests.atualizarEtapa(msg.from, {
@@ -277,6 +287,18 @@ Numero do telefone abaixo:`
   // -------------------------------------------------------------------------
   if (recuperarEtapa.etapa == "e") {
     voltar(msg, client);
+    let message = msg.body.toLowerCase();
+    const retirar = message.split("/");
+    const temBarra = message.includes("/");
+
+    if (retirar[0] == "retirar" && !temBarra && msg.body != "voltar") {
+      client.sendMessage(
+        msg.from,
+        `Qual ingrediente você gostaria de retirar ?`
+      );
+      Requests.atualizarEtapa(msg.from, { etapa: "e" });
+    }
+
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
@@ -313,7 +335,12 @@ Numero do telefone abaixo:`
       );
 
       Requests.atualizarEtapa(msg.from, { etapa: "ing" });
-    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+    } else if (
+      msg.body != "1" &&
+      msg.body != "2" &&
+      msg.body != "voltar" &&
+      retirar[0] != "retirar"
+    ) {
       client.sendMessage(
         msg.from,
         `Quer adicionar *borda recheada* ?
@@ -572,6 +599,10 @@ Igaraçu x Barra: ${
   if (recuperarEtapa.etapa == "k") {
     voltar(msg, client);
     if (msg.body == "1" && msg.body != "voltar") {
+      const response = await Requests.recuperarPedido(msg.from);
+      const valor = await somarValorTotal(response);
+      client.sendMessage(msg.from, `Valor total: ${valor},00`);
+
       client.sendMessage(
         msg.from,
         `Você precisa de troco ?
@@ -594,7 +625,7 @@ Se não, digite apenas o numero 1
         formadepagamento: "cartão",
       });
       const valor = await somarValorTotal(response);
-      console.log(valor);
+
       gerarTemplateString(response, msg.from, client, valor);
 
       desejaConfirmarOPedido(msg.from, client);
@@ -606,7 +637,7 @@ Se não, digite apenas o numero 1
         formadepagamento: "pix",
       });
       const valor = await somarValorTotal(response);
-      console.log(valor);
+
       gerarTemplateString(response, msg.from, client, valor);
 
       desejaConfirmarOPedido(msg.from, client);
@@ -639,7 +670,7 @@ Se não, digite apenas o numero 1
       });
 
       const valor = await somarValorTotal(response);
-      console.log("a", valor);
+
       gerarTemplateString(response, msg.from, client, valor);
 
       desejaConfirmarOPedido(msg.from, client);
@@ -656,7 +687,7 @@ Se não, digite apenas o numero 1
 
 Nossa equipe está animada para preparar a sua deliciosa pizza e entregá-la com todo cuidado e sabor. 😃🍕`
       );
-
+      console.log("PEDIDO FINALIZADO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       const response = await Requests.atualizarPedido({
         telefone: msg.from,
         pedidoconfirmado: true,
@@ -679,6 +710,7 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
       }
     }
     if (msg.body == "2" && msg.body != "voltar") {
+      console.log("NÂO TEM COISA ERRADA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       client.sendMessage(
         msg.from,
         `Ok, aguarde um instante!

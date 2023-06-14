@@ -71,6 +71,7 @@ const client = new Client({
 let imprevisto = false;
 cronJob();
 client.on("message", async (msg) => {
+  console.log(msg.body);
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
 
   const dataAtual = new Date();
@@ -126,7 +127,6 @@ Lamentamos profundamente por qualquer inconveniente que isso possa causar. Agrad
         separar[0] != "ativar" &&
         separar[0] != "desativar" &&
         separar[0] != "entrega" &&
-        separar[0] != "retirar" &&
         separar[0] != "inativo" &&
         separar[0] != "imprevisto"
       ) {

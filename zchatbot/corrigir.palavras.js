@@ -47,8 +47,17 @@ const dados = [
   { nome: "chocoduo", media: "34,00", grande: "38,00" },
   { nome: "chocolate c/ pacoca", media: "34,00", grande: "38,00" },
   { nome: "laka oreo", media: "35,00", grande: "40,00" },
+  {
+    nome: "bacon especial",
+    grande: 42,
+    media: 38,
+  },
+  {
+    nome: "alho",
+    grande: 34,
+    media: 30,
+  },
 ];
-
 
 function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
   // Verifica se há "1/2" após "e" ou ","

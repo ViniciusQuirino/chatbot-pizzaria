@@ -55,7 +55,8 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
 
   if (recuperarEtapa.etapa == "21") {
     voltar(msg, client);
-    let result = msg.body.replace(/1\/2|meia|meio/g, "1/2");
+    let result = msg.body.replace(/1\/2|meia|meio/g, "");
+    result = result.replace(/1\/2|meia|meio/g, "1/2");
     result = result.replace(/mais bacon/g, "");
     result = result.replace(/brocolis com bacon/g, "brocolis");
     result = result.replace(/brocolis com bacon/g, "brocolis");
@@ -82,7 +83,6 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
 
     const sabor = criarObjetoSabor(msg.from, response.loop, frase);
 
-    console.log(ocorrencias);
     console.log(frase);
     console.log(encontrar);
 
@@ -93,10 +93,11 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*
-Tem algum ingrediente que você gostaria de *retirar ou adicionar ?*
+Tem ingrediente que você gostaria de *retirar ou adicionar ?*
   
-Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que você gostaria de retirar.
-*Ex:* retirar cebola.
+Caso deseje remover algum ingrediente, escreva o ingrediente que você gostaria de retirar.
+
+*Exemplo:* quero retirar a cebola.
 
 *1* - Não quero adicionar e retirar nenhum ingrediente.
 *2* - Acrescentar ingrediente`
@@ -106,12 +107,12 @@ Caso deseje remover algum ingrediente, por favor, escreva o ingrediente que voc�
     } else if (encontrar.length == 0 && msg.body != "voltar" && !ocorrencias) {
       client.sendMessage(
         msg.from,
-        `Desculpa, mas não encontrei nenhuma pizza com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
+        `Não encontrei nenhuma pizza com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
         
-*Ex:* frango com catupiry.
-*Ex:* meia atum especial e meia bacon.
+*Exemplo:* frango com catupiry.
+*Exemplo:* meia atum especial e meia bacon.
 
-Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
+Digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
       );
 
       const response = await Requests.atualizarEtapa(msg.from, {
@@ -134,12 +135,12 @@ Numero do telefone abaixo:`
     ) {
       client.sendMessage(
         msg.from,
-        `Desculpa, mas não encontrei as pizzas que deseja com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
+        `Não encontrei as pizzas que deseja com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
         
-*Ex:* frango com catupiry.
-*Ex:* meia atum especial e meia bacon.
+*Exemplo:* frango com catupiry.
+*Exemplo:* meia atum especial e meia bacon.
 
-Por favor digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
+Digite *APENAS* o nome da pizza, *nas próximas etapas* vamos perguntar se deseja adicionar ou retirar algum ingrediente, e até mesmo se quer adicionar borda. 😋`
       );
 
       const response = await Requests.atualizarEtapa(msg.from, {
@@ -161,6 +162,18 @@ Numero do telefone abaixo:`
 
   if (recuperarEtapa.etapa == "22") {
     voltar(msg, client);
+    let message = msg.body.toLowerCase();
+    const retirar = message.split("/");
+    const temBarra = message.includes("/");
+
+    if (retirar[0] == "retirar" && !temBarra && msg.body != "voltar") {
+      client.sendMessage(
+        msg.from,
+        `Qual ingrediente você gostaria de retirar ?`
+      );
+      Requests.atualizarEtapa(msg.from, { etapa: "22" });
+    }
+
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
@@ -198,7 +211,12 @@ Ingredientes para acrescentar:
 *15* - Bacon Cubos R$ 8,00`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "ing" });
-    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+    } else if (
+      msg.body != "1" &&
+      msg.body != "2" &&
+      msg.body != "voltar" &&
+      retirar[0] != "retirar"
+    ) {
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*

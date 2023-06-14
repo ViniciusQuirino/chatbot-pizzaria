@@ -97,13 +97,15 @@ async function somarValorTotal(response) {
           } else if (
             diaSemana >= 1 &&
             diaSemana <= 4 &&
-            isPromocao(resultado[0].nome)
+            isPromocao(resultado[0].nome) &&
+            !isPromocao(resultado[1].nome)
           ) {
             valor += maiorValorSabor;
           } else if (
             diaSemana >= 1 &&
             diaSemana <= 4 &&
-            !isPromocao(resultado[0].nome)
+            !isPromocao(resultado[0].nome) &&
+            isPromocao(resultado[1].nome)
           ) {
             valor += maiorValorSabor;
           } else {
@@ -125,6 +127,7 @@ async function somarValorTotal(response) {
 function isPromocao(nomePizza) {
   const pizzasPromocao = [
     "alho e tomate",
+    "alho",
     "calabresa",
     "milho c/ catupiry",
     "lombo",
