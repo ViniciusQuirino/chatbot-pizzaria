@@ -76,7 +76,6 @@ client.on("message", async (msg) => {
   const dataAtual = new Date();
   const horaAtual = dataAtual.getHours();
   const minutosAtual = dataAtual.getMinutes();
-
   const horaMinima = 17;
   const horaMaxima = 22;
   const minutosMaximos = 50;
