@@ -209,7 +209,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
 
     console.log(frase);
     console.log(encontrar);
-    
+
     if (
       (encontrar[0] && !ocorrencias && msg.body != "voltar") ||
       (encontrar[0] && encontrar[1] && ocorrencias && msg.body != "voltar")
@@ -708,8 +708,7 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
       } else if (response.formadepagamento != "pix") {
         Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
       }
-    }
-    if (msg.body == "2" && msg.body != "voltar") {
+    } else if (msg.body == "2" && msg.body != "voltar") {
       console.log("NÂO TEM COISA ERRADA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       client.sendMessage(
         msg.from,
@@ -726,8 +725,7 @@ O cliente do numero telefone abaixo está precisando de ajuda! Pois ele selecion
       );
       client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
       Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
-    }
-    if (msg.body != 1 && msg.body != 2 && msg.body != "voltar") {
+    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
       client.sendMessage(msg.from, `Atenção ⚠️`);
       dificuldade(msg, client);
       desejaConfirmarOPedido(msg.from, client);
