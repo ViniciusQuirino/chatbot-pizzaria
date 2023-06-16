@@ -21,6 +21,7 @@ const { dados } = require("./corrigir.palavras");
 const { removerPalavras } = require("./remover.palavras");
 
 async function pedidos(recuperarEtapa, msg, client) {
+  const message = msg.body.toLowerCase();
   if (recuperarEtapa.etapa == "a") {
     const response = await Requests.recuperarTempo();
     client.sendMessage(
@@ -165,7 +166,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       Requests.atualizarPedido({ telefone: msg.from, tamanho1: "média" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
     }
-    if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+    if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
@@ -211,8 +212,8 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     console.log(encontrar);
 
     if (
-      (encontrar[0] && !ocorrencias && msg.body != "voltar") ||
-      (encontrar[0] && encontrar[1] && ocorrencias && msg.body != "voltar")
+      (encontrar[0] && !ocorrencias && message != "voltar") ||
+      (encontrar[0] && encontrar[1] && ocorrencias && message != "voltar")
     ) {
       client.sendMessage(
         msg.from,
@@ -227,7 +228,7 @@ Caso deseje remover algum ingrediente, escreva o ingrediente que você gostaria 
       );
       Requests.atualizarPedido({ telefone: msg.from, sabor1: frase });
       Requests.atualizarEtapa(msg.from, { etapa: "e" });
-    } else if (encontrar.length == 0 && msg.body != "voltar" && !ocorrencias) {
+    } else if (encontrar.length == 0 && message != "voltar" && !ocorrencias) {
       client.sendMessage(
         msg.from,
         `Não encontrei nenhuma pizza com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
@@ -254,7 +255,7 @@ Numero do telefone abaixo:`
     } else if (
       ocorrencias != encontrar.length &&
       ocorrencias &&
-      msg.body != "voltar"
+      message != "voltar"
     ) {
       client.sendMessage(
         msg.from,
@@ -287,11 +288,11 @@ Numero do telefone abaixo:`
   // -------------------------------------------------------------------------
   if (recuperarEtapa.etapa == "e") {
     voltar(msg, client);
-    let message = msg.body.toLowerCase();
+
     const retirar = message.split("/");
     const temBarra = message.includes("/");
 
-    if (retirar[0] == "retirar" && !temBarra && msg.body != "voltar") {
+    if (retirar[0] == "retirar" && !temBarra && message != "voltar") {
       client.sendMessage(
         msg.from,
         `Qual ingrediente você gostaria de retirar ?`
@@ -338,7 +339,7 @@ Numero do telefone abaixo:`
     } else if (
       msg.body != "1" &&
       msg.body != "2" &&
-      msg.body != "voltar" &&
+      message != "voltar" &&
       retirar[0] != "retirar"
     ) {
       client.sendMessage(
@@ -394,7 +395,7 @@ Numero do telefone abaixo:`
       msg.body != "2" &&
       msg.body != "3" &&
       msg.body != "4" &&
-      msg.body != "voltar"
+      message != "voltar"
     ) {
       dificuldade(msg, client);
       client.sendMessage(
@@ -447,7 +448,7 @@ Numero do telefone abaixo:`
       msg.body != "1" &&
       msg.body != "2" &&
       msg.body != "3" &&
-      msg.body != "voltar"
+      message != "voltar"
     ) {
       dificuldade(msg, client);
       client.sendMessage(
@@ -464,7 +465,7 @@ Numero do telefone abaixo:`
   if (recuperarEtapa.etapa == "h") {
     voltar(msg, client);
     const verificarResposta = verificarNumero(msg.body);
-    if (verificarResposta && msg.body != "voltar") {
+    if (verificarResposta && message != "voltar") {
       const response = await Requests.atualizarEtapa(msg.from, {
         etapa: "ent",
       });
@@ -473,7 +474,7 @@ Numero do telefone abaixo:`
         telefone: msg.from,
         qntrefrigerante: +verificarResposta,
       });
-    } else if (verificarResposta == "" && msg.body != "voltar") {
+    } else if (verificarResposta == "" && message != "voltar") {
       client.sendMessage(
         msg.from,
         `*Quantos refrigerantes* você quer, digite a quantidade por favor!!!`
@@ -497,7 +498,7 @@ Numero do telefone abaixo:`
 
   if (recuperarEtapa.etapa == "ent") {
     voltar(msg, client);
-    if (msg.body == "1" && msg.body != "voltar") {
+    if (msg.body == "1" && message != "voltar") {
       client.sendMessage(
         msg.from,
         `⬇️ Qual é a cidade ?
@@ -506,7 +507,7 @@ Numero do telefone abaixo:`
 *2* - Barra Bonita`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "i" });
-    } else if (msg.body == "2" && msg.body != "voltar") {
+    } else if (msg.body == "2" && message != "voltar") {
       client.sendMessage(
         msg.from,
         `Endereço completo para que possa nos encontrar facilmente:
@@ -523,7 +524,7 @@ Cidade: Igaraçu do Tietẽ`
 *3* - Pix`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "k" });
-    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+    } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       const response = await dificuldade(msg, client);
       client.sendMessage(
         from,
@@ -545,7 +546,7 @@ Igaraçu x Barra: ${
 
   if (recuperarEtapa.etapa == "i") {
     voltar(msg, client);
-    if (msg.body == "1" || (msg.body == "2" && msg.body != "voltar")) {
+    if (msg.body == "1" || (msg.body == "2" && message != "voltar")) {
       client.sendMessage(
         msg.from,
         `⏩ Digite o seu *endereço* por favor.
@@ -568,7 +569,7 @@ Igaraçu x Barra: ${
         });
         Requests.atualizarEtapa(msg.from, { etapa: "j" });
       }
-    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+    } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
@@ -582,7 +583,7 @@ Igaraçu x Barra: ${
 
   if (recuperarEtapa.etapa == "j") {
     voltar(msg, client);
-    if (msg.body != "voltar") {
+    if (message != "voltar") {
       client.sendMessage(
         msg.from,
         `Qual vai ser a forma de pagamento ?
@@ -598,7 +599,7 @@ Igaraçu x Barra: ${
 
   if (recuperarEtapa.etapa == "k") {
     voltar(msg, client);
-    if (msg.body == "1" && msg.body != "voltar") {
+    if (msg.body == "1" && message != "voltar") {
       const response = await Requests.recuperarPedido(msg.from);
       const valor = await somarValorTotal(response);
       client.sendMessage(msg.from, `Valor total: ${valor},00`);
@@ -619,7 +620,7 @@ Se não, digite apenas o numero 1
       });
       Requests.atualizarEtapa(msg.from, { etapa: "l" });
     }
-    if (msg.body == "2" && msg.body != "voltar") {
+    if (msg.body == "2" && message != "voltar") {
       const response = await Requests.atualizarPedido({
         telefone: msg.from,
         formadepagamento: "cartão",
@@ -631,7 +632,7 @@ Se não, digite apenas o numero 1
       desejaConfirmarOPedido(msg.from, client);
       Requests.atualizarEtapa(msg.from, { etapa: "conf" });
     }
-    if (msg.body == "3" && msg.body != "voltar") {
+    if (msg.body == "3" && message != "voltar") {
       const response = await Requests.atualizarPedido({
         telefone: msg.from,
         formadepagamento: "pix",
@@ -647,7 +648,7 @@ Se não, digite apenas o numero 1
       msg.body != 1 &&
       msg.body != 2 &&
       msg.body != 3 &&
-      msg.body != "voltar"
+      message != "voltar"
     ) {
       dificuldade(msg, client);
       client.sendMessage(
@@ -663,7 +664,7 @@ Se não, digite apenas o numero 1
 
   if (recuperarEtapa.etapa == "l") {
     voltar(msg, client);
-    if (msg.body != "voltar") {
+    if (message != "voltar") {
       const response = await Requests.atualizarPedido({
         telefone: msg.from,
         troco: `${msg.body == "1" ? "" : msg.body}`,
@@ -680,7 +681,7 @@ Se não, digite apenas o numero 1
 
   if (recuperarEtapa.etapa == "conf") {
     voltar(msg, client);
-    if (msg.body == "1" && msg.body != "voltar") {
+    if (msg.body == "1" && message != "voltar") {
       client.sendMessage(
         msg.from,
         `Seu pedido foi *confirmado com sucesso*. Obrigado pela confiança!
@@ -708,7 +709,7 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
       } else if (response.formadepagamento != "pix") {
         Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
       }
-    } else if (msg.body == "2" && msg.body != "voltar") {
+    } else if (msg.body == "2" && message != "voltar") {
       console.log("NÂO TEM COISA ERRADA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       client.sendMessage(
         msg.from,
@@ -725,7 +726,7 @@ O cliente do numero telefone abaixo está precisando de ajuda! Pois ele selecion
       );
       client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
       Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
-    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+    } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       client.sendMessage(msg.from, `Atenção ⚠️`);
       dificuldade(msg, client);
       desejaConfirmarOPedido(msg.from, client);

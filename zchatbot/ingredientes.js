@@ -28,6 +28,7 @@ Deseja adicionar mais algum ingrediente na pizza ?
 };
 
 const ingredientes = async (msg, client, recuperarEtapa) => {
+  const message = msg.body.toLowerCase();
   const response = await Requests.recuperarPedido(msg.from);
   let ordinal = "";
   if (response != null) {
@@ -67,7 +68,7 @@ const ingredientes = async (msg, client, recuperarEtapa) => {
     } else if (
       !numeros.includes(msg.body) &&
       msg.body != "0" &&
-      msg.body != "voltar"
+      message != "voltar"
     ) {
       dificuldade(msg, client);
       client.sendMessage(
@@ -179,7 +180,7 @@ Quer adicionar *borda recheada* ?
         );
         Requests.atualizarEtapa(msg.from, { etapa: "f" });
       }
-    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+    } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       client.sendMessage(msg.from, `*Atenção* ⚠️`);
       dificuldade(msg, client);
       desejaAdicionarMais(msg, client, response, ordinal);

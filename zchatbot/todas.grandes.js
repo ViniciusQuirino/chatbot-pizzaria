@@ -19,6 +19,7 @@ const { dados } = require("./corrigir.palavras");
 const { removerPalavras } = require("./remover.palavras");
 
 async function maisDeUma(recuperarEtapa, msg, client) {
+  const message = msg.body.toLowerCase();
   const response = await Requests.recuperarPedido(msg.from);
   let ordinal = "";
   if (response != null) {
@@ -48,7 +49,7 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
 *2 - Média (6 pedaços) 🍕*`
       );
       Requests.atualizarEtapa(msg.from, { etapa: "20" });
-    } else if (msg.body != "1" && msg.body != "2" && msg.body != "voltar") {
+    } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
@@ -94,8 +95,8 @@ Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
     console.log(encontrar);
 
     if (
-      (encontrar[0] && !ocorrencias && msg.body != "voltar") ||
-      (encontrar[0] && encontrar[1] && ocorrencias && msg.body != "voltar")
+      (encontrar[0] && !ocorrencias && message != "voltar") ||
+      (encontrar[0] && encontrar[1] && ocorrencias && message != "voltar")
     ) {
       client.sendMessage(
         msg.from,
@@ -111,7 +112,7 @@ Caso deseje remover algum ingrediente, escreva o ingrediente que você gostaria 
       );
       Requests.atualizarEtapa(msg.from, { etapa: "3" });
       Requests.atualizarPedido(sabor);
-    } else if (encontrar.length == 0 && msg.body != "voltar" && !ocorrencias) {
+    } else if (encontrar.length == 0 && message != "voltar" && !ocorrencias) {
       client.sendMessage(
         msg.from,
         `Não encontrei nenhuma pizza com esse nome, por favor digite corretamente *APENAS* o nome da pizza!
@@ -138,7 +139,7 @@ Numero do telefone abaixo:`
     } else if (
       ocorrencias != encontrar.length &&
       ocorrencias &&
-      msg.body != "voltar"
+      message != "voltar"
     ) {
       client.sendMessage(
         msg.from,
@@ -168,11 +169,11 @@ Numero do telefone abaixo:`
 
   if (recuperarEtapa.etapa == "3") {
     voltar(msg, client);
-    let message = msg.body.toLowerCase();
+   
     const retirar = message.split("/");
     const temBarra = message.includes("/");
 
-    if (retirar[0] == "retirar" && !temBarra && msg.body != "voltar") {
+    if (retirar[0] == "retirar" && !temBarra && message != "voltar") {
       client.sendMessage(
         msg.from,
         `Qual ingrediente você gostaria de retirar ?`
@@ -180,7 +181,7 @@ Numero do telefone abaixo:`
       Requests.atualizarEtapa(msg.from, { etapa: "3" });
     }
 
-    if (msg.body == "1") {
+    if (message == "1") {
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*
@@ -221,7 +222,7 @@ Ingredientes para acrescentar:
     } else if (
       msg.body != "1" &&
       msg.body != "2" &&
-      msg.body != "voltar" &&
+      message != "voltar" &&
       retirar[0] != "retirar"
     ) {
       client.sendMessage(
@@ -309,7 +310,7 @@ Quer adicionar *borda recheada* ?
       msg.body != "2" &&
       msg.body != "3" &&
       msg.body != "4" &&
-      msg.body != "voltar"
+      message != "voltar"
     ) {
       dificuldade(msg, client);
       client.sendMessage(
