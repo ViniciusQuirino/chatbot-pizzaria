@@ -149,7 +149,7 @@ Qual o *tamanho* que você quer ? Digite *apenas o NUMERO*
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
-        `Qual o *sabor* da pizza que deseja ?
+        `Qual é o *sabor* da pizza que deseja ?
 
 Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       );
@@ -159,7 +159,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     if (msg.body == "2") {
       client.sendMessage(
         msg.from,
-        `Qual o *sabor* da pizza que deseja ?
+        `Qual é o *sabor* da pizza que deseja ?
 
 Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       );

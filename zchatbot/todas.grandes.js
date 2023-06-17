@@ -30,9 +30,10 @@ async function maisDeUma(recuperarEtapa, msg, client) {
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
-        `Qual é o *sabor da ${ordinal} PIZZA ?*
+        `*${ordinal} PIZZA:*
+Qual é o *sabor da ${ordinal} PIZZA ?*
 
-Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
+Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       );
 
       const obj = criarObjetoTelefone(msg.from, response.qnt);
@@ -169,7 +170,7 @@ Numero do telefone abaixo:`
 
   if (recuperarEtapa.etapa == "3") {
     voltar(msg, client);
-   
+
     const retirar = message.split("/");
     const temBarra = message.includes("/");
 

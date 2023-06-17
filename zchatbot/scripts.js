@@ -130,9 +130,10 @@ const sabor = async (from, client, response) => {
 
   client.sendMessage(
     from,
-    `Qual é o *sabor da ${ordinal} PIZZA ?*
+    `*${ordinal} PIZZA:*
+Qual é o *sabor da ${ordinal} PIZZA ?*
 
-Atenção, apenas o *sabor da ${ordinal} PIZZA* 🍕`
+Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
   );
 
   Requests.atualizarEtapa(from, { etapa: "2" });
