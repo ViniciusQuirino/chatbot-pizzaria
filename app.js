@@ -77,7 +77,7 @@ client.on("message", async (msg) => {
   const horaAtual = dataAtual.getHours();
   const minutosAtual = dataAtual.getMinutes();
   const diaDaSemana = dataAtual.getDay();
-  const horaMinima = 1;
+  const horaMinima = 17;
   const horaMaxima = 22;
   const minutosMaximos = 50;
 
@@ -103,7 +103,9 @@ client.on("message", async (msg) => {
 
 Retornaremos amanhã, obrigado pela compreensão.`
     );
-  } else if (
+  }
+
+  if (
     recuperarEtapa !== undefined &&
     recuperarEtapa.ativado == true &&
     recuperarEtapa.ativado2 == true &&
