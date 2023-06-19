@@ -21,6 +21,7 @@ const { dados } = require("./corrigir.palavras");
 const { removerPalavras } = require("./remover.palavras");
 
 async function pedidos(recuperarEtapa, msg, client) {
+  
   const message = msg.body.toLowerCase();
   if (recuperarEtapa.etapa == "a") {
     const response = await Requests.recuperarTempo();
