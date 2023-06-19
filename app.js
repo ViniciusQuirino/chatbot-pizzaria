@@ -69,7 +69,6 @@ const client = new Client({
 
 let imprevisto = false;
 cronJob();
-
 client.on("message", async (msg) => {
   console.log(msg.body);
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
