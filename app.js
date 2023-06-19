@@ -69,6 +69,7 @@ const client = new Client({
 
 let imprevisto = false;
 cronJob();
+
 client.on("message", async (msg) => {
   console.log(msg.body);
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
@@ -76,10 +77,11 @@ client.on("message", async (msg) => {
   const dataAtual = new Date();
   const horaAtual = dataAtual.getHours();
   const minutosAtual = dataAtual.getMinutes();
-  const diaDaSemana = dataAtual.getDay();
-  const horaMinima = 17;
-  const horaMaxima = 22;
-  const minutosMaximos = 50;
+
+  const horaMinima = 0;
+
+  const horaMaxima = 23;
+  const minutosMaximos = 59;
 
   const message = msg.body.toLowerCase();
   const separar = message.split("/");
@@ -110,18 +112,9 @@ Retornaremos amanhã, obrigado pela compreensão.`
     !imprevisto
   ) {
     if (
-      (horaAtual > horaMinima &&
-        horaAtual < horaMaxima &&
-        diaDaSemana >= 1 &&
-        diaDaSemana <= 6) ||
-      (horaAtual === horaMinima &&
-        minutosAtual >= 0 &&
-        diaDaSemana >= 1 &&
-        diaDaSemana <= 6) ||
-      (horaAtual === horaMaxima &&
-        minutosAtual <= minutosMaximos &&
-        diaDaSemana >= 1 &&
-        diaDaSemana <= 6)
+      (horaAtual > horaMinima && horaAtual < horaMaxima) ||
+      (horaAtual === horaMinima && minutosAtual >= 0) ||
+      (horaAtual === horaMaxima && minutosAtual <= minutosMaximos)
     ) {
       if (msg.mediaKey != undefined && msg.duration != undefined) {
         audio(msg.from, client);
@@ -136,7 +129,14 @@ Retornaremos amanhã, obrigado pela compreensão.`
         separar[0] != "imprevisto"
       ) {
         pedidos(recuperarEtapa, msg, client);
-      } else if (
+      }
+
+      listarPizzas(msg, client);
+      listarProdutos(msg, client);
+      atualizarPizza(msg, client);
+      atualizarProduto(msg, client);
+
+      if (
         recuperarEtapa.etapa == "1" ||
         recuperarEtapa.etapa == "2" ||
         recuperarEtapa.etapa == "3" ||
@@ -156,14 +156,10 @@ Retornaremos amanhã, obrigado pela compreensão.`
         `Olá, a *Pizzas Primo Delivery* agradece sua mensagem🙏🏼! Atendimento de Seg á Sab, das 18 às 23hrs.. 😉`
       );
     }
-    listarPizzas(msg, client);
-    listarProdutos(msg, client);
-    atualizarPizza(msg, client);
-    atualizarProduto(msg, client);
-    ativarchatbot(msg, client);
-    desativarchatbot(msg, client);
-    tempo(msg, client);
   }
+  ativarchatbot(msg, client);
+  desativarchatbot(msg, client);
+  tempo(msg, client);
 });
 
 client.initialize();
