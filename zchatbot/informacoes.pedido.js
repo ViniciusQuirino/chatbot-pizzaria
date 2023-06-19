@@ -116,6 +116,8 @@ ${response.endereco == null && "*Retirar no local*"}
   }
 
   client.sendMessage(from, template);
+  client.sendMessage("5514998908820@c.us", template);
+  client.sendMessage("5514998434664@c.us", template);
 }
 
 module.exports = { gerarTemplateString };
