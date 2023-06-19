@@ -69,7 +69,6 @@ const client = new Client({
 
 let imprevisto = false;
 cronJob();
-
 client.on("message", async (msg) => {
   console.log(msg.body);
   let recuperarEtapa = await Requests.recuperarEtapa(msg);
@@ -78,7 +77,7 @@ client.on("message", async (msg) => {
   const horaAtual = dataAtual.getHours();
   const minutosAtual = dataAtual.getMinutes();
   const diaDaSemana = dataAtual.getDay();
-  const horaMinima = 17;
+  const horaMinima = 1;
   const horaMaxima = 22;
   const minutosMaximos = 50;
 
