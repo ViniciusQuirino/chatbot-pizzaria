@@ -80,6 +80,13 @@ Quantas pizzas você vai querer ? Digite *apenas o NUMERO.*`
 const querQueEntregue = async (from, client, response) => {
   client.sendMessage(
     from,
+    `Nosso endereço caso deseja retirar:
+
+*Rua*: Josepha Rodrigues Moreira, 48
+*Cidade*: Igaraçu do Tietẽ`
+  );
+  client.sendMessage(
+    from,
     `Ok, você quer que *entregue* ?
 
 Valores:

@@ -69,10 +69,6 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     .replace(/ piza /g, "")
     .replace(/ pzza /g, "")
     .replace(/ izza /g, "")
-    .replace(/3 queijo/g, "3 queijos")
-    .replace(/tres queijo/g, "3 queijos")
-    .replace(/4 queijo/g, "4 queijos")
-    .replace(/quatro queijo/g, "4 queijos")
     .replace(/ quero| quero |quero/g, "")
     .replace(/ queria| queria |queria/g, "")
     .replace(/ gostaria| gostaria |gostaria/g, "")
@@ -221,7 +217,6 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     result = result.replace(/ e e /g, " e ");
     result = result.replace(/1\/2 e 1\/2/g, "1/2");
     result = result.replace(/,/g, "");
-
     result = result.replace(/alface c\/ bacon/g, "alface e bacon");
     result = result.replace(/calabresa c\/ bacon/g, "calabresa e bacon");
     result = result.replace(/moda c\/ bacon/g, "moda e bacon");
@@ -249,7 +244,6 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     result = result.replace(/provolone c\/ bacon/g, "provolone e bacon");
     result = result.replace(/salame c\/ bacon/g, "salame e bacon");
     result = result.replace(/toscana c\/ bacon/g, "toscana e bacon");
-    result = result.replace(/queijo c\/ bacon/g, "queijo e bacon");
     result = result.replace(/vegetariana c\/ bacon/g, "vegetariana e bacon");
     result = result.replace(/banana c\/ bacon/g, "banana e bacon");
     result = result.replace(/nevada c\/ bacon/g, "nevada e bacon");
@@ -258,6 +252,11 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     result = result.replace(/laka c\/ bacon/g, "laka e bacon");
     result = result.replace(/oreo c\/ bacon/g, "oreo e bacon");
     result = result.replace(/casa c\/ bacon/g, "casa e bacon");
+    result = result
+      .replace(/3 queijo/g, "3 queijos")
+      .replace(/tres queijo/g, "3 queijos")
+      .replace(/4 queijo/g, "4 queijos")
+      .replace(/quatro queijo/g, "4 queijos");
 
     const ocorrencia = result.match(/1\/2/g);
 

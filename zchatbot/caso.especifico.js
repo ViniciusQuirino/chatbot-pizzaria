@@ -65,6 +65,7 @@ function encontrarObjetos(frase) {
 function corrigirFrase(frase) {
   frase = frase.replace(/1\/2/g, "");
   frase = frase.replace(/\s+/g, " ");
+  console.log(frase)
   const objetosEncontrados = encontrarObjetos(frase);
 
   if (objetosEncontrados.length > 0) {

@@ -73,6 +73,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     result = result.replace(/brocolis c\/ bacon/g, "brocolis");
     result = result.replace(/\//g, " ");
     result = result.replace(/\(.*?\)/g, "").replace(/(['"])(.*?)\1/g, "");
+
     const retorno = removerAcentos(result);
 
     let variavelum = true;

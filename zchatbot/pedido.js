@@ -510,13 +510,6 @@ Numero do telefone abaixo:`
     } else if (msg.body == "2" && message != "voltar") {
       client.sendMessage(
         msg.from,
-        `Endereço completo para que possa nos encontrar facilmente:
-
-Rua: Josepha Rodrigues Moreira, 48
-Cidade: Igaraçu do Tietẽ`
-      );
-      client.sendMessage(
-        msg.from,
         `Qual vai ser a forma de pagamento ?
   
 *1* - Dinheiro

@@ -93,6 +93,8 @@ ${
         response.formadepagamento
       }
 *Telefone:* ${response.telefone.slice(2, 13)}
+
+${response.endereco == null && "*Retirar no local*"}
              
 *Valor total:* R$ ${valor},00`;
     } else if (response.formadepagamento == "dinheiro") {
@@ -106,6 +108,8 @@ ${
       }
 *Telefone:* ${response.telefone.slice(2, 13)}
 ${response.troco !== "" ? `*Troco:* ${response.troco}` : "*Troco:* não precisa"}
+
+${response.endereco == null && "*Retirar no local*"}
     
 *Valor total:* R$ ${valor},00`;
     }
