@@ -25,6 +25,7 @@ async function maisDeUma(recuperarEtapa, msg, client) {
   if (response != null) {
     ordinal = obterRepresentacaoOrdinal(response.loop);
   }
+
   if (recuperarEtapa.etapa == "1") {
     voltar(msg, client);
     if (msg.body == "1") {
@@ -40,8 +41,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
 
       Requests.atualizarPedido(obj);
       Requests.atualizarEtapa(msg.from, { etapa: "2" });
-    }
-    if (msg.body == "2") {
+    } else if (msg.body == "2") {
       client.sendMessage(
         msg.from,
         `Qual é o *tamanho da ${ordinal} PIZZA ?*
@@ -54,10 +54,11 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
       dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Todas são tamanho grande ?
-  
-*1* - Sim, as 2 pizzas são tamanho grande.
-*2* - Não, tem pizza que vai ser tamanho médio.`
+        `Todas são *tamanho* grande ? Digite *apenas o NUMERO*
+
+*1* - Sim, todas pizzas são tamanho grande - *(8 pedaços) 🍕*
+
+*2* - Não, tem pizza que vai ser tamanho médio - *(6 pedaços) 🍕*`
       );
     }
   }
@@ -184,18 +185,17 @@ Numero do telefone abaixo:`
     }
 
     if (message == "1") {
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "4" });
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*
-Quer adicionar borda recheada ?
-
-1 - Não quero
-2 - Catupiry R$ 10,00
-3 - Cheddar R$ 10,00
-4 - Chocolate R$ 12,00`
+Quer adicionar *borda recheada* ?
+  
+*1* - Não quero
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
-
-      Requests.atualizarEtapa(msg.from, { etapa: "4" });
     } else if (msg.body == "2") {
       client.sendMessage(
         msg.from,
@@ -227,21 +227,20 @@ Ingredientes para acrescentar:
       message != "voltar" &&
       retirar[0] != "retirar"
     ) {
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "4" });
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*
 Quer adicionar *borda recheada* ?
   
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
 
       const obs = criarObjetoObs(msg.from, response.loop, msg.body);
       Requests.atualizarPedido(obs);
-
-      Requests.atualizarEtapa(msg.from, { etapa: "4" });
     }
   }
 
@@ -314,15 +313,15 @@ Quer adicionar *borda recheada* ?
       msg.body != "4" &&
       message != "voltar"
     ) {
-      dificuldade(msg, client);
+      const response = await dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Quer adicionar borda recheada ?
-
+        `Quer adicionar *borda recheada* ?
+  
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
     }
   }

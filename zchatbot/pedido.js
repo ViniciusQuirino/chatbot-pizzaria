@@ -21,7 +21,6 @@ const { dados } = require("./corrigir.palavras");
 const { removerPalavras } = require("./remover.palavras");
 
 async function pedidos(recuperarEtapa, msg, client) {
-  
   const message = msg.body.toLowerCase();
   if (recuperarEtapa.etapa == "a") {
     const response = await Requests.recuperarTempo();
@@ -119,8 +118,9 @@ Qual o *tamanho* que você quer ? Digite *apenas o NUMERO*
           msg.from,
           `Certo, então são ${resposta} pizzas. Todas são *tamanho* grande ? Digite *apenas o NUMERO*
   
-*1* - Sim, as ${resposta} pizzas são tamanho grande.
-*2* - Não, tem pizza que vai ser tamanho médio.`
+*1* - Sim, as ${resposta} pizzas são tamanho grande - *(8 pedaços) 🍕*
+
+*2* - Não, tem pizza que vai ser tamanho médio - *(6 pedaços) 🍕*`
         );
         Requests.criarPedido({ telefone: msg.from, qnt: resposta });
         Requests.atualizarEtapa(msg.from, { etapa: "1" });
@@ -302,16 +302,16 @@ Numero do telefone abaixo:`
     }
 
     if (msg.body == "1") {
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "f" });
       client.sendMessage(
         msg.from,
         `Quer adicionar *borda recheada* ?
   
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
-      Requests.atualizarEtapa(msg.from, { etapa: "f" });
     } else if (msg.body == "2") {
       client.sendMessage(
         msg.from,
@@ -343,17 +343,17 @@ Numero do telefone abaixo:`
       message != "voltar" &&
       retirar[0] != "retirar"
     ) {
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "f" });
       client.sendMessage(
         msg.from,
         `Quer adicionar *borda recheada* ?
-   
+  
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
       Requests.atualizarPedido({ telefone: msg.from, obs1: msg.body });
-      Requests.atualizarEtapa(msg.from, { etapa: "f" });
     }
   }
 
@@ -364,32 +364,32 @@ Numero do telefone abaixo:`
   if (recuperarEtapa.etapa == "f") {
     voltar(msg, client);
     if (msg.body == "1") {
-      desejaAlgoParaBeber(msg.from, client);
-      Requests.atualizarEtapa(msg.from, { etapa: "g" });
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "g" });
+      desejaAlgoParaBeber(msg.from, client, response);
     }
     if (msg.body == "2") {
-      desejaAlgoParaBeber(msg.from, client);
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "g" });
+      desejaAlgoParaBeber(msg.from, client, response);
       Requests.atualizarPedido({
         telefone: msg.from,
         bordarecheada1: "catupiry",
       });
-      Requests.atualizarEtapa(msg.from, { etapa: "g" });
     }
     if (msg.body == "3") {
-      desejaAlgoParaBeber(msg.from, client);
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "g" });
+      desejaAlgoParaBeber(msg.from, client, response);
       Requests.atualizarPedido({
         telefone: msg.from,
         bordarecheada1: "cheddar",
       });
-      Requests.atualizarEtapa(msg.from, { etapa: "g" });
     }
     if (msg.body == "4") {
-      desejaAlgoParaBeber(msg.from, client);
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "g" });
+      desejaAlgoParaBeber(msg.from, client, response);
       Requests.atualizarPedido({
         telefone: msg.from,
         bordarecheada1: "chocolate",
       });
-      Requests.atualizarEtapa(msg.from, { etapa: "g" });
     }
     if (
       msg.body != "1" &&
@@ -398,15 +398,15 @@ Numero do telefone abaixo:`
       msg.body != "4" &&
       message != "voltar"
     ) {
-      dificuldade(msg, client);
+      const response = await dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Quer adicionar borda recheada ?
-
+        `Quer adicionar *borda recheada* ?
+  
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
     }
   }
@@ -423,7 +423,7 @@ Numero do telefone abaixo:`
     if (msg.body == "2") {
       client.sendMessage(
         msg.from,
-        `Ok, *quantas* Coca-Cola 2 Litros você vai querer ? Digite o número.`
+        `Ok, *quantas* Coca-Cola 2L você vai querer ? Digite o número.`
       );
 
       Requests.atualizarPedido({
@@ -436,12 +436,12 @@ Numero do telefone abaixo:`
     if (msg.body == "3") {
       client.sendMessage(
         msg.from,
-        `Ok, *quantos* guaraná Conquista 2 litros você vai querer ? Digite o número.`
+        `Ok, *quantos* guaraná Conquista 2L você vai querer ? Digite o número.`
       );
 
       Requests.atualizarPedido({
         telefone: msg.from,
-        refrigerante: "Conquista guaraná 2 litros",
+        refrigerante: "Conquista guaraná 2L litros",
       });
       Requests.atualizarEtapa(msg.from, { etapa: "h" });
     }
@@ -451,14 +451,14 @@ Numero do telefone abaixo:`
       msg.body != "3" &&
       message != "voltar"
     ) {
-      dificuldade(msg, client);
+      const response = await dificuldade(msg, client);
       client.sendMessage(
         msg.from,
         `Você deseja algo para *beber* ? 🥤
  
 *1* - Não quero.
-*2* - Coca-Cola 2 Litros R$ 14,00
-*3* - Conquista Guaraná 2 Litros R$ 8,00`
+*2* - Coca-Cola 2L R$ ${response[3].valor},00
+*3* - Conquista Guaraná 2L R$ ${response[4].valor},00`
       );
     }
   }
@@ -533,7 +533,11 @@ Igaraçu x Barra: ${
         }
 
 *1* - Sim, quero que entregue.
-*2* - Não, vou ir buscar.`
+*2* - Não, vou ir buscar.
+
+Nosso endereço:
+*Rua*: Josepha Rodrigues Moreira, 48
+*Cidade*: Igaraçu do Tietê`
       );
     }
   }
@@ -719,7 +723,7 @@ Um de nossos colaboradores já vai te atender.`
 O cliente do numero telefone abaixo está precisando de ajuda! Pois ele selecionou a opção que as informações do pedido não estão corretas.`
       );
       client.sendMessage("5514998908820@c.us", `${msg.from.slice(2, 13)}`);
-      Requests.atualizarEtapa(msg.from, { etapa: "a", ativado2: false });
+      Requests.atualizarEtapa(msg.from, { etapa: "ajud", ativado2: false });
     } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       client.sendMessage(msg.from, `Atenção ⚠️`);
       dificuldade(msg, client);

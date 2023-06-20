@@ -43,10 +43,14 @@ const cardapio = async (from, dia) => {
 };
 
 function cronJob() {
-  const date = new Date();
-  const h = date.getHours();
   const encerrarAtendimento = new CronJob("0 * * * *", async () => {
+    const date = new Date();
+    const h = date.getHours();
     if (h >= 17 && h <= 23) {
+      Requests.encerrarAtendimento();
+    }
+
+    if (h == 0) {
       Requests.encerrarAtendimento();
     }
   });
@@ -80,13 +84,6 @@ Quantas pizzas você vai querer ? Digite *apenas o NUMERO.*`
 const querQueEntregue = async (from, client, response) => {
   client.sendMessage(
     from,
-    `Nosso endereço caso deseja retirar:
-
-*Rua*: Josepha Rodrigues Moreira, 48
-*Cidade*: Igaraçu do Tietẽ`
-  );
-  client.sendMessage(
-    from,
     `Ok, você quer que *entregue* ?
 
 Valores:
@@ -98,7 +95,11 @@ Igaraçu x Barra: ${
     }
 
 *1* - Sim, quero que entregue.
-*2* - Não, vou ir buscar.`
+*2* - Não, vou ir buscar.
+
+Nosso endereço:
+*Rua*: Josepha Rodrigues Moreira, 48
+*Cidade*: Igaraçu do Tietê`
   );
 };
 
@@ -112,14 +113,14 @@ const desejaConfirmarOPedido = async (from, client) => {
   );
 };
 
-const desejaAlgoParaBeber = async (from, client) => {
+const desejaAlgoParaBeber = async (from, client, response) => {
   client.sendMessage(
     from,
     `Ok, você deseja algo para beber ? 🥤
 
 *1* - Não quero.
-*2* - Coca-Cola 2 Litros R$ 14,00
-*3* - Conquista Guaraná 2 Litros R$ 8,00`
+*2* - Coca-Cola 2L R$ ${response[3].valor},00
+*3* - Conquista Guaraná 2L R$ ${response[4].valor},00`
   );
 };
 

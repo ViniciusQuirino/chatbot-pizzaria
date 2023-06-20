@@ -152,33 +152,37 @@ Caso deseje remover algum ingrediente, escreva o ingrediente que você gostaria 
       );
       Requests.atualizarEtapa(msg.from, { etapa: "ing" });
     } else if (msg.body == "2") {
+      let retorno = [];
+      if (response["tamanho" + response.qnt] == "grande") {
+        retorno = await Requests.atualizarEtapa(msg.from, { etapa: "4" });
+      } else if (response["tamanho" + response.qnt] != "grande") {
+        retorno = await Requests.atualizarEtapa(msg.from, { etapa: "23" });
+      }
+
       if (response.qnt > 1) {
         client.sendMessage(
           msg.from,
           `*${ordinal} PIZZA:*
 Quer adicionar *borda recheada* ?
-
+  
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${retorno[5]},00
+*3* - Cheddar R$ ${retorno[6]},00
+*4* - Chocolate R$ ${retorno[7]},00`
         );
-        if (response["tamanho" + response.qnt] == "grande") {
-          Requests.atualizarEtapa(msg.from, { etapa: "4" });
-        } else if (response["tamanho" + response.qnt] != "grande") {
-          Requests.atualizarEtapa(msg.from, { etapa: "23" });
-        }
       } else if (response.qnt == 1) {
+        const retorno = await Requests.atualizarEtapa(msg.from, {
+          etapa: "f",
+        });
         client.sendMessage(
           msg.from,
           `Quer adicionar *borda recheada* ?
   
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${retorno[5]},00
+*3* - Cheddar R$ ${retorno[6]},00
+*4* - Chocolate R$ ${retorno[7]},00`
         );
-        Requests.atualizarEtapa(msg.from, { etapa: "f" });
       }
     } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       client.sendMessage(msg.from, `*Atenção* ⚠️`);

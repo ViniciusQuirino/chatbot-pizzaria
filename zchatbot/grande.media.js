@@ -66,7 +66,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     result = result.replace(/brocolis c\/ bacon/g, "brocolis");
     result = result.replace(/\//g, " ");
     result = result.replace(/\(.*?\)/g, "").replace(/(['"])(.*?)\1/g, "");
-    
+
     const retorno = removerAcentos(result);
 
     let variavelum = true;
@@ -178,17 +178,17 @@ Numero do telefone abaixo:`
     }
 
     if (msg.body == "1") {
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "23" });
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*
-Quer adicionar borda recheada ?
-
-1 - Não quero
-2 - Catupiry R$ 10,00
-3 - Cheddar R$ 10,00
-4 - Chocolate R$ 12,00`
+Quer adicionar *borda recheada* ?
+  
+*1* - Não quero
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
-      Requests.atualizarEtapa(msg.from, { etapa: "23" });
     } else if (msg.body == "2") {
       client.sendMessage(
         msg.from,
@@ -220,21 +220,20 @@ Ingredientes para acrescentar:
       message != "voltar" &&
       retirar[0] != "retirar"
     ) {
+      const response = await Requests.atualizarEtapa(msg.from, { etapa: "23" });
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*
 Quer adicionar *borda recheada* ?
- 
+  
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
 
       const obs = criarObjetoObs(msg.from, response.loop, msg.body);
       Requests.atualizarPedido(obs);
-
-      Requests.atualizarEtapa(msg.from, { etapa: "23" });
     }
   }
 
@@ -306,15 +305,15 @@ Quer adicionar *borda recheada* ?
       msg.body != "4" &&
       message != "voltar"
     ) {
-      dificuldade(msg, client);
+      const response = await dificuldade(msg, client);
       client.sendMessage(
         msg.from,
-        `Quer adicionar borda recheada ?
-
+        `Quer adicionar *borda recheada* ?
+  
 *1* - Não quero
-*2* - Catupiry R$ 10,00
-*3* - Cheddar R$ 10,00
-*4* - Chocolate R$ 12,00`
+*2* - Catupiry R$ ${response[5].valor},00
+*3* - Cheddar R$ ${response[6].valor},00
+*4* - Chocolate R$ ${response[7].valor},00`
       );
     }
   }

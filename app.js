@@ -77,7 +77,7 @@ client.on("message", async (msg) => {
   const horaAtual = dataAtual.getHours();
   const minutosAtual = dataAtual.getMinutes();
   const diaDaSemana = dataAtual.getDay();
-  const horaMinima = 17;
+  const horaMinima = 5;
   const horaMaxima = 22;
   const minutosMaximos = 50;
 
@@ -131,6 +131,9 @@ Retornaremos amanhã, obrigado pela compreensão.`
         separar[0] != "listar" &&
         separar[1] != "entrega" &&
         separar[1] != "produtos" &&
+        separar[1] != "produto" &&
+        separar[1] != "grande" &&
+        separar[1] != "media" &&
         separar[0] != "ativar" &&
         separar[0] != "desativar" &&
         separar[0] != "entrega" &&
@@ -138,19 +141,21 @@ Retornaremos amanhã, obrigado pela compreensão.`
         separar[0] != "imprevisto"
       ) {
         pedidos(recuperarEtapa, msg, client);
-      } else if (
-        recuperarEtapa.etapa == "1" ||
-        recuperarEtapa.etapa == "2" ||
-        recuperarEtapa.etapa == "3" ||
-        recuperarEtapa.etapa == "4" ||
-        recuperarEtapa.etapa == "20" ||
-        recuperarEtapa.etapa == "21" ||
-        recuperarEtapa.etapa == "22" ||
-        recuperarEtapa.etapa == "23" ||
-        recuperarEtapa.etapa == "24"
-      ) {
-        maisDeUma(recuperarEtapa, msg, client);
-        grandeEMedia(recuperarEtapa, msg, client);
+
+        if (
+          recuperarEtapa.etapa == "1" ||
+          recuperarEtapa.etapa == "2" ||
+          recuperarEtapa.etapa == "3" ||
+          recuperarEtapa.etapa == "4" ||
+          recuperarEtapa.etapa == "20" ||
+          recuperarEtapa.etapa == "21" ||
+          recuperarEtapa.etapa == "22" ||
+          recuperarEtapa.etapa == "23" ||
+          recuperarEtapa.etapa == "24"
+        ) {
+          maisDeUma(recuperarEtapa, msg, client);
+          grandeEMedia(recuperarEtapa, msg, client);
+        }
       }
     } else {
       client.sendMessage(
@@ -158,13 +163,15 @@ Retornaremos amanhã, obrigado pela compreensão.`
         `Olá, a *Pizzas Primo Delivery* agradece sua mensagem🙏🏼! Atendimento de Seg á Sab, das 18 às 23hrs.. 😉`
       );
     }
+  }
+  if (recuperarEtapa !== undefined) {
     listarPizzas(msg, client);
     listarProdutos(msg, client);
     atualizarPizza(msg, client);
     atualizarProduto(msg, client);
+    tempo(msg, client);
     ativarchatbot(msg, client);
     desativarchatbot(msg, client);
-    tempo(msg, client);
   }
 });
 
