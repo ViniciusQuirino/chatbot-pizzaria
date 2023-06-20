@@ -257,8 +257,10 @@ Quer adicionar *borda recheada* ?
       });
 
       if (atualizar.qnt < atualizar.loop + "") {
-        desejaAlgoParaBeber(msg.from, client);
-        Requests.atualizarEtapa(msg.from, { etapa: "g" });
+        const response = await Requests.atualizarEtapa(msg.from, {
+          etapa: "g",
+        });
+        desejaAlgoParaBeber(msg.from, client, response);
       } else {
         sabor(msg.from, client, atualizar);
       }
@@ -272,8 +274,10 @@ Quer adicionar *borda recheada* ?
 
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
-        desejaAlgoParaBeber(msg.from, client);
-        Requests.atualizarEtapa(msg.from, { etapa: "g" });
+        const response = await Requests.atualizarEtapa(msg.from, {
+          etapa: "g",
+        });
+        desejaAlgoParaBeber(msg.from, client, response);
       } else {
         sabor(msg.from, client, atualizar);
       }
@@ -286,8 +290,10 @@ Quer adicionar *borda recheada* ?
       );
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
-        desejaAlgoParaBeber(msg.from, client);
-        Requests.atualizarEtapa(msg.from, { etapa: "g" });
+        const response = await Requests.atualizarEtapa(msg.from, {
+          etapa: "g",
+        });
+        desejaAlgoParaBeber(msg.from, client, response);
       } else {
         sabor(msg.from, client, atualizar);
       }
@@ -300,8 +306,10 @@ Quer adicionar *borda recheada* ?
       );
       const atualizar = await Requests.atualizarPedido(borda);
       if (atualizar.qnt < atualizar.loop + "") {
-        desejaAlgoParaBeber(msg.from, client);
-        Requests.atualizarEtapa(msg.from, { etapa: "g" });
+        const response = await Requests.atualizarEtapa(msg.from, {
+          etapa: "g",
+        });
+        desejaAlgoParaBeber(msg.from, client, response);
       } else {
         sabor(msg.from, client, atualizar);
       }

@@ -441,7 +441,7 @@ Numero do telefone abaixo:`
 
       Requests.atualizarPedido({
         telefone: msg.from,
-        refrigerante: "Conquista guaraná 2L litros",
+        refrigerante: "Conquista guaraná 2 litros",
       });
       Requests.atualizarEtapa(msg.from, { etapa: "h" });
     }

@@ -166,9 +166,9 @@ Caso deseje remover algum ingrediente, escreva o ingrediente que você gostaria 
 Quer adicionar *borda recheada* ?
   
 *1* - Não quero
-*2* - Catupiry R$ ${retorno[5]},00
-*3* - Cheddar R$ ${retorno[6]},00
-*4* - Chocolate R$ ${retorno[7]},00`
+*2* - Catupiry R$ ${retorno[5].valor},00
+*3* - Cheddar R$ ${retorno[6].valor},00
+*4* - Chocolate R$ ${retorno[7].valor},00`
         );
       } else if (response.qnt == 1) {
         const retorno = await Requests.atualizarEtapa(msg.from, {
@@ -179,9 +179,9 @@ Quer adicionar *borda recheada* ?
           `Quer adicionar *borda recheada* ?
   
 *1* - Não quero
-*2* - Catupiry R$ ${retorno[5]},00
-*3* - Cheddar R$ ${retorno[6]},00
-*4* - Chocolate R$ ${retorno[7]},00`
+*2* - Catupiry R$ ${retorno[5].valor},00
+*3* - Cheddar R$ ${retorno[6].valor},00
+*4* - Chocolate R$ ${retorno[7].valor},00`
         );
       }
     } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
