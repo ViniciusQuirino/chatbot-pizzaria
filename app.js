@@ -157,7 +157,19 @@ Retornaremos amanhã, obrigado pela compreensão.`
           grandeEMedia(recuperarEtapa, msg, client);
         }
       }
-    } else {
+    } else if (
+      separar[0] != "listar" &&
+      separar[1] != "entrega" &&
+      separar[1] != "produtos" &&
+      separar[1] != "produto" &&
+      separar[1] != "grande" &&
+      separar[1] != "media" &&
+      separar[0] != "ativar" &&
+      separar[0] != "desativar" &&
+      separar[0] != "entrega" &&
+      separar[0] != "inativo" &&
+      separar[0] != "imprevisto"
+    ) {
       client.sendMessage(
         msg.from,
         `Olá, a *Pizzas Primo Delivery* agradece sua mensagem🙏🏼! Atendimento de Seg á Sab, das 18 às 23hrs.. 😉`
