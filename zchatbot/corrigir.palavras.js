@@ -22,6 +22,7 @@ const dados = [
   { nome: "lombo c/ cheddar", media: "35,00", grande: "40,00" },
   { nome: "marguerita", media: "32,00", grande: "36,00" },
   { nome: "milho c/ catupiry", media: "30,00", grande: "36,00" },
+  { nome: "milho", media: "30,00", grande: "36,00" },
   { nome: "mista", media: "34,00", grande: "38,00" },
   { nome: "moda do pizzaiolo", media: "40,00", grande: "45,00" },
   { nome: "mussarela", media: "33,00", grande: "37,00" },
@@ -76,6 +77,12 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     .replace(/chucuduo/g, "chocoduo")
     .replace(/chucoduo/g, "chocoduo")
     .replace(/ queru| queru |queru/g, "")
+    .replace(/alho tomate/g, "alho e tomate")
+    .replace(/coca/g, "")
+    .replace(/cola/g, "")
+    .replace(/guarana/g, "")
+    .replace(/conquista/g, "")
+    .replace(/borda/g, "")
     .replace(/\s+/g, " ")
     .replace(/(1\/2)\s*\1+/g, "$1");
 
@@ -217,6 +224,7 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     result = result.replace(/ e e /g, " e ");
     result = result.replace(/1\/2 e 1\/2/g, "1/2");
     result = result.replace(/,/g, "");
+    result = result.replace(/uma e/g, "");
     result = result.replace(/alface c\/ bacon/g, "alface e bacon");
     result = result.replace(/calabresa c\/ bacon/g, "calabresa e bacon");
     result = result.replace(/moda c\/ bacon/g, "moda e bacon");
@@ -252,11 +260,32 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
     result = result.replace(/laka c\/ bacon/g, "laka e bacon");
     result = result.replace(/oreo c\/ bacon/g, "oreo e bacon");
     result = result.replace(/casa c\/ bacon/g, "casa e bacon");
+    result = result.replace(/alho c\/ bacon/g, "alho e bacon");
+    result = result.replace(/milho c\/ bacon/g, "milho e bacon");
     result = result
       .replace(/3 queijo/g, "3 queijos")
       .replace(/tres queijo/g, "3 queijos")
       .replace(/4 queijo/g, "4 queijos")
       .replace(/quatro queijo/g, "4 queijos");
+
+    // Verifica se a palavra "especial" está presente na string
+    if (result.includes("especial")) {
+      // Divide a string em um array de palavras
+      let palavras = result.split(" ");
+
+      // Encontra a posição da palavra "especial" no array
+      let indiceEspecial = palavras.indexOf("especial");
+
+      // Verifica se há uma palavra após a palavra "especial"
+      if (indiceEspecial < palavras.length - 1) {
+        // Substitui a palavra seguinte por "e"
+        palavras[indiceEspecial + 1] = "e " + palavras[indiceEspecial + 1];
+      }
+
+      // Junta o array de palavras de volta em uma string
+      result = palavras.join(" ");
+      result = result.replace(/ e e /g, " e ");
+    }
 
     const ocorrencia = result.match(/1\/2/g);
 
@@ -293,7 +322,9 @@ function corrigirPalavrasParecidas(frase, variavelum, variaveldois) {
         result = result.replace(/1\/2 alho 1\/2 tomate/g, "1/2 alho e tomate");
       }
     }
-
+    result = result.replace(/4 queijoss/g, "4 queijos");
+    result = result.replace(/3 queijoss/g, "3 queijos");
+    result = result.replace(/alho e 1\/2 tomate/g, "e 1/2 alho e tomate");
     return result;
   }
 }

@@ -43,7 +43,7 @@ const cardapio = async (from, dia) => {
 };
 
 function cronJob() {
-  const encerrarAtendimento = new CronJob("0 * * * *", async () => {
+  const encerrarAtendimento = new CronJob("*/17 * * * *", async () => {
     const date = new Date();
     const h = date.getHours();
     if (h >= 17 && h <= 23) {

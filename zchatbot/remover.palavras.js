@@ -54,9 +54,6 @@ let palavras = [
 ];
 
 function removerPalavras(frase) {
-  frase = frase.replace(/4 queijoss/g, "4 queijos");
-  frase = frase.replace(/3 queijoss/g, "3 queijos");
-
   let palavrasFrase = frase.split(" ");
 
   // Filtrar as palavras que estão presentes no array

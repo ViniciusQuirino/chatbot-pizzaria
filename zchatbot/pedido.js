@@ -182,6 +182,7 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
   // -------------------------------------------------------------------------
   if (recuperarEtapa.etapa == "d") {
     voltar(msg, client);
+    // ------------------------------------------------------------------------------------------------
     let result = msg.body.replace(/1\/2|meia|meio/g, "");
     result = result.replace(/1\/2|meia|meio/g, "1/2");
     result = result.replace(/mais bacon/g, "");
@@ -191,20 +192,24 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     result = result.replace(/brocolis c\/ bacon/g, "brocolis");
     result = result.replace(/\//g, " ");
     result = result.replace(/\(.*?\)/g, "").replace(/(['"])(.*?)\1/g, "");
-
     let retorno = removerAcentos(result);
-
+    // ------------------------------------------------------------------------------------------------
     let variavelum = true;
     let variaveldois = true;
     let frase = corrigirPalavrasParecidas(retorno, variavelum, variaveldois);
 
     const frasePronta = corrigirFrase(frase);
-
+    // ------------------------------------------------------------------------------------------------
     variavelum = true;
     variaveldois = true;
     frase = corrigirPalavrasParecidas(frasePronta, variavelum, variaveldois);
-
+    // ------------------------------------------------------------------------------------------------
     frase = removerPalavras(frase);
+
+    variavelum = true;
+    variaveldois = true;
+    frase = corrigirPalavrasParecidas(frase, variavelum, variaveldois);
+    // ------------------------------------------------------------------------------------------------
 
     const ocorrencias = (frase.match(/1\/2/g) || []).length;
     const encontrar = await encontrarObjetos(frase, dados);

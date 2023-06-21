@@ -66,20 +66,24 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     result = result.replace(/brocolis c\/ bacon/g, "brocolis");
     result = result.replace(/\//g, " ");
     result = result.replace(/\(.*?\)/g, "").replace(/(['"])(.*?)\1/g, "");
-
-    const retorno = removerAcentos(result);
-
+    let retorno = removerAcentos(result);
+    // ------------------------------------------------------------------------------------------------
     let variavelum = true;
     let variaveldois = true;
     let frase = corrigirPalavrasParecidas(retorno, variavelum, variaveldois);
 
     const frasePronta = corrigirFrase(frase);
-
+    // ------------------------------------------------------------------------------------------------
     variavelum = true;
     variaveldois = true;
     frase = corrigirPalavrasParecidas(frasePronta, variavelum, variaveldois);
-
+    // ------------------------------------------------------------------------------------------------
     frase = removerPalavras(frase);
+
+    variavelum = true;
+    variaveldois = true;
+    frase = corrigirPalavrasParecidas(frase, variavelum, variaveldois);
+    // ------------------------------------------------------------------------------------------------
 
     const ocorrencias = (frase.match(/1\/2/g) || []).length;
     const encontrar = await encontrarObjetos(frase, dados);
@@ -248,7 +252,7 @@ Quer adicionar *borda recheada* ?
         telefone: msg.from,
         b: "loop",
       });
-      if (atualizar.qnt < atualizar.loop + "") {
+      if (+atualizar.qnt < atualizar.loop) {
         const response = await Requests.atualizarEtapa(msg.from, {
           etapa: "g",
         });
@@ -265,7 +269,7 @@ Quer adicionar *borda recheada* ?
       );
 
       const atualizar = await Requests.atualizarPedido(borda);
-      if (atualizar.qnt < atualizar.loop + "") {
+      if (+atualizar.qnt < atualizar.loop) {
         const response = await Requests.atualizarEtapa(msg.from, {
           etapa: "g",
         });
@@ -281,7 +285,7 @@ Quer adicionar *borda recheada* ?
         "cheddar"
       );
       const atualizar = await Requests.atualizarPedido(borda);
-      if (atualizar.qnt < atualizar.loop + "") {
+      if (+atualizar.qnt < atualizar.loop) {
         const response = await Requests.atualizarEtapa(msg.from, {
           etapa: "g",
         });
@@ -297,7 +301,7 @@ Quer adicionar *borda recheada* ?
         "chocolate"
       );
       const atualizar = await Requests.atualizarPedido(borda);
-      if (atualizar.qnt < atualizar.loop + "") {
+      if (+atualizar.qnt < atualizar.loop) {
         const response = await Requests.atualizarEtapa(msg.from, {
           etapa: "g",
         });
