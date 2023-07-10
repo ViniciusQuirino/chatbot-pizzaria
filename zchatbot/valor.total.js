@@ -130,6 +130,7 @@ function isPromocao(nomePizza) {
     "alho",
     "calabresa",
     "milho c/ catupiry",
+    "milho",
     "lombo",
     "presunto",
   ];
