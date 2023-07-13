@@ -109,8 +109,7 @@ Obrigado pela compreensão.`
   if (
     recuperarEtapa !== undefined &&
     recuperarEtapa.ativado == true &&
-    recuperarEtapa.ativado2 == true &&
-    !imprevisto
+    recuperarEtapa.ativado2 == true
   ) {
     if (
       (horaAtual > horaMinima &&

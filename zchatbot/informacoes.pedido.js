@@ -26,10 +26,9 @@ ${
 }${response["bordarecheada" + i] !== null ? "\n" : ""}*Tamanho:* ${
       response["tamanho" + i]
     }
-${response["obs" + i] !== null 
-    ? `*Obs:* ${response["obs" + i]}`
-    : ""}
-${response["obs" + i] !== null ? "\n" : ""}${response["adcingrediente" + i] !== null ? `*Adicional:* ${ing}` : ""}${
+${response["obs" + i] !== null ? `*Obs:* ${response["obs" + i]}` : ""}${
+      response["obs" + i] !== null ? "\n" : ""
+    }${response["adcingrediente" + i] !== null ? `*Adicional:* ${ing}` : ""}${
       response["adcingrediente" + i] !== null ? "\n" : ""
     }`;
   }
