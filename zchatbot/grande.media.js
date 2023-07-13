@@ -224,19 +224,20 @@ Ingredientes para acrescentar:
       message != "voltar" &&
       retirar[0] != "retirar"
     ) {
-      const response = await Requests.atualizarEtapa(msg.from, { etapa: "23" });
+      const result = await Requests.atualizarEtapa(msg.from, { etapa: "23" });
       client.sendMessage(
         msg.from,
         `*${ordinal} PIZZA:*
 Quer adicionar *borda recheada* ?
   
 *1* - Não quero
-*2* - Catupiry R$ ${response[5].valor},00
-*3* - Cheddar R$ ${response[6].valor},00
-*4* - Chocolate R$ ${response[7].valor},00`
+*2* - Catupiry R$ ${result[5].valor},00
+*3* - Cheddar R$ ${result[6].valor},00
+*4* - Chocolate R$ ${result[7].valor},00`
       );
 
       const obs = criarObjetoObs(msg.from, response.loop, msg.body);
+      
       Requests.atualizarPedido(obs);
     }
   }
