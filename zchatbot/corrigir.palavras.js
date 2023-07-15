@@ -374,8 +374,6 @@ function levenshteinDistance(a, b) {
   if (b.length === 0) return a.length;
 
   var matrix = [];
-
-  // Inicializar a matriz
   for (var i = 0; i <= b.length; i++) {
     matrix[i] = [i];
   }
@@ -384,7 +382,6 @@ function levenshteinDistance(a, b) {
     matrix[0][j] = j;
   }
 
-  // Calcular a distância
   for (var i = 1; i <= b.length; i++) {
     for (var j = 1; j <= a.length; j++) {
       if (b.charAt(i - 1) === a.charAt(j - 1)) {

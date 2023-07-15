@@ -24,6 +24,17 @@ async function pedidos(recuperarEtapa, msg, client) {
   const message = msg.body.toLowerCase();
   if (recuperarEtapa.etapa == "a") {
     const response = await Requests.recuperarTempo();
+
+    let dataAtual = new Date();
+    let horaAtual = dataAtual.getHours();
+
+    if (horaAtual >= 13 && horaAtual < 18) {
+      client.sendMessage(
+        msg.from,
+        `O horário de funcionamento é das 18 as 23hrs, mas caso já queira fazer seu pedido fique vontade.`
+      );
+    }
+
     client.sendMessage(
       msg.from,
       `Olá! 😃
@@ -714,6 +725,11 @@ Assim que terminar de fazer o pix, nos envie o comprovante por favor, assim já 
       }
     } else if (msg.body == "2" && message != "voltar") {
       console.log("NÂO TEM COISA ERRADA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      Requests.atualizarPedido({
+        telefone: msg.from,
+        pedidoconfirmado: true,
+      });
+
       client.sendMessage(
         msg.from,
         `Ok, aguarde um instante!
