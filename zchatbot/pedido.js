@@ -31,7 +31,7 @@ async function pedidos(recuperarEtapa, msg, client) {
     if (horaAtual >= 13 && horaAtual < 18) {
       client.sendMessage(
         msg.from,
-        `O horário de funcionamento é das 18 às 23hrs, mas caso já queira fazer seu pedido fique vontade.`
+        `O horário de funcionamento é das 18 às 23hrs, mas já podemos anotar seu pedido.`
       );
     }
 
