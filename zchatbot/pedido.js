@@ -160,7 +160,7 @@ Qual o *tamanho* que você quer ? Digite *apenas o NUMERO*
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
-        `Qual é o *sabor da ${ordinal} PIZZA ?*
+        `Qual é o *sabor da PIZZA ?*
 
 Você pode pedir até dois sabores 😃
 *Exemplo:* meia frango com catupiry e meia calabresa`
@@ -171,7 +171,7 @@ Você pode pedir até dois sabores 😃
     if (msg.body == "2") {
       client.sendMessage(
         msg.from,
-        `Qual é o *sabor da ${ordinal} PIZZA ?*
+        `Qual é o *sabor da PIZZA ?*
 
 Você pode pedir até dois sabores 😃
 *Exemplo:* meia frango com catupiry e meia calabresa`
