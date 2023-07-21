@@ -34,7 +34,8 @@ async function maisDeUma(recuperarEtapa, msg, client) {
         `*${ordinal} PIZZA:*
 Qual é o *sabor da ${ordinal} PIZZA ?*
 
-Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
+Você pode pedir até dois sabores 😃
+*Exemplo:* meia frango com catupiry e meia calabresa`
       );
 
       const obj = criarObjetoTelefone(msg.from, response.qnt);

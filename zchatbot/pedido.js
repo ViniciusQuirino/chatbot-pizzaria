@@ -139,8 +139,7 @@ Qual o *tamanho* que você quer ? Digite *apenas o NUMERO*
         client.sendMessage(
           msg.from,
           `*Atenção ⚠️*
-*Com a nossa assistente virtual voce pode pedir 10 pizzas no máximo*
-*Caso queira pedir mais que 10 pizzas chame no numero: 14998908820*`
+*Com a nossa assistente virtual voce pode pedir 10 pizzas no máximo*`
         );
       }
     } else if (verificarResposta == "") {
@@ -161,9 +160,10 @@ Qual o *tamanho* que você quer ? Digite *apenas o NUMERO*
     if (msg.body == "1") {
       client.sendMessage(
         msg.from,
-        `Qual é o *sabor* da pizza que deseja ?
+        `Qual é o *sabor da ${ordinal} PIZZA ?*
 
-Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
+Você pode pedir até dois sabores 😃
+*Exemplo:* meia frango com catupiry e meia calabresa`
       );
       Requests.atualizarPedido({ telefone: msg.from, tamanho1: "grande" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
@@ -171,9 +171,10 @@ Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
     if (msg.body == "2") {
       client.sendMessage(
         msg.from,
-        `Qual é o *sabor* da pizza que deseja ?
+        `Qual é o *sabor da ${ordinal} PIZZA ?*
 
-Se você quiser *MEIO A MEIO*, pode informar aqui mesmo por favor 😃`
+Você pode pedir até dois sabores 😃
+*Exemplo:* meia frango com catupiry e meia calabresa`
       );
       Requests.atualizarPedido({ telefone: msg.from, tamanho1: "média" });
       Requests.atualizarEtapa(msg.from, { etapa: "d" });
