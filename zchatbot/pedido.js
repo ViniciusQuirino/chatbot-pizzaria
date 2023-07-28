@@ -538,7 +538,7 @@ Numero do telefone abaixo:`
     } else if (msg.body != "1" && msg.body != "2" && message != "voltar") {
       const response = await dificuldade(msg, client);
       client.sendMessage(
-        from,
+        msg.from,
         `Ok, você quer que *entregue* ?
 
 Valores:
